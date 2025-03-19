@@ -84,6 +84,8 @@ bool Player::Update(float dt)
 	}
 	
 	//Jump
+	 
+	if (isJumping && lastJump <= 25)lastJump++;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 		if (!isJumping) {
 			// Apply an initial upward force
@@ -91,7 +93,7 @@ bool Player::Update(float dt)
 			isJumping = true;
 			canDoubleJump = true;
 		}
-		else if (canDoubleJump) {
+		else if (canDoubleJump && lastJump>25) {
 			pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
 			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 			canDoubleJump = false;
@@ -132,6 +134,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision PLATFORM");
 		isJumping = false;
 		canDoubleJump = false;
+		lastJump = 0;
 		break;
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
