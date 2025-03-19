@@ -6,6 +6,7 @@
 #include "Animation.h"
 
 struct SDL_Texture;
+#define glidDuration 40
 
 class Player : public Entity
 {
@@ -53,7 +54,7 @@ public:
 	bool canDoubleJump = false;
 	int lastJump = 0;
 	int glid_time = 0;
-	int glid_reduce=5;
+	int glid_reduce=0;
 	float fallForce = 1.5f;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
