@@ -84,7 +84,6 @@ bool Player::Update(float dt)
 	}
 	
 	//Jump
-	 
 	if (isJumping && lastJump <= 25)lastJump++;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 		if (!isJumping) {
