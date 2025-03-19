@@ -52,7 +52,9 @@ public:
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	bool canDoubleJump = false;
 	int lastJump = 0;
-	int pr = 0;
+	int glid_time = 0;
+	int glid_reduce=5;
+	float fallForce = 1.5f;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;

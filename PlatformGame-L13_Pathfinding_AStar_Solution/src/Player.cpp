@@ -111,7 +111,12 @@ bool Player::Update(float dt)
 	//To plan
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
 	{
-		velocity.y = pbody->body->GetLinearVelocity().y/1.5;
+		/*glid_time++;
+		if (fallForce != 1.0 &&glid_time > glid_reduce) {
+			fallForce =- 0.1;
+			glid_reduce =+ 5;
+		}*/
+		velocity.y = pbody->body->GetLinearVelocity().y/ fallForce;
 	}
 
 	
