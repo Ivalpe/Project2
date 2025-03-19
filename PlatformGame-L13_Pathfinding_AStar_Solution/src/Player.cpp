@@ -46,7 +46,7 @@ bool Player::Start() {
 	pbody->ctype = ColliderType::PLAYER;
 
 	// Set the gravity of the body
-	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(1);
 
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
@@ -104,8 +104,17 @@ bool Player::Update(float dt)
 	if(isJumping == true)
 	{
 		velocity.y = pbody->body->GetLinearVelocity().y;
+		
 	}
 
+
+	//To plan
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
+	{
+		velocity.y = pbody->body->GetLinearVelocity().y/1.5;
+	}
+
+	
 	// Apply the velocity to the player
 	pbody->body->SetLinearVelocity(velocity);
 
