@@ -56,6 +56,9 @@ public:
 	int glid_time = 0;
 	int glid_reduce=0;
 	float fallForce = 1.5f;
+
+	bool isClimbing=false;
+
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;

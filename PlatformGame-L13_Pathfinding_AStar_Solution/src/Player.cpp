@@ -73,15 +73,7 @@ bool Player::Update(float dt)
 		velocity.x = 0.2 * 16;
 	}
 
-	// Move Up
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
-		velocity.y = -0.2 * 16;
-	}
 
-	// Move down
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-		velocity.y = 0.2 * 16;
-	}
 	
 	//Jump
 	if (isJumping && lastJump <= 25)lastJump++;
@@ -119,7 +111,24 @@ bool Player::Update(float dt)
 		velocity.y = pbody->body->GetLinearVelocity().y/ fallForce;
 	}
 
-	
+	if (isClimbing) {
+		velocity.y = 0;
+		pbody->body->SetGravityScale(0);
+
+		// Move Up
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+			velocity.y = -0.2 * 16;
+		}
+
+		// Move down
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+			velocity.y = 0.2 * 16;
+		}
+	}
+	else {
+		pbody->body->SetGravityScale(1);
+
+	}
 	// Apply the velocity to the player
 	pbody->body->SetLinearVelocity(velocity);
 
@@ -149,11 +158,20 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		canDoubleJump = false;
 		lastJump = 0;
 		fallForce = 1.5;
+
+		isClimbing = false;
 		break;
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
 		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
+		break;
+	case ColliderType::CLIMBABLE:
+
+		isClimbing = true;
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		pbody->body->SetGravityScale(0);
+
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
@@ -172,6 +190,12 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 	case ColliderType::ITEM:
 		LOG("End Collision ITEM");
+		break;
+	case ColliderType::CLIMBABLE:
+		isClimbing = false;
+		pbody->body->SetGravityScale(1);
+
+		LOG("End Collision CLIMABLE");
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");

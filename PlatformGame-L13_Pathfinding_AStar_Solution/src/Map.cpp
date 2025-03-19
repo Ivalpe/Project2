@@ -213,8 +213,24 @@ bool Map::Load(std::string path, std::string fileName)
             }
         }
 
-        ret = true;
+        //Iterate the layer and create climb
+        for (const auto& mapLayer : mapData.layers) {
+            if (mapLayer->name == "Climb") {
+                for (int i = 0; i < mapData.width; i++) {
+                    for (int j = 0; j < mapData.height; j++) {
+                        int gid = mapLayer->Get(i, j);
+                        if (gid == 50) {
+                            Vector2D mapCoord = MapToWorld(i, j);
+                            PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + mapData.tileWidth / 2, mapCoord.getY() + mapData.tileHeight / 2, mapData.tileWidth, mapData.tileHeight, STATIC);
+                            c1->ctype = ColliderType::CLIMBABLE;
+                        }
+                    }
+                }
+            }
+        }
 
+        ret = true;
+        
         // L06: TODO 5: LOG all the data loaded iterate all tilesetsand LOG everything
         if (ret == true)
         {
