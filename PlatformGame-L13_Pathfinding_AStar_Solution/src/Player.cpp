@@ -117,12 +117,12 @@ bool Player::Update(float dt)
 
 		// Move Up
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
-			velocity.y = -0.2 * 16;
+			velocity.y = -0.3 * 16;
 		}
 
 		// Move down
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-			velocity.y = 0.2 * 16;
+			velocity.y = 0.3 * 16;
 		}
 	}
 	else {
