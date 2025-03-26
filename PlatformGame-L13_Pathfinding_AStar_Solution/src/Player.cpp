@@ -50,6 +50,7 @@ bool Player::Start() {
 
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	
 
 	return true;
 }
@@ -66,11 +67,12 @@ bool Player::Update(float dt)
 	// Move left
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -0.2 * 16;
-	}
 
+	}
 	// Move right
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 		velocity.x = 0.2 * 16;
+		
 	}
 
 
@@ -99,8 +101,16 @@ bool Player::Update(float dt)
 		
 	}
 
+	// hide
+	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+		isJumping = false;
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+			velocity.x /= 4;
+		}
 
-	//To plan
+	}
+
+	//To glide
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
 	{
 		++glid_time;
