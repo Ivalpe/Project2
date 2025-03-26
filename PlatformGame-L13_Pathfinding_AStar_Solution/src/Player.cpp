@@ -171,7 +171,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		isClimbing = true;
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		pbody->body->SetGravityScale(0);
-
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");

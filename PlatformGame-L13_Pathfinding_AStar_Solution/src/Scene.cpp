@@ -47,6 +47,12 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
+	for (pugi::xml_node platfromNode = configParameters.child("entities").child("platforms").child("platform"); platfromNode; platfromNode = platfromNode.next_sibling("platform"))
+	{
+		Platform* platform = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
+		platform->SetParameters(platfromNode);
+		platformList.push_back(platform);
+	}
 	return ret;
 }
 
