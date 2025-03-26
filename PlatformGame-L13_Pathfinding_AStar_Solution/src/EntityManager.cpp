@@ -4,7 +4,7 @@
 #include "Textures.h"
 #include "Scene.h"
 #include "Log.h"
-#include "Item.h"
+#include "Feather.h"
 #include "Enemy.h"
 
 EntityManager::EntityManager() : Module()
@@ -74,7 +74,7 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		entity = new Player();
 		break;
 	case EntityType::ITEM:
-		entity = new Item();
+		entity = new Feather();
 		break;
 	case EntityType::ENEMY:
 		entity = new Enemy();

@@ -10,7 +10,7 @@
 #include "EntityManager.h"
 #include "Player.h"
 #include "Map.h"
-#include "Item.h"
+#include "Feather.h"
 #include "Enemy.h"
 
 Scene::Scene() : Module()
@@ -33,10 +33,10 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 	
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
-	for(pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
+	for(pugi::xml_node itemNode = configParameters.child("entities").child("items").child("feather"); itemNode; itemNode = itemNode.next_sibling("feather"))
 	{
-		Item* item = (Item*) Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-		item->SetParameters(itemNode);
+		Feather* feather1 = (Feather*) Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		feather1->SetParameters(itemNode);
 	}
 
 	// Create a enemy using the entity manager 
