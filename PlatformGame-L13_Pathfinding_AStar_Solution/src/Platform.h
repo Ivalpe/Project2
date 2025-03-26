@@ -29,13 +29,13 @@ public:
 
 	Vector2D GetPosition();
 
-
 public:
+	PhysBody* pbody;
 
 private:
-	int initial_position = 800;
-	int end_position = 1000;
-	int movment = 5;
+	int startPositionX = 800;
+	int endPositionX = 1000;
+	int movement = 5;
 
 	SDL_Texture* texture;
 	const char* texturePath;
@@ -43,5 +43,4 @@ private:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
-	PhysBody* pbody;
 };

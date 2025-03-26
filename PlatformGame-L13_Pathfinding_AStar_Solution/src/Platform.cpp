@@ -41,14 +41,15 @@ bool Platform::Start() {
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::KINEMATIC);
+	pbody->listener = this;
 
 
 	// Set the gravity of the body
 	pbody->body->SetGravityScale(0);
 
 	//Assign collider type
-	pbody->ctype = ColliderType::PLATFORM;
+	pbody->ctype = ColliderType::M_PLATFORM;
 
 
 
@@ -58,14 +59,12 @@ bool Platform::Start() {
 
 bool Platform::Update(float dt)
 {
+	//Platform moving
 	b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x,0);
 	
-
-	if (position.getX() <= initial_position && position.getX()!= end_position) velocity.x = movment;
-	else if (position.getX() >= end_position) velocity.x = -movment;
+	if (position.getX() <= startPositionX && position.getX()!= endPositionX) velocity.x = movement; //Movement to the right
+	else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
 	pbody->body->SetLinearVelocity(velocity);
-
-	pbody->body->SetFixedRotation(1);
 
 
 

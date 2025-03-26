@@ -4,6 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Box2D/Box2D.h"
 #include "Animation.h"
+#include "Platform.h"
 
 struct SDL_Texture;
 #define glidDuration 40
@@ -58,6 +59,9 @@ public:
 	float fallForce = 1.5f;
 
 	bool isClimbing=false;
+
+	bool isOnPlatform = false;
+	Platform* platform=nullptr;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;

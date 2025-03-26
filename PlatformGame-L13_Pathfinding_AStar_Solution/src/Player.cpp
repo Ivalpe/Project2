@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
+#include "Platform.h"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
@@ -129,6 +130,13 @@ bool Player::Update(float dt)
 		pbody->body->SetGravityScale(1);
 
 	}
+
+	// When on a m_platform, add platform velocity to player movement
+	if (isOnPlatform){
+		velocity.x+= platform->pbody->body->GetLinearVelocity().x;
+	}
+
+
 	// Apply the velocity to the player
 	pbody->body->SetLinearVelocity(velocity);
 
@@ -161,6 +169,22 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 		isClimbing = false;
 		break;
+	case ColliderType::M_PLATFORM:
+		LOG("Collision M_PLATFORM");
+		isJumping = false;
+		canDoubleJump = false;
+		lastJump = 0;
+		fallForce = 1.5;
+		isClimbing = false;
+		isOnPlatform = true;
+
+		// Assign the platform listener if valid.
+		if (physB->listener != nullptr && dynamic_cast<Platform*>(physB->listener)) {
+			platform = static_cast<Platform*>(physB->listener);
+		}
+	
+		break;
+
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
 		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
@@ -186,6 +210,11 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		LOG("End Collision PLATFORM");
+		break;
+	case ColliderType::M_PLATFORM:
+		LOG("End Collision M_PLATFORM");
+		isOnPlatform = false;
+		platform = nullptr;
 		break;
 	case ColliderType::ITEM:
 		LOG("End Collision ITEM");
