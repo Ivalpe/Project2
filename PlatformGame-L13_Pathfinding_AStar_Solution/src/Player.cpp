@@ -75,11 +75,26 @@ bool Player::Update(float dt)
 		
 	}
 
+	// hide
+	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+		
+		isHiding = true;
+		pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+			velocity.x /= 4;
+		}
+
+
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
+		isHiding = false;
+	}
 
 	
 	//Jump
 	if (isJumping && lastJump <= 25)lastJump++;
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+	if (!isHiding && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 		if (!isJumping) {
 			// Apply an initial upward force
 			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
@@ -101,14 +116,7 @@ bool Player::Update(float dt)
 		
 	}
 
-	// hide
-	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-		isJumping = false;
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
-			velocity.x /= 4;
-		}
-
-	}
+	
 
 	//To glide
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)

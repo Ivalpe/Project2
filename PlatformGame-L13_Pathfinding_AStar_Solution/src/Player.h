@@ -35,6 +35,7 @@ public:
 
 	void SetPosition(Vector2D pos);
 
+
 	Vector2D GetPosition();
 
 public:
@@ -52,6 +53,7 @@ public:
 	float jumpForce = 2.5f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	bool canDoubleJump = false;
+	bool isHiding = false;
 	int lastJump = 0;
 	int glid_time = 0;
 	int glid_reduce=0;
