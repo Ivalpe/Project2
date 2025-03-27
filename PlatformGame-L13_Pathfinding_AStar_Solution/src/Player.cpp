@@ -186,7 +186,7 @@ void Player::HandleClimbing(float dt)
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
-	return true;
+	
 
 }
 
