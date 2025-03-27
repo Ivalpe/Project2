@@ -33,7 +33,6 @@ bool Window::Awake()
 		bool resizable = configParameters.child("resizable").attribute("value").as_bool();
 		bool fullscreen_window = configParameters.child("fullscreen_window").attribute("value").as_bool();
 
-		//TODO Get the values from the config file
 		width = configParameters.child("resolution").attribute("width").as_int();
 		height = configParameters.child("resolution").attribute("height").as_int();
 		scale = configParameters.child("resolution").attribute("scale").as_int();
