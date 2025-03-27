@@ -37,14 +37,18 @@
         </animations>
       </player>
       <items>
-        <item name="coin" x="200" y="672" w="32" h="32" texture="Assets/Textures/goldCoin.png" gravity="true">
+        <feather name="feather" x="200" y="670" w="22" h="64" texture="Assets/Textures/items/feather/feather_02.png" gravity="false">
           <animations>
             <idle loop="true" speed ="0.5">
-              <frame x="0" y="0" w="32" h="32"/>
+              <frame x="0" y="0" w="22" h="64"/>
             </idle>
           </animations>
-        </item>
+        </feather>
+        <candle>
+        </candle>
+        
       </items>
+     
 
       <enemies>
         <enemy name="badguy" x="448" y="350" w="32" h="32" texture="Assets/Textures/enemy/Idle.png" gravity="true">

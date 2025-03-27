@@ -6,12 +6,12 @@
 
 struct SDL_Texture;
 
-class Item : public Entity
+class Feather : public Entity
 {
 public:
 
-	Item();
-	virtual ~Item();
+	Feather();
+	virtual ~Feather();
 
 	bool Awake();
 

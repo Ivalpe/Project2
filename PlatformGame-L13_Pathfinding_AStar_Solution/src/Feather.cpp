@@ -1,4 +1,4 @@
-#include "Item.h"
+#include "Feather.h"
 #include "Engine.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -8,18 +8,18 @@
 #include "Log.h"
 #include "Physics.h"
 
-Item::Item() : Entity(EntityType::ITEM)
+Feather::Feather() : Entity(EntityType::ITEM)
 {
-	name = "item";
+	name = "feather";
 }
 
-Item::~Item() {}
+Feather::~Feather() {}
 
-bool Item::Awake() {
+bool Feather::Awake() {
 	return true;
 }
 
-bool Item::Start() {
+bool Feather::Start() {
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
@@ -33,7 +33,7 @@ bool Item::Start() {
 	currentAnimation = &idle;
 	
 	// L08 TODO 4: Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texW / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
 	// L08 TODO 7: Assign collider type
 	pbody->ctype = ColliderType::ITEM;
@@ -44,12 +44,12 @@ bool Item::Start() {
 	return true;
 }
 
-bool Item::Update(float dt)
+bool Feather::Update(float dt)
 {
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
@@ -58,7 +58,7 @@ bool Item::Update(float dt)
 	return true;
 }
 
-bool Item::CleanUp()
+bool Feather::CleanUp()
 {
 	return true;
 }
