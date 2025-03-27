@@ -213,19 +213,35 @@ bool Map::Load(std::string path, std::string fileName)
             }
         }
 
-        //Iterate the layer and create climb
-        for (const auto& mapLayer : mapData.layers) {
-            if (mapLayer->name == "Climb") {
-                for (int i = 0; i < mapData.width; i++) {
-                    for (int j = 0; j < mapData.height; j++) {
-                        int gid = mapLayer->Get(i, j);
-                        if (gid == 50) {
-                            Vector2D mapCoord = MapToWorld(i, j);
-                            PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + mapData.tileWidth / 2, mapCoord.getY() + mapData.tileHeight / 2, mapData.tileWidth, mapData.tileHeight, STATIC);
-                            c1->ctype = ColliderType::CLIMBABLE;
-                        }
-                    }
+        // L08 TODO 3: Create colliders
+        float x = 0.0f;
+        float y = 0.0f;
+        float width = 0.0f;
+        float height = 0.0f;
+
+        for (pugi::xml_node layerNode = mapFileXML.child("map").child("objectgroup"); layerNode != NULL; layerNode = layerNode.next_sibling("objectgroup")) {
+
+            //Get objet group name(PLATFORM OR SPIKE)
+            std::string layerName = layerNode.attribute("name").as_string();
+
+            for (pugi::xml_node tileNode = layerNode.child("object"); tileNode != NULL; tileNode = tileNode.next_sibling("object")) {
+
+                // Asigna los valores correctos desde el XML
+                x = tileNode.attribute("x").as_float();
+                y = tileNode.attribute("y").as_float();
+                width = tileNode.attribute("width").as_float();
+                height = tileNode.attribute("height").as_float();
+
+                ColliderType colliderType = ColliderType::PLATFORM; // Valor por defecto
+
+                // If layer name is "spike" then asign type spike AQUI ES LO DE LAS CAPAS
+                if (layerName == "Climb") {
+                    colliderType = ColliderType::CLIMBABLE;
                 }
+
+                // Crear el objeto de colisión con el tipo determinado
+                PhysBody* rect = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+                rect->ctype = ColliderType::CLIMBABLE;
             }
         }
 
