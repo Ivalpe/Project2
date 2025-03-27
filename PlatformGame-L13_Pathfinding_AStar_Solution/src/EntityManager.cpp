@@ -6,7 +6,7 @@
 #include "Log.h"
 #include "Item.h"
 #include "Enemy.h"
-
+#include "Platform.h"
 EntityManager::EntityManager() : Module()
 {
 	name = "entitymanager";
@@ -78,6 +78,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		break;
 	case EntityType::ENEMY:
 		entity = new Enemy();
+		break;
+	case EntityType::PLATFORM:
+		entity = new Platform();
 		break;
 	default:
 		break;

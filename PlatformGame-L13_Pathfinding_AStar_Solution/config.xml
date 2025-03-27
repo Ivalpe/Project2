@@ -63,7 +63,15 @@
           </animations>
           </enemy>
       </enemies>
-            
+		<platforms>
+			<platform name="platform" x="800" y="650" w="100" h="32" texture="Assets/Textures/platform.png" gravity="true">
+				<animations>
+					<idle loop="true" speed ="0.5">
+						<frame x="0" y="0" w="32" h="32"/>
+					</idle>
+				</animations>
+			</platform>
+		</platforms>
     </entities>
   </scene>
 	
