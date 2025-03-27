@@ -36,7 +36,13 @@ public:
 	void SetPosition(Vector2D pos);
 
 	Vector2D GetPosition();
+	
+	void HandleJump(float dt);
+	void HandleHide(float dt);
+	void HandleClimbing(float dt);
+	void HandleGlide(float dt);
 
+	b2Vec2 velocity;
 public:
 
 	//Declare player parameters
