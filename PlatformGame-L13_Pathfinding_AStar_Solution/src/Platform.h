@@ -6,12 +6,12 @@
 
 struct SDL_Texture;
 
-class Item : public Entity
+class Platform : public Entity
 {
 public:
 
-	Item();
-	virtual ~Item();
+	Platform();
+	virtual ~Platform();
 
 	bool Awake();
 
@@ -25,11 +25,17 @@ public:
 		this->parameters = parameters;
 	}
 
-public:
+	void SetPosition(Vector2D pos);
 
-	bool isPicked = false;
+	Vector2D GetPosition();
+
+public:
+	PhysBody* pbody;
 
 private:
+	int startPositionX = 800;
+	int endPositionX = 1000;
+	int movement = 5;
 
 	SDL_Texture* texture;
 	const char* texturePath;
@@ -37,6 +43,4 @@ private:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
-
-	PhysBody* pbody;
 };

@@ -137,7 +137,6 @@ bool Pathfinding::IsWalkable(int x, int y) {
 
     bool isWalkable = false;
 
-    // L11: TODO 3: return true only if x and y are within map limits
     // and the tile is walkable (tile id 0 in the navigation layer)
 
     //Set isWalkable to true if the position is inside map limits and is a position that is not blocked in the navigation layer
@@ -155,7 +154,6 @@ bool Pathfinding::IsWalkable(int x, int y) {
 
 void Pathfinding::PropagateBFS() {
 
-    // L11 TODO 4: Check if we have reach a destination
     bool foundDestination = false;
     if (frontier.size() > 0) {
         Vector2D frontierTile = frontier.front();
@@ -165,12 +163,10 @@ void Pathfinding::PropagateBFS() {
         if (frontierTile == playerPosTile) {
             foundDestination = true;
 
-            // L12: TODO 2: When the destination is reach, call the function ComputePath
             ComputePath(frontierTile.getX(), frontierTile.getY());
         }
     }
 
-    // L11: TODO 1: If frontier queue contains elements pop the first element and find the neighbors
     if (frontier.size() > 0 && !foundDestination) {
 
         //Get the value of the firt element in the queue
@@ -192,12 +188,10 @@ void Pathfinding::PropagateBFS() {
             neighbors.push_back(Vector2D(frontierTile.getX(), frontierTile.getY() - 1));
         }
 
-        // L11: TODO 2: For each neighbor, if not visited, add it to the frontier queue and visited list
         for(const auto& neighbor : neighbors) {
 			if (std::find(visited.begin(), visited.end(), neighbor) == visited.end()) {
 				frontier.push(neighbor);
 				visited.push_back(neighbor);
-                //L12 TODO 1: store the position from where the neighbor was reached in the breadcrumbs list
                 breadcrumbs.push_back(frontierTile);
 			}
 		}
@@ -207,7 +201,6 @@ void Pathfinding::PropagateBFS() {
 
 void Pathfinding::PropagateDijkstra() {
 
-    // L12: TODO 3: Taking BFS as a reference, implement the Dijkstra algorithm
 
     bool foundDestination = false;
     if (frontierDijkstra.size() > 0) {
@@ -218,7 +211,6 @@ void Pathfinding::PropagateDijkstra() {
         if (frontierTile == playerPosTile) {
             foundDestination = true;
 
-            // L12: TODO 2: When the destination is reach, call the function ComputePath
             ComputePath(frontierTile.getX(), frontierTile.getY());
         }
     }
@@ -263,7 +255,6 @@ void Pathfinding::PropagateDijkstra() {
 
 void Pathfinding::PropagateAStar(ASTAR_HEURISTICS heuristic) {
 
-    // L13: TODO 2: Adapt Dijkstra algorithm for AStar. Consider the different heuristics
 
     Vector2D playerPos = Engine::GetInstance().scene.get()->GetPlayerPosition();
     Vector2D playerPosTile = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
@@ -356,7 +347,6 @@ int Pathfinding::MovementCost(int x, int y)
 
 void Pathfinding::ComputePath(int x, int y)
 {
-    // L12: TODO 2: Follow the breadcrumps to goal back to the origin
     // at each step, add the point into "pathTiles" (it will then draw automatically)
 
     //Clear the pathTiles list

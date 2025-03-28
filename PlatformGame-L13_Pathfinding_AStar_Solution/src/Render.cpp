@@ -26,7 +26,6 @@ bool Render::Awake()
 
 	Uint32 flags = SDL_RENDERER_ACCELERATED;
 
-	//L05 TODO 5 - Load the configuration of the Render module
 	if (configParameters.child("vsync").attribute("value").as_bool() == true) {
 		flags |= SDL_RENDERER_PRESENTVSYNC;
 		LOG("Using vsync");

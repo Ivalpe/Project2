@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
+#include "Platform.h"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
@@ -25,7 +26,6 @@ bool Player::Awake() {
 
 bool Player::Start() {
 
-	//L03: TODO 2: Initialize Player parameters
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	position.setX(parameters.attribute("x").as_int());
 	position.setY(parameters.attribute("y").as_int());
@@ -36,13 +36,10 @@ bool Player::Start() {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
 
-	// L08 TODO 5: Add physics to the player - initialize physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texW / 2, bodyType::DYNAMIC);
 
-	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
 	pbody->listener = this;
 
-	// L08 TODO 7: Assign collider type
 	pbody->ctype = ColliderType::PLAYER;
 
 	// Set the gravity of the body
@@ -57,8 +54,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	// L08 TODO 5: Add physics to the player - updated player position using physics
-	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
+	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) {
 		velocity = b2Vec2(0,0);
@@ -74,6 +70,9 @@ bool Player::Update(float dt)
 		velocity.x = 0.2 * 16;
 		
 	}
+	
+	//Jump
+	HandleJump(dt);
 
 	// hide
 	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
@@ -91,8 +90,26 @@ bool Player::Update(float dt)
 		isHiding = false;
 	}
 
+	//To glide
+	HandleGlide(dt);
+
+	//Climbing
+	HandleClimbing(dt);
 	
-	//Jump
+	// Apply the velocity to the player
+	pbody->body->SetLinearVelocity(velocity);
+
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
+	return true;
+}
+
+void Player::HandleJump(float dt)
+{
 	if (isJumping && lastJump <= 25)lastJump++;
 	if (!isHiding && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 		if (!isJumping) {
@@ -101,34 +118,37 @@ bool Player::Update(float dt)
 			isJumping = true;
 			canDoubleJump = true;
 		}
-		else if (canDoubleJump && lastJump>25) {
+		else if (canDoubleJump && lastJump > 25) {
 			pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
 			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 			canDoubleJump = false;
 		}
-	
+
 	}
 
 	// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
-	if(isJumping == true)
+	if (isJumping == true)
 	{
 		velocity.y = pbody->body->GetLinearVelocity().y;
-		
+
 	}
+}
 
-	
-
-	//To glide
+void Player::HandleGlide(float dt)
+{
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
 	{
 		++glid_time;
-		if (fallForce >= 1.0 &&glid_time > glid_reduce) {
+		if (fallForce >= 1.0 && glid_time > glid_reduce) {
 			fallForce -= 0.1;
 			glid_reduce += glidDuration;
 		}
-		velocity.y = pbody->body->GetLinearVelocity().y/ fallForce;
+		velocity.y = pbody->body->GetLinearVelocity().y / fallForce;
 	}
+}
 
+void Player::HandleClimbing(float dt) 
+{
 	if (isClimbing) {
 		velocity.y = 0;
 		pbody->body->SetGravityScale(0);
@@ -147,6 +167,13 @@ bool Player::Update(float dt)
 		pbody->body->SetGravityScale(1);
 
 	}
+
+	// When on a m_platform, add platform velocity to player movement
+	if (isOnPlatform){
+		velocity.x+= platform->pbody->body->GetLinearVelocity().x;
+	}
+
+
 	// Apply the velocity to the player
 	pbody->body->SetLinearVelocity(velocity);
 
@@ -156,7 +183,8 @@ bool Player::Update(float dt)
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
-	return true;
+	
+
 }
 
 bool Player::CleanUp()
@@ -166,7 +194,6 @@ bool Player::CleanUp()
 	return true;
 }
 
-// L08 TODO 6: Define OnCollision function for the player. 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
@@ -179,6 +206,22 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 		isClimbing = false;
 		break;
+	case ColliderType::M_PLATFORM:
+		LOG("Collision M_PLATFORM");
+		isJumping = false;
+		canDoubleJump = false;
+		lastJump = 0;
+		fallForce = 1.5;
+		isClimbing = false;
+		isOnPlatform = true;
+
+		// Assign the platform listener if valid.
+		if (physB->listener != nullptr && dynamic_cast<Platform*>(physB->listener)) {
+			platform = static_cast<Platform*>(physB->listener);
+		}
+	
+		break;
+
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
 		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
@@ -189,7 +232,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		isClimbing = true;
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		pbody->body->SetGravityScale(0);
-
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
@@ -205,6 +247,11 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		LOG("End Collision PLATFORM");
+		break;
+	case ColliderType::M_PLATFORM:
+		LOG("End Collision M_PLATFORM");
+		isOnPlatform = false;
+		platform = nullptr;
 		break;
 	case ColliderType::ITEM:
 		LOG("End Collision ITEM");

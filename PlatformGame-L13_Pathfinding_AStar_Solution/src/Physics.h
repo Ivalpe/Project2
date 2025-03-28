@@ -26,7 +26,8 @@ enum bodyType {
 enum class ColliderType {
 	PLAYER, 
 	ITEM,
-	PLATFORM, 
+	PLATFORM,
+	M_PLATFORM,
 	ENEMY,
 	CLIMBABLE,
 	UNKNOWN
@@ -56,7 +57,7 @@ public:
 };
 
 // Module --------------------------------------
-class Physics : public Module, public b2ContactListener // TODO
+class Physics : public Module, public b2ContactListener
 {
 public:
 
