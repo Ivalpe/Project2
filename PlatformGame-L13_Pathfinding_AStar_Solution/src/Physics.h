@@ -57,7 +57,7 @@ public:
 };
 
 // Module --------------------------------------
-class Physics : public Module, public b2ContactListener // TODO
+class Physics : public Module, public b2ContactListener
 {
 public:
 
