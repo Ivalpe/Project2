@@ -19,7 +19,8 @@
   </window>
 
   <scene>
-    <map path="Assets/Maps/" name="MapTemplate.tmx"/>
+	  <map path="Assets/Maps/" name="Intro.tmx"/>
+	  <map1 path="Assets/Maps/" name="MapTemplate.tmx"/>
     <entities>
       <player x="784" y="600" w="32" h ="32" texture="Assets/Textures/player/Idle.png" gravity="true">
         <animations>

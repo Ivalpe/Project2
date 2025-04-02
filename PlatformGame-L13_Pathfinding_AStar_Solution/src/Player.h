@@ -64,4 +64,8 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 
+	bool change_level = false;
+	bool cleanup_pbody = false;
+
+
 };

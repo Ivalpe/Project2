@@ -91,6 +91,12 @@ bool Map::CleanUp()
 {
     LOG("Unloading map");
 
+    for (PhysBody* body : Engine::GetInstance().physics->listToDelete)
+    {
+        Engine::GetInstance().physics->DeletePhysBody(body);
+    }
+    Engine::GetInstance().physics->listToDelete.clear();
+
     // L06: TODO 2: Make sure you clean up any memory allocated from tilesets/map
     for (const auto& tileset : mapData.tilesets) {
         delete tileset;
@@ -207,6 +213,8 @@ bool Map::Load(std::string path, std::string fileName)
                             Vector2D mapCoord = MapToWorld(i, j);
                             PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX()+ mapData.tileWidth/2, mapCoord.getY()+ mapData.tileHeight/2, mapData.tileWidth, mapData.tileHeight, STATIC);
                             c1->ctype = ColliderType::PLATFORM;
+                            Engine::GetInstance().physics->listToDelete.push_back(c1);
+
                         }
                     }
                 }
@@ -237,11 +245,23 @@ bool Map::Load(std::string path, std::string fileName)
                 // If layer name is "spike" then asign type spike AQUI ES LO DE LAS CAPAS
                 if (layerName == "Climb") {
                     colliderType = ColliderType::CLIMBABLE;
+
+                    // Crear el objeto de colisión con el tipo determinado
+                    PhysBody* rect = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+                    rect->ctype = ColliderType::CLIMBABLE;
+                    Engine::GetInstance().physics->listToDelete.push_back(rect);
+
                 }
 
-                // Crear el objeto de colisión con el tipo determinado
-                PhysBody* rect = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
-                rect->ctype = ColliderType::CLIMBABLE;
+                if (layerName == "Exit") {
+                    colliderType = ColliderType::CHANGE_LEVEL;
+
+                    // Crear el objeto de colisión con el tipo determinado
+                    PhysBody* Change_level = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+                    Change_level->ctype = ColliderType::CHANGE_LEVEL;
+                    Engine::GetInstance().physics->listToDelete.push_back(Change_level);
+                }
+                
             }
         }
 

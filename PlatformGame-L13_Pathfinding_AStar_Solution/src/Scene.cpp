@@ -68,6 +68,30 @@ bool Scene::Start()
 	return true;
 }
 
+void Scene::Change_level(int level)
+{
+
+	if (level == 0)
+	{
+		Uint32 startTime = SDL_GetTicks();
+
+		Engine::GetInstance().map.get()->CleanUp();
+
+		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
+
+	}
+
+	if (level == 1)
+	{
+		Uint32 startTime = SDL_GetTicks();
+
+		Engine::GetInstance().map.get()->CleanUp();
+
+		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
+
+	}
+}
+
 // Called each loop iteration
 bool Scene::PreUpdate()
 {
@@ -124,6 +148,8 @@ bool Scene::Update(float dt)
 		enemyList[0]->ResetPath();
 	}
 
+	Change_level(level);
+
 	return true;
 }
 
@@ -134,7 +160,16 @@ bool Scene::PostUpdate()
 
 	if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
+	
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_0) == KEY_DOWN) {
+		Change_level(0);
+		level = 0;
+	}
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
+		Change_level(1);
+		level = 1;
+	}
 	return ret;
 }
 

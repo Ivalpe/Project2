@@ -25,12 +25,21 @@ bool Player::Awake() {
 
 bool Player::Start() {
 
+
 	//L03: TODO 2: Initialize Player parameters
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
+
+	if (Engine::GetInstance().scene.get()->level == 0) {
+		position.setX(parameters.attribute("x").as_int());
+		position.setY(parameters.attribute("y").as_int());
+	}
+	else if (Engine::GetInstance().scene.get()->level == 1)
+	{
+		position.setX(40);
+		position.setY(70);
+	}
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
@@ -159,6 +168,13 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		pbody->body->SetGravityScale(0);
 
 		break;
+	case ColliderType::CHANGE_LEVEL:
+		change_level = true;
+		Engine::GetInstance().scene.get()->level++;
+
+		cleanup_pbody = true;
+		break;
+
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;
@@ -182,6 +198,20 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		pbody->body->SetGravityScale(1);
 
 		LOG("End Collision CLIMABLE");
+		break;
+	case ColliderType::CHANGE_LEVEL:
+		change_level = false;
+
+		if (cleanup_pbody) {
+
+			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+			pbody = nullptr;  // Eliminar el cuerpo físico del jugador
+
+			Start();
+
+			cleanup_pbody = false;
+		}
+
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");

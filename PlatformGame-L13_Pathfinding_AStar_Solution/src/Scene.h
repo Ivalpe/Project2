@@ -37,12 +37,16 @@ public:
 	// Return the player position
 	Vector2D GetPlayerPosition();
 
+	void Change_level(int level);
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
 		return tilePosDebug;
 
 	}
+
+	int level = 0;
 
 private:
 	SDL_Texture* mouseTileTex = nullptr;
