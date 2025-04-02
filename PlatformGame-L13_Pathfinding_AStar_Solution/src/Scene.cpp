@@ -148,7 +148,12 @@ bool Scene::Update(float dt)
 		enemyList[0]->ResetPath();
 	}
 
-	Change_level(level);
+	if (reset_level) {
+		Change_level(level);
+		if(level==0) player->SetPosition(Vector2D{ 40,70 });
+
+		reset_level = false;
+	}
 
 	return true;
 }

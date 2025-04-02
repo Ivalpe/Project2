@@ -171,6 +171,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::CHANGE_LEVEL:
 		change_level = true;
 		Engine::GetInstance().scene.get()->level++;
+		Engine::GetInstance().scene.get()->reset_level = true;
 
 		cleanup_pbody = true;
 		break;
@@ -178,8 +179,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Colisión con daño detectada");
 
 		life--;
-		damage = true;
 		Engine::GetInstance().scene.get()->PreUpdate();
+		Engine::GetInstance().scene.get()->reset_level = true;
 
 		break;
 
@@ -209,6 +210,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 	case ColliderType::CHANGE_LEVEL:
 		change_level = false;
+		Engine::GetInstance().scene.get()->reset_level = true;
 
 		if (cleanup_pbody) {
 
@@ -220,17 +222,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 			cleanup_pbody = false;
 		}
 	case ColliderType::DAMAGE:
-
-
-		if (damage) {
-
-			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-			pbody = nullptr;  // Eliminar el cuerpo físico del jugador
-
-			Start();
-
-			damage = false;
-		}
+		Engine::GetInstance().scene.get()->reset_level = true;
 
 		break;
 	case ColliderType::UNKNOWN:

@@ -47,7 +47,7 @@ public:
 	}
 
 	int level = 0;
-
+	bool reset_level = false;
 private:
 	SDL_Texture* mouseTileTex = nullptr;
 	std::string tilePosDebug = "[0,0]";
