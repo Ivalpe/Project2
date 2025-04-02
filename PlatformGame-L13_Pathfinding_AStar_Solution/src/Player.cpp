@@ -51,38 +51,19 @@ bool Player::Start() {
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
 	
-
 	return true;
 }
 
 bool Player::Update(float dt)
 {
-	if (isClimbing) {
-
-		printf("escalando yeha\n");
-	}
-	else printf("notclimbing                            :c\n");
-		
-	// L08 TODO : Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
-	if (!parameters.attribute("gravity").as_bool()) {
-		velocity = b2Vec2(0,0);
-	}
-
+	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
 	// Move left
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
-		velocity.x = -0.2 * 16;
-
-	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) velocity.x = -0.2 * 16;
 	// Move right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
-		velocity.x = 0.2 * 16;
-		
-	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) velocity.x = 0.2 * 16;
 
-
-	
 	//Jump
 	if (isJumping && lastJump <= 25)lastJump++;
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
@@ -97,23 +78,17 @@ bool Player::Update(float dt)
 			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 			canDoubleJump = false;
 		}
-	
 	}
 
 	// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
-	if(isJumping == true)
-	{
-		velocity.y = pbody->body->GetLinearVelocity().y;
+	if(isJumping == true) velocity.y = pbody->body->GetLinearVelocity().y;
 		
-	}
-
 	// hide
 	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 		isJumping = false;
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 			velocity.x /= 4;
 		}
-
 	}
 
 	//To glide
@@ -132,14 +107,10 @@ bool Player::Update(float dt)
 		pbody->body->SetGravityScale(0);
 
 		// Move Up
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
-			velocity.y = -0.3 * 16;
-		}
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) velocity.y = -0.3 * 16;
 
 		// Move down
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-			velocity.y = 0.3 * 16;
-		}
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) velocity.y = 0.3 * 16;
 	}
 	else {
 		pbody->body->SetGravityScale(1);

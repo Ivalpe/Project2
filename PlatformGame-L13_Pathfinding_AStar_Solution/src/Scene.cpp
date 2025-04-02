@@ -79,18 +79,23 @@ bool Scene::Update(float dt)
 {
 	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
+	int Px = player->position.getX();
+	int Py = player->position.getY();
 
-	if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
+	Engine::GetInstance().render.get()->camera.x = -(Px - 1000);
+	Engine::GetInstance().render.get()->camera.y = -(Py-500);
 
-	if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
+	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	//	Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
 
-	if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
+	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	//	Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
 
-	if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
+	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	//	Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
+
+	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	//	Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
 
 	// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
 	
