@@ -221,6 +221,24 @@ bool Map::Load(std::string path, std::string fileName)
             }
         }
 
+        for (const auto& mapLayer : mapData.layers) {
+            if (mapLayer->name == "Damage") {
+                for (int i = 0; i < mapData.width; i++) {
+                    for (int j = 0; j < mapData.height; j++) {
+                        int gid = mapLayer->Get(i, j);
+                        if (gid == 50) {
+                            Vector2D mapCoord = MapToWorld(i, j);
+                            PhysBody* damage = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + mapData.tileWidth / 2, mapCoord.getY() + mapData.tileHeight / 2, mapData.tileWidth, mapData.tileHeight, STATIC);
+                            damage->ctype = ColliderType::DAMAGE;
+                            Engine::GetInstance().physics->listToDelete.push_back(damage);
+                            LOG("Collider de DAMAGE creado en: (%f, %f)", mapCoord.getX(), mapCoord.getY());
+
+                        }
+                    }
+                }
+            }
+        }
+
         // L08 TODO 3: Create colliders
         float x = 0.0f;
         float y = 0.0f;

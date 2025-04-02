@@ -174,6 +174,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 		cleanup_pbody = true;
 		break;
+	case ColliderType::DAMAGE:
+		LOG("Colisión con daño detectada");
+
+		life--;
+		damage = true;
+		Engine::GetInstance().scene.get()->PreUpdate();
+
+		break;
 
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
@@ -211,6 +219,18 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 
 			cleanup_pbody = false;
 		}
+	case ColliderType::DAMAGE:
+
+
+		if (damage) {
+
+			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+			pbody = nullptr;  // Eliminar el cuerpo físico del jugador
+
+			Start();
+
+			damage = false;
+		}
 
 		break;
 	case ColliderType::UNKNOWN:
@@ -232,4 +252,8 @@ Vector2D Player::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+
+int Player::GetLife() {
+	return life;
 }

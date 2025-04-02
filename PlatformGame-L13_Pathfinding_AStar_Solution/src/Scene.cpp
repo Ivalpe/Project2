@@ -170,6 +170,13 @@ bool Scene::PostUpdate()
 		Change_level(1);
 		level = 1;
 	}
+
+	//Life texture
+	lifeTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/live.png");
+	for (int i = 0; i < player->GetLife(); i++) {
+		Engine::GetInstance().render.get()->DrawTexture(lifeTexture, 10 + (i * 40), 10, nullptr, false);
+	}
+
 	return ret;
 }
 

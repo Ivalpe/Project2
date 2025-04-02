@@ -30,6 +30,7 @@ enum class ColliderType {
 	ENEMY,
 	CLIMBABLE,
 	CHANGE_LEVEL,
+	DAMAGE,
 	UNKNOWN
 	// ..
 };

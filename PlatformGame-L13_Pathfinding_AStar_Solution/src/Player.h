@@ -37,6 +37,7 @@ public:
 
 	Vector2D GetPosition();
 
+	int GetLife();
 public:
 
 	//Declare player parameters
@@ -67,5 +68,6 @@ public:
 	bool change_level = false;
 	bool cleanup_pbody = false;
 
-
+	int life = 3;
+	bool damage = false;
 };
