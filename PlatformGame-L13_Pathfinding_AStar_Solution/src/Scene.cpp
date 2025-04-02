@@ -77,7 +77,6 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-	//L03 TODO 3: Make the camera movement independent of framerate
 	float camSpeed = 1;
 	int Px = player->position.getX();
 	int Py = player->position.getY();
