@@ -69,9 +69,9 @@ bool Player::Update(float dt)
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
 	// Move left
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) velocity.x = -0.2 * 16;
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) velocity.x = -0.2 * speed;
 	// Move right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) velocity.x = 0.2 * 16;
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) velocity.x = 0.2 * speed;
 
 	//Jump
 	if (isJumping && lastJump <= 25)lastJump++;

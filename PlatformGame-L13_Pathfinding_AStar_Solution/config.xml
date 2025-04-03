@@ -11,7 +11,7 @@
   </render>
 
   <window>
-    <resolution width="1920" height="1080" scale="2"/>
+    <resolution width="1920" height="1080" scale="1"/>
     <fullscreen value="true"/>
     <borderless value="false"/>
     <resizable value="false"/>
@@ -22,18 +22,10 @@
 	  <map path="Assets/Maps/" name="Intro.tmx"/>
 	  <map1 path="Assets/Maps/" name="MapTemplate.tmx"/>
     <entities>
-      <player x="784" y="600" w="32" h ="32" texture="Assets/Textures/player/Idle.png" gravity="true">
+      <player x="784" y="600" w="128" h ="128" texture="Assets/Textures/player/caped_ikaro_placeholder2.png" gravity="true">
         <animations>
           <idle loop="true" speed ="0.5">
-            <frame x="0" y="0" w="32" h="32"/>
-            <frame x="32" y="0" w="32" h="32"/>
-            <frame x="64" y="0" w="32" h="32"/>
-            <frame x="96" y="0" w="32" h="32"/>
-            <frame x="128" y="0" w="32" h="32"/>
-            <frame x="160" y="0" w="32" h="32"/>
-            <frame x="192" y="0" w="32" h="32"/>
-            <frame x="224" y="0" w="32" h="32"/>
-            <frame x="256" y="0" w="32" h="32"/>
+            <frame x="0" y="0" w="128" h="128"/>
           </idle>
         </animations>
       </player>
