@@ -8,6 +8,18 @@
 
 struct SDL_Texture;
 
+
+
+enum SceneState {
+
+	PAUSE,
+	SETTINGS,
+	GAME,
+	DEATH
+	
+};
+
+SceneState state = SceneState::GAME;
 class Scene : public Module
 {
 public:
@@ -44,6 +56,18 @@ public:
 		return tilePosDebug;
 
 	}
+
+	//textures
+	
+	
+	//game
+	SDL_Texture* settingsMenu;
+	SDL_Texture* pauseMenu;
+	SDL_Texture* select;
+	SDL_Texture* deathScreen;
+	SDL_Texture* sliderBackground;
+	SDL_Texture* slider;
+	
 
 private:
 	SDL_Texture* mouseTileTex = nullptr;
