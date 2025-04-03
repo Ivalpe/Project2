@@ -190,7 +190,7 @@ bool Scene::PostUpdate()
 		Engine::GetInstance().render.get()->DrawTexture(lifeTexture, 10 + (i * 40), 10, nullptr, false);
 	}
 
-	//Candle texture
+	//Wax texture
 	waxTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/wax.png");
 	Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 50, nullptr, false);
 	char WaxText[64];
