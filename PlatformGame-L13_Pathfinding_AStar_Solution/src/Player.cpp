@@ -178,7 +178,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
-		life--;
+		Engine::GetInstance().entityManager.get()->life--;
 		Engine::GetInstance().scene.get()->PreUpdate();
 		Engine::GetInstance().scene.get()->reset_level = true;
 
@@ -247,5 +247,5 @@ Vector2D Player::GetPosition() {
 }
 
 int Player::GetLife() {
-	return life;
+	return Engine::GetInstance().entityManager.get()->life;
 }

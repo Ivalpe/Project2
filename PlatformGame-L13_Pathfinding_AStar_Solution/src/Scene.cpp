@@ -35,8 +35,13 @@ bool Scene::Awake()
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for(pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
-		Item* item = (Item*) Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-		item->SetParameters(itemNode);
+		for (int i = 0; i < 3; i++)
+		{
+			Item* item = (Item*) Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(itemNode);		
+			item->position = Vector2D(200+(100*i), 672);
+		}
+	
 	}
 
 	// Create a enemy using the entity manager 
@@ -169,11 +174,14 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_0) == KEY_DOWN) {
 		Change_level(0);
 		level = 0;
+		player->SetPosition(Vector2D{ 784, 600 });
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
 		Change_level(1);
 		level = 1;
+		player->SetPosition(Vector2D{ 40, 70 });
+
 	}
 
 	//Life texture
@@ -181,6 +189,14 @@ bool Scene::PostUpdate()
 	for (int i = 0; i < player->GetLife(); i++) {
 		Engine::GetInstance().render.get()->DrawTexture(lifeTexture, 10 + (i * 40), 10, nullptr, false);
 	}
+
+	//Candle texture
+	waxTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/wax.png");
+	Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 50, nullptr, false);
+	char WaxText[64];
+	sprintf_s(WaxText, " x%d", Engine::GetInstance().entityManager->wax);
+	Engine::GetInstance().render.get()->DrawText(WaxText, 80, 130, 80, 30);
+	LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->wax);
 
 	return ret;
 }

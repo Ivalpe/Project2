@@ -39,6 +39,8 @@ public:
 
 	void Change_level(int level);
 
+	Player* GetPlayer() const { return player; }
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -58,4 +60,5 @@ private:
 	std::vector<Enemy*> enemyList;
 
 	SDL_Texture* lifeTexture;
+	SDL_Texture* waxTexture;
 };

@@ -28,6 +28,7 @@ public:
 public:
 
 	bool isPicked = false;
+	bool isWax = false;
 
 private:
 

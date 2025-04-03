@@ -35,5 +35,6 @@ public:
 public:
 
 	std::list<Entity*> entities;
-
+	int life = 3;
+	int wax = 0;
 };

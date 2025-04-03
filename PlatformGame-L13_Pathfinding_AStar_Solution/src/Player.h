@@ -68,5 +68,4 @@ public:
 	bool change_level = false;
 	bool cleanup_pbody = false;
 
-	int life = 3;
 };
