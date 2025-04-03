@@ -111,7 +111,7 @@ bool Scene::Update(float dt)
 	int Py = player->position.getY();
 
 	Engine::GetInstance().render.get()->camera.x = -(Px - 600)*2;
-	Engine::GetInstance().render.get()->camera.y = -(Py-400)*2;
+	Engine::GetInstance().render.get()->camera.y = -(Py-300)*2;
 
 	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	//	Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
