@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "Item.h"
 #include <vector>
+#include "GuiControlButton.h"
 
 struct SDL_Texture;
 

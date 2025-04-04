@@ -12,6 +12,8 @@
 #include "Map.h"
 #include "Item.h"
 #include "Enemy.h"
+#include "GuiControl.h"
+#include "GuiManager.h"
 
 Scene::Scene() : Module()
 {
