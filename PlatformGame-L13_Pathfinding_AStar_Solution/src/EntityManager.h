@@ -32,6 +32,9 @@ public:
 
 	void AddEntity(Entity* entity);
 
+	void RemoveAllEnemies();
+	void RemoveAllItems();
+
 public:
 
 	std::list<Entity*> entities;

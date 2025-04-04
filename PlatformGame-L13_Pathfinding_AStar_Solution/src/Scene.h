@@ -3,6 +3,7 @@
 #include "Module.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Item.h"
 #include <vector>
 
 struct SDL_Texture;
@@ -41,6 +42,7 @@ public:
 
 	Player* GetPlayer() const { return player; }
 
+	void CreateItems();
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -58,6 +60,7 @@ private:
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
 	std::vector<Enemy*> enemyList;
+	std::vector<Item*> itemList;
 
 	SDL_Texture* lifeTexture;
 	SDL_Texture* waxTexture;

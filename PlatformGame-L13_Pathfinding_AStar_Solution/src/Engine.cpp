@@ -130,6 +130,12 @@ bool Engine::Update() {
 
     if (input->GetWindowEvent(WE_QUIT) == true)
         ret = false;
+    
+    //--------------------------------- DEBUG MODE CODE -------------------------------------
+    if (input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
+        limitFPS = !limitFPS; // Alternar el límite de FPS
+        maxFrameDuration = limitFPS ? 34 : 16; // 33 ms para ~30 FPS, 16 ms para ~60 FPS
+    }
 
     if (ret == true)
         ret = PreUpdate();

@@ -116,3 +116,33 @@ bool EntityManager::Update(float dt)
 	}
 	return ret;
 }
+
+void EntityManager::RemoveAllEnemies()
+{
+	for (auto it = entities.begin(); it != entities.end(); ) {
+		if ((*it)->type == EntityType::ENEMY) {
+			LOG("Destroying enemy entity at position: (%f, %f)", (*it)->position.getX(), (*it)->position.getY());
+			(*it)->CleanUp();
+			delete* it;
+			it = entities.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+}
+
+void EntityManager::RemoveAllItems()
+{
+	for (auto it = entities.begin(); it != entities.end(); ) {
+		if ((*it)->type == EntityType::ITEM) {
+			LOG("Destroying enemy entity at position: (%f, %f)", (*it)->position.getX(), (*it)->position.getY());
+			(*it)->CleanUp();
+			delete* it;
+			it = entities.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+}

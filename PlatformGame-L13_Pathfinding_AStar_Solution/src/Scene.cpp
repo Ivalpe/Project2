@@ -33,15 +33,15 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 	
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
-	for(pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
+	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			Item* item = (Item*) Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-			item->SetParameters(itemNode);		
-			item->position = Vector2D(200+(100*i), 672);
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(itemNode);
+			item->position = Vector2D(200 + (100 * i), 672);
 		}
-	
+
 	}
 
 	// Create a enemy using the entity manager 
@@ -54,6 +54,36 @@ bool Scene::Awake()
 
 	return ret;
 }
+
+void Scene::CreateItems() 
+{
+	int WaxIndex = 0;
+	std::vector<Vector2D> waxPositions;
+
+	if (level == 0) {
+
+		waxPositions = {
+		  Vector2D(300, 672),
+		  Vector2D(400, 672),
+		  Vector2D(500, 672)
+		};
+
+		for (auto& it : itemList) {
+			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
+				it->position = waxPositions[WaxIndex++];
+			}
+		}
+	}
+	else {
+		for (auto& it : itemList) {
+			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
+				it->CleanUp();
+			}
+		}
+	}
+	
+}
+
 
 // Called before the first frame
 bool Scene::Start()
@@ -81,8 +111,11 @@ void Scene::Change_level(int level)
 		Uint32 startTime = SDL_GetTicks();
 
 		Engine::GetInstance().map.get()->CleanUp();
-
+		Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
+		Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
+		CreateItems();
+		//CreateEnemies();
 
 	}
 
@@ -91,8 +124,10 @@ void Scene::Change_level(int level)
 		Uint32 startTime = SDL_GetTicks();
 
 		Engine::GetInstance().map.get()->CleanUp();
-
+		Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
+		Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
+		CreateItems();
 
 	}
 }

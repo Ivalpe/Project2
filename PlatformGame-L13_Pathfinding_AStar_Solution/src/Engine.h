@@ -101,6 +101,9 @@ public:
 	// L08: TODO 2: Add Physics module
 	std::shared_ptr<Physics> physics;
 
+	int maxFrameDuration = 16; 	//Maximun frame duration in miliseconds.
+
+	bool limitFPS;
 
 private: 
 
@@ -108,6 +111,7 @@ private:
 	float dt; 
 	//Frames since startup
 	int frames;
+	int timer;
 
 	// Calculate timing measures
 	// required variables are provided:
@@ -122,8 +126,6 @@ private:
 	float averageFps = 0.0f;
 	int secondsSinceStartup = 0;
 
-	//Maximun frame duration in miliseconds.
-	int maxFrameDuration = 16;
 
 	std::string gameTitle = "Platformer Game";
 
