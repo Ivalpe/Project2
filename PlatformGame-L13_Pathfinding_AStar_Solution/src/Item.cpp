@@ -55,32 +55,33 @@ bool Item::Start() {
 
 bool Item::Update(float dt)
 {
-	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
+	if (apear) {
+		// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 
-	Player* player = Engine::GetInstance().scene.get()->GetPlayer();
-	if (player != nullptr)
-	{
-		// Comprobar la distancia entre el ítem y el jugador
-		float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
+		Player* player = Engine::GetInstance().scene.get()->GetPlayer();
+		if (player != nullptr)
+		{
+			// Comprobar la distancia entre el ítem y el jugador
+			float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
 
-		if (isWax && distance < 50.0f && isPicked == 0) {
-			isPicked = 1;
-			Engine::GetInstance().entityManager->wax++;
-			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
+			if (isWax && distance < 50.0f && isPicked == 0) {
+				isPicked = 1;
+				Engine::GetInstance().entityManager->wax++;
+				LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
 
+			}
 		}
+		if (isPicked == 0) {
+			Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+			currentAnimation->Update();
+		}
+
+
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
 	}
-	if (isPicked == 0) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-		currentAnimation->Update();
-	}
-
-
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-	
 
 	return true;
 }

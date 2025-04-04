@@ -38,6 +38,10 @@ public:
 	Vector2D GetPosition();
 
 	int GetLife();
+
+	void StopMovement();
+	void ResumeMovement();
+
 public:
 
 	//Declare player parameters

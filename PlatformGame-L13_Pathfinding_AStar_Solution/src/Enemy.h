@@ -32,7 +32,11 @@ public:
 
 	void ResetPath();
 
+
+	void StopMovement();
+	void ResumeMovement();
 public:
+	int visible = true;
 
 private:
 
@@ -44,4 +48,5 @@ private:
 	Animation idle;
 	PhysBody* pbody;
 	Pathfinding* pathfinding;
+
 };

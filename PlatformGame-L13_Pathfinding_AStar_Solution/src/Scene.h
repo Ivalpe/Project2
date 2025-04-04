@@ -44,6 +44,10 @@ public:
 	Player* GetPlayer() const { return player; }
 
 	void CreateItems();
+
+	//UI
+	void MenuPause();
+
 public:
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
@@ -53,6 +57,12 @@ public:
 
 	int level = 0;
 	bool reset_level = false;
+
+	bool showPauseMenu = false;
+
+
+	SDL_Texture* Menu_Pause = NULL;
+
 private:
 	SDL_Texture* mouseTileTex = nullptr;
 	std::string tilePosDebug = "[0,0]";
@@ -65,4 +75,6 @@ private:
 
 	SDL_Texture* lifeTexture;
 	SDL_Texture* waxTexture;
+
+
 };

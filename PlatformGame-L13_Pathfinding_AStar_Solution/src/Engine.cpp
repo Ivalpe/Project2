@@ -13,6 +13,8 @@
 #include "EntityManager.h"
 #include "Map.h"
 #include "Physics.h"
+#include "GuiManager.h"
+
 
 // Constructor
 Engine::Engine() {

@@ -15,7 +15,7 @@
 #include "GuiControl.h"
 #include "GuiManager.h"
 
-Scene::Scene() : Module()
+Scene::Scene() : Module(), showPauseMenu(false)
 {
 	name = "scene";
 }
@@ -101,6 +101,9 @@ bool Scene::Start()
 	Engine::GetInstance().window.get()->GetWindowSize(w, h);
 	Engine::GetInstance().render.get()->camera.x = 0;
 	Engine::GetInstance().render.get()->camera.y = 0;
+
+
+	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 
 	return true;
 }
@@ -192,11 +195,48 @@ bool Scene::Update(float dt)
 		enemyList[0]->ResetPath();
 	}
 
+	//Reset level
 	if (reset_level) {
 		Change_level(level);
 		if(level==0) player->SetPosition(Vector2D{ 40,70 });
 
 		reset_level = false;
+	}
+
+	//Pause menu
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+		showPauseMenu = !showPauseMenu;
+		if (showPauseMenu) {
+			player->StopMovement();
+			for (Enemy* enemy : enemyList) {
+				if (enemy) {
+					enemy->visible = false;
+					enemy->StopMovement();
+				}
+			}
+			for (Item* item : itemList) {
+				item->apear = false;
+			}
+		}
+		else {
+			player->ResumeMovement();
+			for (Enemy* enemy : enemyList) {
+				if (enemy) {
+					enemy->visible = true;
+					enemy->ResumeMovement();
+				}
+			}
+			for (Item* item : itemList) {
+				item->apear = true;
+			}
+		}
+	}
+
+	if (showPauseMenu) {
+		
+		MenuPause();
+
+		return true;
 	}
 
 	return true;
@@ -251,4 +291,18 @@ bool Scene::CleanUp()
 Vector2D Scene::GetPlayerPosition()
 {
 	return player->GetPosition();
+}
+
+void Scene::MenuPause()
+{
+	//Engine::GetInstance().guiManager->CleanUp();
+	int cameraX = Engine::GetInstance().render.get()->camera.x;
+	int cameraY = Engine::GetInstance().render.get()->camera.y;
+
+	SDL_Rect destRect = { -cameraX, -cameraY, 1920, 1080 };
+
+
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, destRect.x, destRect.y, &destRect);
+	Engine::GetInstance().render.get()->DrawText("Pause", 768, 195, 360, 60);
+
 }

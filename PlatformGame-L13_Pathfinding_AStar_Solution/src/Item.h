@@ -29,7 +29,7 @@ public:
 
 	bool isPicked = false;
 	bool isWax = false;
-
+	int apear = true;
 private:
 
 	SDL_Texture* texture;

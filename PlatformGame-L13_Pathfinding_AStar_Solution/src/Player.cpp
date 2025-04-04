@@ -249,3 +249,23 @@ Vector2D Player::GetPosition() {
 int Player::GetLife() {
 	return Engine::GetInstance().entityManager.get()->life;
 }
+
+void Player::StopMovement() {
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::PLAYER;
+
+	}
+}
+
+void Player::ResumeMovement() {
+	if (pbody == nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::PLAYER;
+
+	}
+}
