@@ -22,7 +22,6 @@ bool GuiManager::Start()
 GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char* text, SDL_Rect bounds, Module* observer, SDL_Rect sliderBounds)
 {
 	GuiControl* guiControl = nullptr;
-
 	//Call the constructor according to the GuiControlType
 	switch (type)
 	{
@@ -35,7 +34,9 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	guiControl->observer = observer;
 
 	// Created GuiControls are add it to the list of controls
+
 	guiControlsList.push_back(guiControl);
+
 
 	return guiControl;
 }
@@ -57,5 +58,6 @@ bool GuiManager::CleanUp()
 		delete control;
 	}
 
+	guiControlsList.clear();
 	return true;
 }

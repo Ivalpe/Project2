@@ -15,6 +15,7 @@
 #include "GuiControl.h"
 #include "GuiManager.h"
 
+
 Scene::Scene() : Module(), showPauseMenu(false)
 {
 	name = "scene";
@@ -295,11 +296,11 @@ Vector2D Scene::GetPlayerPosition()
 
 void Scene::MenuPause()
 {
-	//Engine::GetInstance().guiManager->CleanUp();
+	if(Engine::GetInstance().guiManager!=nullptr)	Engine::GetInstance().guiManager->CleanUp();
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
-	;
+	
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
-	;
+	
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
 	/*Engine::GetInstance().render.get()->DrawText("Continues", );
@@ -310,10 +311,14 @@ void Scene::MenuPause()
 	SDL_Rect ConitnuesButton = { 680, 400, 150, 30 };
 	SDL_Rect Settings = { 685, 465, 150, 30 };
 	SDL_Rect Exit = { 730, 530, 50, 25 };
+	if (Engine::GetInstance().guiManager == nullptr)
+	{
+		LOG("Error: guiManager no está inicializado.");
+	}
 
-	//guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 0, "Conitnues", ConitnuesButton, this));
-	//guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
-	//guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Conitnues", ConitnuesButton, this));
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
 }
 
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
