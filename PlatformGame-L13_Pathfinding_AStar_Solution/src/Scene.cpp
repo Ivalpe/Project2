@@ -105,6 +105,7 @@ bool Scene::Start()
 
 
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
+	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
 
 	return true;
 }
@@ -205,41 +206,7 @@ bool Scene::Update(float dt)
 	}
 
 	//Pause menu
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
-		showPauseMenu = !showPauseMenu;
-		if (showPauseMenu) {
-			player->StopMovement();
-			for (Enemy* enemy : enemyList) {
-				if (enemy) {
-					enemy->visible = false;
-					enemy->StopMovement();
-				}
-			}
-			for (Item* item : itemList) {
-				item->apear = false;
-			}
-		}
-		else {
-			player->ResumeMovement();
-			for (Enemy* enemy : enemyList) {
-				if (enemy) {
-					enemy->visible = true;
-					enemy->ResumeMovement();
-				}
-			}
-			for (Item* item : itemList) {
-				item->apear = true;
-			}
-		}
-	}
-
-	if (showPauseMenu) {
-		
-		MenuPause();
-
-		return true;
-	}
-
+	Active_MenuPause();
 	return true;
 }
 
@@ -294,19 +261,51 @@ Vector2D Scene::GetPlayerPosition()
 	return player->GetPosition();
 }
 
-void Scene::MenuPause()
+void Scene::Active_MenuPause() {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+		showPauseMenu = !showPauseMenu;
+		if (showPauseMenu) {
+			player->StopMovement();
+			for (Enemy* enemy : enemyList) {
+				if (enemy) {
+					enemy->visible = false;
+					enemy->StopMovement();
+				}
+			}
+			for (Item* item : itemList) {
+				item->apear = false;
+			}
+		}
+		else {
+			player->ResumeMovement();
+			for (Enemy* enemy : enemyList) {
+				if (enemy) {
+					enemy->visible = true;
+					enemy->ResumeMovement();
+				}
+			}
+			for (Item* item : itemList) {
+				item->apear = true;
+			}
+		}
+	}
+
+	if (showPauseMenu) {
+
+		MenuPause();
+
+	}
+
+}
+
+void Scene::MenuSettings()
 {
-	if(Engine::GetInstance().guiManager!=nullptr)	Engine::GetInstance().guiManager->CleanUp();
+	if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
+
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
-	
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
-	
 
-	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
-	/*Engine::GetInstance().render.get()->DrawText("Continues", );
-	Engine::GetInstance().render.get()->DrawText("Settings", );
-	Engine::GetInstance().render.get()->DrawText("Exit", );*/
-
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
 
 	SDL_Rect ConitnuesButton = { 680, 400, 150, 30 };
 	SDL_Rect Settings = { 685, 465, 150, 30 };
@@ -317,16 +316,59 @@ void Scene::MenuPause()
 	}
 
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Conitnues", ConitnuesButton, this));
-	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
-	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
+	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+}
+
+void Scene::MenuPause()
+{
+	if(Engine::GetInstance().guiManager!=nullptr)	Engine::GetInstance().guiManager->CleanUp();
+	
+	int cameraX = Engine::GetInstance().render.get()->camera.x;
+	int cameraY = Engine::GetInstance().render.get()->camera.y;
+	
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
+
+	SDL_Rect ConitnuesButton = { 680, 400, 150, 30 };
+	SDL_Rect Settings = { 685, 465, 150, 30 };
+	SDL_Rect Exit = { 730, 530, 50, 25 };
+	if (Engine::GetInstance().guiManager == nullptr)
+	{
+		LOG("Error: guiManager no está inicializado.");
+	}
+
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Conitnues", ConitnuesButton, this));
+	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
+	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
 }
 
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	switch (control->id) {
 	case 1:
+		showPauseMenu = false;
+
+		player->ResumeMovement();
+		for (Enemy* enemy : enemyList) {
+			if (enemy) {
+				enemy->visible = true;
+				enemy->ResumeMovement();
+			}
+		}
+		for (Item* item : itemList) {
+			item->apear = true;
+		}
+		guiBt->state = GuiControlState::DISABLED;
+		guiBt1->state = GuiControlState::DISABLED;
+		guiBt2->state = GuiControlState::DISABLED;
 		break;
-	case 0:
+	case 2:
+		break;
+	case 3:
+		exit(0);
+		guiBt->state = GuiControlState::DISABLED;
+		guiBt1->state = GuiControlState::DISABLED;
+		guiBt2->state = GuiControlState::DISABLED;
 		break;
 	}
 	return true;

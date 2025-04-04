@@ -23,6 +23,7 @@
 	  <map1 path="Assets/Maps/" name="MapTemplate.tmx"/>
 	  <textures>
 		  <Menu_Pause path="Assets/Textures/UI/PauseMenu.png"/>
+		  <Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
 	  </textures>
     <entities>
       <player x="784" y="600" w="128" h ="128" texture="Assets/Textures/player/caped_ikaro_placeholder2.png" gravity="true">

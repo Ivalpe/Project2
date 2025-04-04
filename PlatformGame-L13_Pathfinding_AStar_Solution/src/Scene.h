@@ -48,7 +48,9 @@ public:
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
 	//UI
+	void MenuSettings();
 	void MenuPause();
+	void Active_MenuPause();
 
 public:
 	// Get tilePosDebug value
@@ -61,11 +63,15 @@ public:
 	bool reset_level = false;
 
 	bool showPauseMenu = false;
+	bool showSettingsMenu = false;
 
 
 	SDL_Texture* Menu_Pause = NULL;
+	SDL_Texture* Menu_Settings = NULL;
 
 	GuiControlButton* guiBt = nullptr;
+	GuiControlButton* guiBt1 = nullptr;
+	GuiControlButton* guiBt2 = nullptr;
 
 private:
 	SDL_Texture* mouseTileTex = nullptr;
