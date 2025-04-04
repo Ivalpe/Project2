@@ -45,6 +45,8 @@ public:
 
 	void CreateItems();
 
+
+	bool OnGuiMouseClickEvent(GuiControl* control);
 	//UI
 	void MenuPause();
 
@@ -63,6 +65,8 @@ public:
 
 	SDL_Texture* Menu_Pause = NULL;
 
+	GuiControlButton* guiBt = nullptr;
+
 private:
 	SDL_Texture* mouseTileTex = nullptr;
 	std::string tilePosDebug = "[0,0]";
@@ -75,6 +79,8 @@ private:
 
 	SDL_Texture* lifeTexture;
 	SDL_Texture* waxTexture;
+
+
 
 
 };

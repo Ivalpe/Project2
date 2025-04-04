@@ -65,6 +65,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true) return true;
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
@@ -261,7 +262,7 @@ void Player::StopMovement() {
 }
 
 void Player::ResumeMovement() {
-	if (pbody == nullptr) {
+	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 		pbody->listener = this;

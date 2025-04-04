@@ -274,7 +274,7 @@ bool Scene::PostUpdate()
 	Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 50, nullptr, false);
 	char WaxText[64];
 	sprintf_s(WaxText, " x%d", Engine::GetInstance().entityManager->wax);
-	Engine::GetInstance().render.get()->DrawText(WaxText, 80, 130, 80, 30);
+	Engine::GetInstance().render.get()->DrawText(WaxText, 50, 55, 80, 30);
 	LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->wax);
 
 	return ret;
@@ -297,12 +297,32 @@ void Scene::MenuPause()
 {
 	//Engine::GetInstance().guiManager->CleanUp();
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
+	;
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
+	;
 
-	SDL_Rect destRect = { -cameraX, -cameraY, 1920, 1080 };
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
+	/*Engine::GetInstance().render.get()->DrawText("Continues", );
+	Engine::GetInstance().render.get()->DrawText("Settings", );
+	Engine::GetInstance().render.get()->DrawText("Exit", );*/
 
 
-	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, destRect.x, destRect.y, &destRect);
-	Engine::GetInstance().render.get()->DrawText("Pause", 768, 195, 360, 60);
+	SDL_Rect ConitnuesButton = { 680, 400, 150, 30 };
+	SDL_Rect Settings = { 685, 465, 150, 30 };
+	SDL_Rect Exit = { 730, 530, 50, 25 };
 
+	//guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 0, "Conitnues", ConitnuesButton, this));
+	//guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
+	//guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+}
+
+bool Scene::OnGuiMouseClickEvent(GuiControl* control)
+{
+	switch (control->id) {
+	case 1:
+		break;
+	case 0:
+		break;
+	}
+	return true;
 }

@@ -72,6 +72,8 @@ public:
 		observer->OnGuiMouseClickEvent(this);
 	}
 
+	GuiControlState GetState() const { return state; }
+
 public:
 
 	int id;

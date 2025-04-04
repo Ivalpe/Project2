@@ -1,6 +1,7 @@
 #include "GuiManager.h"
 #include "Engine.h"
 #include "Textures.h"
+#include "Log.h"
 
 #include "GuiControlButton.h"
 #include "Audio.h"
