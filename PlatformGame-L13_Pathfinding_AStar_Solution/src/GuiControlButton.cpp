@@ -78,14 +78,14 @@ bool GuiControlButton::Update(float dt)
 					Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 0, true, false);
 					break;
 				case GuiControlState::FOCUSED:
-					if (id==1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 520, nullptr, false);
-					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 595, nullptr, false);
-					if(id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 670, nullptr, false);
+					if (id==1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770-4, 520+13, nullptr, false);
+					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770-4, 595 + 15, nullptr, false);
+					if(id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770-4, 670+5, nullptr, false);
 					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 0, true, false);
 					break;
 				case GuiControlState::PRESSED:
-					if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 520, nullptr, false);
-					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 595, nullptr, false);
+					if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 520 + 10, nullptr, false);
+					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 595 + 10, nullptr, false);
 					if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 670, nullptr, false);
 					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 255, true, false);
 					break;

@@ -29,15 +29,19 @@ public:
 
 	bool isPicked = false;
 	bool isWax = false;
+	bool isFeather = false;
 	int apear = true;
 private:
 
 	SDL_Texture* texture;
+	SDL_Texture* Feather_texture;
 	const char* texturePath;
 	int texW, texH;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
+	Animation* currentAnimation_feather = nullptr;
 	Animation idle;
+	Animation idle_feather;
 
 	//L08 TODO 4: Add a physics to an item
 	PhysBody* pbody;

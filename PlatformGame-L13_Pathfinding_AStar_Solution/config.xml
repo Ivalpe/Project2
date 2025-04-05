@@ -42,6 +42,13 @@
             </idle>
           </animations>
         </item>
+		  <feather_item name="wax" x="200" y="672" w="32" h="32" isFeather="true" isPicked="false" texture1="Assets/Textures/Feather_item.png" gravity="true">
+			  <animations>
+				  <idle_feather loop="true" speed ="0.5">
+					  <frame x="0" y="0" w="32" h="32"/>
+				  </idle_feather>
+			  </animations>
+		  </feather_item>
       </items>
 
       <enemies>

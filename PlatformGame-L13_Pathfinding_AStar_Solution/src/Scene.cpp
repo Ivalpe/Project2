@@ -47,6 +47,18 @@ bool Scene::Awake()
 
 	}
 
+	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("feather_item"); itemNode; itemNode = itemNode.next_sibling("item"))
+	{
+	
+		for (int i = 0; i < 3; i++)
+		{
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(itemNode);
+			item->position = Vector2D(600 + (100 * i), 672);
+		}
+
+	}
+
 	// Create a enemy using the entity manager 
 	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
 	{
@@ -73,6 +85,12 @@ void Scene::CreateItems()
 
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
+				it->position = waxPositions[WaxIndex++];
+			}
+		}
+
+		for (auto& it : itemList) {
+			if (it->name == "feather" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
 			}
 		}
@@ -216,8 +234,8 @@ bool Scene::PostUpdate()
 {
 	bool ret = true;
 
-	if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-		ret = false;
+	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	//	ret = false;
 	
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_0) == KEY_DOWN) {
 		Change_level(0);
@@ -232,19 +250,22 @@ bool Scene::PostUpdate()
 
 	}
 
-	//Life texture
-	lifeTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/live.png");
-	for (int i = 0; i < player->GetLife(); i++) {
-		Engine::GetInstance().render.get()->DrawTexture(lifeTexture, 10 + (i * 40), 10, nullptr, false);
-	}
+	if (!showPauseMenu && !showSettingsMenu) {
+		//Life texture
+		lifeTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/live.png");
+		for (int i = 0; i < player->GetLife(); i++) {
+			Engine::GetInstance().render.get()->DrawTexture(lifeTexture, 10 + (i * 40), 10, nullptr, false);
+		}
 
-	//Wax texture
-	waxTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/wax.png");
-	Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 50, nullptr, false);
-	char WaxText[64];
-	sprintf_s(WaxText, " x%d", Engine::GetInstance().entityManager->wax);
-	Engine::GetInstance().render.get()->DrawText(WaxText, 50, 55, 80, 30);
-	LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->wax);
+		//Wax texture
+		waxTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/wax.png");
+		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 50, nullptr, false);
+		char WaxText[64];
+		sprintf_s(WaxText, " x%d", Engine::GetInstance().entityManager->wax);
+		Engine::GetInstance().render.get()->DrawText(WaxText, 50, 55, 80, 30);
+		LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->wax);
+	}
+	
 
 	return ret;
 }
@@ -263,8 +284,9 @@ Vector2D Scene::GetPlayerPosition()
 }
 
 void Scene::Active_MenuPause() {
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 		showPauseMenu = !showPauseMenu;
+		showSettingsMenu = false;
 		if (showPauseMenu) {
 			player->StopMovement();
 			for (Enemy* enemy : enemyList) {
@@ -307,6 +329,28 @@ void Scene::Active_MenuPause() {
 
 }
 
+void Scene::MenuPause()
+{
+	if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
+
+	int cameraX = Engine::GetInstance().render.get()->camera.x;
+	int cameraY = Engine::GetInstance().render.get()->camera.y;
+
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
+
+	SDL_Rect ConitnuesButton = { 840, 520, 200, 45 };
+	SDL_Rect Settings = { 860, 595, 150, 45 };
+	SDL_Rect Exit = { 900-3, 670, 75, 35 };
+	if (Engine::GetInstance().guiManager == nullptr)
+	{
+		LOG("Error: guiManager no está inicializado.");
+	}
+
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Conitnues", ConitnuesButton, this));
+	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
+	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+}
+
 void Scene::MenuSettings()
 {
 	if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
@@ -320,10 +364,10 @@ void Scene::MenuSettings()
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
 
 	Engine::GetInstance().render.get()->DrawText("Settings", 860, 325, 250, 65);
-	Engine::GetInstance().render.get()->DrawText("Music Volumen", 700, 485, 200, 45);
-	Engine::GetInstance().render.get()->DrawText("Ambient Sounds", 700, 555, 200, 45);
+	Engine::GetInstance().render.get()->DrawText("Music Volumen", 700, 485, 220, 35);
+	Engine::GetInstance().render.get()->DrawText("Ambient Sounds", 700, 555, 220, 35);
 	Engine::GetInstance().render.get()->DrawText("Lenguage", 700, 630, 150, 35);
-	Engine::GetInstance().render.get()->DrawText("English", 1085, 625, 100, 45);
+	Engine::GetInstance().render.get()->DrawText("English", 1085, 625, 100, 35);
 
 
 	SDL_Rect MusicPosition = { musicPosX, 10, 485, 35 };
@@ -417,28 +461,6 @@ void Scene::MenuSettings()
 	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 	//Ambient sounds filled portion
 	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
-}
-
-void Scene::MenuPause()
-{
-	if(Engine::GetInstance().guiManager!=nullptr)	Engine::GetInstance().guiManager->CleanUp();
-	
-	int cameraX = Engine::GetInstance().render.get()->camera.x;
-	int cameraY = Engine::GetInstance().render.get()->camera.y;
-	
-	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
-
-	SDL_Rect ConitnuesButton = { 840, 520, 200, 45 };
-	SDL_Rect Settings = { 860, 595, 150, 45 };
-	SDL_Rect Exit = { 905, 670, 75, 35 };
-	if (Engine::GetInstance().guiManager == nullptr)
-	{
-		LOG("Error: guiManager no está inicializado.");
-	}
-
-	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Conitnues", ConitnuesButton, this));
-	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
-	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
 }
 
 void Scene::DisableGuiControlButtons() 

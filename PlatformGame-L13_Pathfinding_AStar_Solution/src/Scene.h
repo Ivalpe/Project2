@@ -48,7 +48,11 @@ public:
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
 	void DisableGuiControlButtons();
-	//UI
+	
+	//UI items
+	void items_UI();
+	
+	//Menus
 	void MenuSettings();
 	void MenuPause();
 	void Active_MenuPause();
@@ -70,6 +74,8 @@ public:
 	SDL_Texture* Menu_Pause = NULL;
 	SDL_Texture* Menu_Settings = NULL;
 	SDL_Texture* Feather = NULL;
+	SDL_Texture* Feather_UI = NULL;
+	SDL_Texture* Wax = NULL;
 
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;

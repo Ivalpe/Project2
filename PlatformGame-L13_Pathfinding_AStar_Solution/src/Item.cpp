@@ -31,16 +31,24 @@ bool Item::Start() {
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 	isPicked = parameters.attribute("isPicked").as_bool(false);
-	isWax = parameters.attribute("isWax").as_bool(true);
+	isWax = parameters.attribute("isWax").as_bool(false);
+	isFeather = parameters.attribute("isFeather").as_bool(false);
 
 	//Initialize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
+	Feather_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture1").as_string());
+	if (texture == NULL) {
+		LOG("jfjff %d", Feather_texture);
 
+	}
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
 	
+	idle_feather.LoadAnimations(parameters.child("animations").child("idle_feather"));
+	currentAnimation_feather = &idle_feather;
+
 	// L08 TODO 4: Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
@@ -65,18 +73,27 @@ bool Item::Update(float dt)
 		// Comprobar la distancia entre el ítem y el jugador
 		float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
 
-		if (isWax && distance < 50.0f && isPicked == 0) {
+		if (isWax && distance < 100.0f && isPicked == 0) {
+			isPicked = 1;
+			Engine::GetInstance().entityManager->wax++;
+			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
+
+		}
+		if (isFeather && distance < 100.0f && isPicked == 0) {
 			isPicked = 1;
 			Engine::GetInstance().entityManager->wax++;
 			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
 
 		}
 	}
-	if (isPicked == 0) {
+	if (isWax && isPicked == 0) {
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 	}
-
+	if (isFeather && isPicked == 0) {
+		Engine::GetInstance().render.get()->DrawTexture(Feather_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_feather->GetCurrentFrame());
+		currentAnimation_feather->Update();
+	}
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
@@ -94,6 +111,7 @@ bool Item::CleanUp()
 		pbody = nullptr;
 	}
 	Engine::GetInstance().textures.get()->UnLoad(texture);
+	Engine::GetInstance().textures.get()->UnLoad(Feather_texture);
 
 	return true;
 }
