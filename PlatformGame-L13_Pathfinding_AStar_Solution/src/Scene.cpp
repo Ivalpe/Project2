@@ -106,6 +106,7 @@ bool Scene::Start()
 
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
+	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 
 	return true;
 }
@@ -276,7 +277,7 @@ void Scene::Active_MenuPause() {
 				item->apear = false;
 			}
 		}
-		else {
+		else if(!showPauseMenu){
 			player->ResumeMovement();
 			for (Enemy* enemy : enemyList) {
 				if (enemy) {
@@ -287,13 +288,21 @@ void Scene::Active_MenuPause() {
 			for (Item* item : itemList) {
 				item->apear = true;
 			}
+
+			DisableGuiControlButtons();
 		}
 	}
 
 	if (showPauseMenu) {
 
 		MenuPause();
-
+		if (showSettingsMenu) {
+			MenuSettings();
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) 
+			{
+				showSettingsMenu = false;
+			}
+		}
 	}
 
 }
@@ -302,22 +311,112 @@ void Scene::MenuSettings()
 {
 	if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
 
+	Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
+
+
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
 
-	SDL_Rect ConitnuesButton = { 680, 400, 150, 30 };
-	SDL_Rect Settings = { 685, 465, 150, 30 };
-	SDL_Rect Exit = { 730, 530, 50, 25 };
-	if (Engine::GetInstance().guiManager == nullptr)
+	Engine::GetInstance().render.get()->DrawText("Settings", 860, 325, 250, 65);
+	Engine::GetInstance().render.get()->DrawText("Music Volumen", 700, 485, 200, 45);
+	Engine::GetInstance().render.get()->DrawText("Ambient Sounds", 700, 555, 200, 45);
+	Engine::GetInstance().render.get()->DrawText("Lenguage", 700, 630, 150, 35);
+	Engine::GetInstance().render.get()->DrawText("English", 1085, 625, 100, 45);
+
+
+	SDL_Rect MusicPosition = { musicPosX, 10, 485, 35 };
+	guiBt->bounds.x = musicPosX; // Reposition the music volume button
+	SDL_Rect FxPosition = { ambient_soundsPosX, 10, 555, 35 };
+	guiBt1->bounds.x = ambient_soundsPosX; // Reposition the ambient sounds volume button
+
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 4, "  ", MusicPosition, this));
+	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "  ", FxPosition, this));
+
+	// Prevent both ambient sounds and Music Volume from moving at the same time. Check the mouse position on the Y axis
+	if (mousePos.getX() >= musicPosX && mousePos.getX() <= musicPosX + 6 &&	mousePos.getY() >= 511 - 5 && mousePos.getY() <= 511 + 10)
 	{
-		LOG("Error: guiManager no está inicializado.");
+		mouseOverMusicControl = true; // Mouse is over the music volume control
+	}
+	else {
+		mouseOverMusicControl = false; // Mouse is not over the music control
 	}
 
-	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Conitnues", ConitnuesButton, this));
-	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
-	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+	// Check if the mouse is over the Ambient sounds control
+	if (mousePos.getX() >= ambient_soundsPosX && mousePos.getX() <= ambient_soundsPosX + 6 && mousePos.getY() >= 571 - 5 && mousePos.getY() <= 571 + 10) {
+		mouseOverAmbientControl = true;  // Mouse is over the ambient sounds volume control
+	}
+	else {
+		mouseOverAmbientControl = false; // Mouse is not over the ambient sounds volume control
+	}
+
+	if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+		if (mouseOverMusicControl) {
+			musicButtonHeld = true;  // Enable movement only if mouse is over the music button
+		}
+		if (mouseOverAmbientControl) {
+			Ambient_Sounds_ButtonHeld = true;  // Enable movement only if mouse is over the ambient sounds button
+		}
+	}
+
+	if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
+		Ambient_Sounds_ButtonHeld = false;   // Disable movement when mouse button is released - ambient sounds    
+		musicButtonHeld = false;  // // Disable movement when mouse button is released - Music volume
+	}
+
+	if (musicButtonHeld) {
+
+		if (mousePos.getX() < 1034) {
+			musicPosX = 1034;
+		}
+		else if (mousePos.getX() > 1225) {
+			musicPosX = 1225;
+		}
+		else {
+			musicPosX = mousePos.getX();
+		}
+	}
+
+	if (Ambient_Sounds_ButtonHeld) {
+
+		if (mousePos.getX() < 1034) {
+			ambient_soundsPosX = 1034;
+		}
+		else if (mousePos.getX() > 1225) {
+			ambient_soundsPosX = 1225;
+		}
+		else {
+			ambient_soundsPosX = mousePos.getX();
+		}
+	}
+
+	SDL_Rect newMusicPos = { musicPosX, 511-5, 6, 15 }; // New music volume position 
+	guiBt->bounds = newMusicPos;
+
+	SDL_Rect newFxPos = { ambient_soundsPosX, 571-5, 6, 15 }; // New music ambient sounds position
+	guiBt1->bounds = newFxPos;
+
+	// Adjust music volume
+	float volume = (float)(musicPosX - 1034) / (1225 - 1034);
+	volume = std::max(0.0f, std::min(1.0f, volume));
+	sdlVolume = (int)(volume * MIX_MAX_VOLUME);
+	Mix_VolumeMusic(sdlVolume);
+
+	// Adjust Ambient sounds
+	float volumeFx = (float)(ambient_soundsPosX - 1034) / (1225 - 1034);
+	int sdlVolumeFx = (int)(volumeFx * MIX_MAX_VOLUME);
+	Mix_Volume(-1, sdlVolumeFx);
+
+	// Music volume background bar
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511, 195, 6 }, 0, 0, 0, 255, true, false);
+	//Ambient sounds background bar
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, 195, 6 }, 0, 0, 0, 255, true, false);
+
+	// Music volume filled portion
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+	//Ambient sounds filled portion
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 }
 
 void Scene::MenuPause()
@@ -329,9 +428,9 @@ void Scene::MenuPause()
 	
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
 
-	SDL_Rect ConitnuesButton = { 680, 400, 150, 30 };
-	SDL_Rect Settings = { 685, 465, 150, 30 };
-	SDL_Rect Exit = { 730, 530, 50, 25 };
+	SDL_Rect ConitnuesButton = { 840, 520, 200, 45 };
+	SDL_Rect Settings = { 860, 595, 150, 45 };
+	SDL_Rect Exit = { 905, 670, 75, 35 };
 	if (Engine::GetInstance().guiManager == nullptr)
 	{
 		LOG("Error: guiManager no está inicializado.");
@@ -342,6 +441,12 @@ void Scene::MenuPause()
 	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
 }
 
+void Scene::DisableGuiControlButtons() 
+{
+	guiBt->state = GuiControlState::DISABLED;
+	guiBt1->state = GuiControlState::DISABLED;
+	guiBt2->state = GuiControlState::DISABLED;
+}
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	switch (control->id) {
@@ -358,17 +463,20 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		for (Item* item : itemList) {
 			item->apear = true;
 		}
-		guiBt->state = GuiControlState::DISABLED;
-		guiBt1->state = GuiControlState::DISABLED;
-		guiBt2->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
 		break;
 	case 2:
+		showSettingsMenu = true;
 		break;
 	case 3:
 		exit(0);
-		guiBt->state = GuiControlState::DISABLED;
-		guiBt1->state = GuiControlState::DISABLED;
-		guiBt2->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
+		break;
+	case 4:	// Settings: Music Volume
+		musicButtonHeld = true;
+		break;
+	case 5:// Settings: Fx Volume
+		Ambient_Sounds_ButtonHeld = true;
 		break;
 	}
 	return true;

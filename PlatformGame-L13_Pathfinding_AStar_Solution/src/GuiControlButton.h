@@ -18,6 +18,8 @@ private:
 
 	bool canClick = true;
 	bool drawBasic = false;
+
+	SDL_Texture* feather;
 };
 
 #pragma once

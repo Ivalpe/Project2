@@ -24,6 +24,7 @@
 	  <textures>
 		  <Menu_Pause path="Assets/Textures/UI/PauseMenu.png"/>
 		  <Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
+		  <Feather path="Assets/Textures/UI/Feather.png"/>
 	  </textures>
     <entities>
       <player x="784" y="600" w="128" h ="128" texture="Assets/Textures/player/caped_ikaro_placeholder2.png" gravity="true">

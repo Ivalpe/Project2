@@ -4,6 +4,7 @@
 #include "Audio.h"
 #include "Scene.h"
 #include "GuiManager.h"
+#include "Textures.h"
 
 GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
@@ -49,28 +50,53 @@ bool GuiControlButton::Update(float dt)
 		}
 
 			//L16: TODO 4: Draw the button according the GuiControl State
-		switch (state)
-		{
-
-		case GuiControlState::DISABLED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
-			break;
-		case GuiControlState::NORMAL:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
-			break;
-		case GuiControlState::FOCUSED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
-			break;
-		case GuiControlState::PRESSED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
-			break;
-
-		}
-
-		Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
-
 		
+			if (id == 4 || id == 5) 
+			{
+				switch (state)
+				{
+				case GuiControlState::NORMAL:
+					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 255, true, false);
+					break;
+				case GuiControlState::FOCUSED:
+					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 255, true, false);
+					break;
+				case GuiControlState::PRESSED:
+					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 255, true, false);
+					break;
+				}
+
+			}
+			else {
+
+				switch (state)
+				{
+				case GuiControlState::DISABLED:
+					Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 0, true, false);
+					break;
+				case GuiControlState::NORMAL:
+					Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 0, true, false);
+					break;
+				case GuiControlState::FOCUSED:
+					if (id==1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 520, nullptr, false);
+					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 595, nullptr, false);
+					if(id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 670, nullptr, false);
+					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 0, true, false);
+					break;
+				case GuiControlState::PRESSED:
+					if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 520, nullptr, false);
+					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 595, nullptr, false);
+					if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 770, 670, nullptr, false);
+					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 255, true, false);
+					break;
+				}
+
+			}
+
+			Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
+
 	}
+
 
 	return false;
 }

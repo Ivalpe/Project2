@@ -47,6 +47,7 @@ public:
 
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
+	void DisableGuiControlButtons();
 	//UI
 	void MenuSettings();
 	void MenuPause();
@@ -68,10 +69,23 @@ public:
 
 	SDL_Texture* Menu_Pause = NULL;
 	SDL_Texture* Menu_Settings = NULL;
+	SDL_Texture* Feather = NULL;
 
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;
 	GuiControlButton* guiBt2 = nullptr;
+
+
+	//Sounds
+	bool musicButtonHeld = false;
+	bool Ambient_Sounds_ButtonHeld = false;
+	bool mouseOverMusicControl = false;
+	bool mouseOverAmbientControl = false;
+	bool isMusicPlaying = false;
+
+	int sdlVolume;
+	int musicPosX = 1225;
+	int ambient_soundsPosX = 1225;
 
 private:
 	SDL_Texture* mouseTileTex = nullptr;
@@ -86,6 +100,7 @@ private:
 	SDL_Texture* lifeTexture;
 	SDL_Texture* waxTexture;
 
+	Vector2D mousePos;
 
 
 
