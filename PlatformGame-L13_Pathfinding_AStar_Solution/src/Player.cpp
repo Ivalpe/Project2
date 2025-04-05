@@ -180,8 +180,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Colisión con daño detectada");
 
 		Engine::GetInstance().entityManager.get()->life--;
-		Engine::GetInstance().scene.get()->PreUpdate();
-		Engine::GetInstance().scene.get()->reset_level = true;
+		if (Engine::GetInstance().entityManager.get()->life > 0) {
+			Engine::GetInstance().scene.get()->PreUpdate();
+			Engine::GetInstance().scene.get()->reset_level = true;
+
+
+		}
 
 		break;
 
@@ -254,6 +258,7 @@ int Player::GetLife() {
 void Player::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
@@ -264,6 +269,7 @@ void Player::StopMovement() {
 void Player::ResumeMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;

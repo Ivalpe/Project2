@@ -56,6 +56,8 @@ public:
 	void MenuSettings();
 	void MenuPause();
 	void Active_MenuPause();
+	void GameOver_State();
+
 
 public:
 	// Get tilePosDebug value
@@ -69,10 +71,12 @@ public:
 
 	bool showPauseMenu = false;
 	bool showSettingsMenu = false;
+	bool GameOverMenu = false;
 
 
 	SDL_Texture* Menu_Pause = NULL;
 	SDL_Texture* Menu_Settings = NULL;
+	SDL_Texture* GameOver = NULL;
 	SDL_Texture* Feather = NULL;
 	SDL_Texture* Feather_UI = NULL;
 	SDL_Texture* Wax = NULL;
@@ -100,6 +104,7 @@ private:
 	
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
+	Enemy* enemy;
 	std::vector<Enemy*> enemyList;
 	std::vector<Item*> itemList;
 

@@ -16,7 +16,7 @@
 #include "GuiManager.h"
 
 
-Scene::Scene() : Module(), showPauseMenu(false)
+Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
 {
 	name = "scene";
 }
@@ -124,6 +124,7 @@ bool Scene::Start()
 
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
+	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 
 	return true;
@@ -226,6 +227,8 @@ bool Scene::Update(float dt)
 
 	//Pause menu
 	Active_MenuPause();
+
+	GameOver_State();
 	return true;
 }
 
@@ -281,6 +284,39 @@ bool Scene::CleanUp()
 Vector2D Scene::GetPlayerPosition()
 {
 	return player->GetPosition();
+}
+
+void Scene::GameOver_State()
+{
+	/*if (Engine::GetInstance().entityManager.get()->life<=0) {
+
+		if (!GameOverMenu) {
+			GameOverMenu = true;
+		}
+		if (player != nullptr) {
+			player->CleanUp();
+		}
+		Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
+		Engine::GetInstance().entityManager.get()->RemoveAllItems();
+
+		if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
+
+		int cameraX = Engine::GetInstance().render.get()->camera.x;
+		int cameraY = Engine::GetInstance().render.get()->camera.y;
+
+		Engine::GetInstance().render.get()->DrawTexture(GameOver, -cameraX, -cameraY);
+
+		SDL_Rect Continue = { 865, 760, 245, 75 };
+		SDL_Rect Exit = { 940, 860, 95, 75 };
+
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
+	}*/
+		
+
+		
+	
+	
 }
 
 void Scene::Active_MenuPause() {
@@ -341,12 +377,8 @@ void Scene::MenuPause()
 	SDL_Rect ConitnuesButton = { 840, 520, 200, 45 };
 	SDL_Rect Settings = { 860, 595, 150, 45 };
 	SDL_Rect Exit = { 900-3, 670, 75, 35 };
-	if (Engine::GetInstance().guiManager == nullptr)
-	{
-		LOG("Error: guiManager no está inicializado.");
-	}
 
-	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Conitnues", ConitnuesButton, this));
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Continues", ConitnuesButton, this));
 	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
 	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
 }
@@ -499,6 +531,16 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		break;
 	case 5:// Settings: Fx Volume
 		Ambient_Sounds_ButtonHeld = true;
+		break;
+	case 6:	// Game Over: Continue
+		CreateItems();
+		player->Start();
+		Engine::GetInstance().entityManager->life = 3;
+		Engine::GetInstance().entityManager->wax = 0;
+		break;
+	case 7:// Game Over: Exit
+		exit(0);
+		DisableGuiControlButtons();
 		break;
 	}
 	return true;

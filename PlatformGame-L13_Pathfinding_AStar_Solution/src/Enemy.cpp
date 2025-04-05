@@ -120,6 +120,8 @@ bool Enemy::Update(float dt)
 
 	// Draw pathfinding 
 	pathfinding->DrawPath();
+
+
 	
 	return true;
 }
@@ -137,7 +139,8 @@ void Enemy::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	pbody->body->SetTransform(bodyPos, 0);
+	pbody->body->SetTransform(bodyPos, 0);	
+
 }
 
 Vector2D Enemy::GetPosition() {
@@ -155,6 +158,7 @@ void Enemy::ResetPath() {
 void Enemy::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::ENEMY;
