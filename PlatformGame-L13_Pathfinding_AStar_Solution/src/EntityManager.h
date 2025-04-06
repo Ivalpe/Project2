@@ -38,6 +38,6 @@ public:
 public:
 
 	std::list<Entity*> entities;
-	int life = 3;
-	int wax = 0;
+	int wax = 3;
+	int feather = 0;
 };

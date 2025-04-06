@@ -54,7 +54,7 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(600 + (100 * i), 672);
+			item->position = Vector2D(800 + (100 * i), 400);
 		}
 
 	}
@@ -126,6 +126,8 @@ bool Scene::Start()
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
 	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
+	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
+	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
 
 	return true;
 }
@@ -255,18 +257,16 @@ bool Scene::PostUpdate()
 
 	if (!showPauseMenu && !showSettingsMenu) {
 		//Life texture
-		lifeTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/live.png");
-		for (int i = 0; i < player->GetLife(); i++) {
-			Engine::GetInstance().render.get()->DrawTexture(lifeTexture, 10 + (i * 40), 10, nullptr, false);
+		for (int i = 0; i < player->GetWax(); i++) {
+			Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 40), 10, nullptr, false);
 		}
 
 		//Wax texture
-		waxTexture = Engine::GetInstance().textures.get()->Load("Assets/Textures/wax.png");
-		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 50, nullptr, false);
-		char WaxText[64];
-		sprintf_s(WaxText, " x%d", Engine::GetInstance().entityManager->wax);
-		Engine::GetInstance().render.get()->DrawText(WaxText, 50, 55, 80, 30);
-		LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->wax);
+		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 50, nullptr, false);
+		char FeatherText[64];
+		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
+		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 55, 40, 30);
+		LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->feather);
 	}
 	
 
@@ -535,8 +535,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	case 6:	// Game Over: Continue
 		CreateItems();
 		player->Start();
-		Engine::GetInstance().entityManager->life = 3;
-		Engine::GetInstance().entityManager->wax = 0;
+		Engine::GetInstance().entityManager->wax = 3;
+		Engine::GetInstance().entityManager->feather = 0;
 		break;
 	case 7:// Game Over: Exit
 		exit(0);

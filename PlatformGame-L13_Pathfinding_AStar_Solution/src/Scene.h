@@ -108,7 +108,7 @@ private:
 	std::vector<Enemy*> enemyList;
 	std::vector<Item*> itemList;
 
-	SDL_Texture* lifeTexture;
+	SDL_Texture* FeatherTexture;
 	SDL_Texture* waxTexture;
 
 	Vector2D mousePos;

@@ -37,7 +37,7 @@ public:
 
 	Vector2D GetPosition();
 
-	int GetLife();
+	int GetWax();
 
 	void StopMovement();
 	void ResumeMovement();
