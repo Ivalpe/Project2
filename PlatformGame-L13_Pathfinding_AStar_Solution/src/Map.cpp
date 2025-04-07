@@ -199,6 +199,28 @@ bool Map::Load(std::string path, std::string fileName)
             mapData.layers.push_back(mapLayer);
         }
 
+            for (pugi::xml_node layerNode = mapFileXML.child("map").child("layer"); layerNode != NULL; layerNode = layerNode.next_sibling("layer")) {
+
+            // L07: TODO 4: Implement the load of a single layer 
+            //Load the attributes and saved in a new MapLayer
+            MapLayer* mapLayer = new MapLayer();
+            mapLayer->id = layerNode.attribute("id").as_int();
+            mapLayer->name = layerNode.attribute("name").as_string();
+            mapLayer->width = layerNode.attribute("width").as_int();
+            mapLayer->height = layerNode.attribute("height").as_int();
+
+            //L09: TODO 6 Call Load Layer Properties
+            LoadProperties(layerNode, mapLayer->properties);
+
+            //Iterate over all the tiles and assign the values in the data array
+            for (pugi::xml_node tileNode = layerNode.child("data").child("tile"); tileNode != NULL; tileNode = tileNode.next_sibling("tile")) {
+                mapLayer->tiles.push_back(tileNode.attribute("gid").as_int());
+            }
+
+            //add the layer to the map
+            mapData.layers.push_back(mapLayer);
+        }
+
         // L08 TODO 3: Create colliders
         // L08 TODO 7: Assign collider type
         // Later you can create a function here to load and create the colliders from the map
