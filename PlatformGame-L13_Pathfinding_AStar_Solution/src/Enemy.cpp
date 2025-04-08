@@ -120,9 +120,6 @@ bool Enemy::Update(float dt)
 
 	// Draw pathfinding 
 	pathfinding->DrawPath();
-
-
-	
 	return true;
 }
 

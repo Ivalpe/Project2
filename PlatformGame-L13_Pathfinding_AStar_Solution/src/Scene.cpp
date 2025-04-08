@@ -153,8 +153,9 @@ void Scene::Change_level(int level)
 		Uint32 startTime = SDL_GetTicks();
 
 		Engine::GetInstance().map.get()->CleanUp();
-		Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
-		Engine::GetInstance().entityManager.get()->RemoveAllItems();
+		//REMOVE // WHEN SECOND STAGE ENEMYS ADDED
+		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
+		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 		CreateItems();
 
@@ -176,7 +177,7 @@ bool Scene::Update(float dt)
 
 
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py - 550);
+	Engine::GetInstance().render.get()->camera.y = -(Py - 700);
 
 
 	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
@@ -252,7 +253,6 @@ bool Scene::PostUpdate()
 		Change_level(1);
 		level = 1;
 		player->SetPosition(Vector2D{ 40, 70 });
-
 	}
 
 	if (!showPauseMenu && !showSettingsMenu) {
