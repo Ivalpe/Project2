@@ -153,7 +153,7 @@ public:
 
     MapLayer* GetNavigationLayer();
 
-
+    void DrawFront();
 public: 
     std::string mapFileName;
     std::string mapPath;

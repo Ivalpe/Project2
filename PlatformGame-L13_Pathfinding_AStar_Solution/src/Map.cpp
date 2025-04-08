@@ -41,7 +41,7 @@ bool Map::Update(float dt)
         // iterate all tiles in a layer
         for (const auto& mapLayer : mapData.layers) {
             //Check if the property Draw exist get the value, if it's true draw the lawyer
-            if (mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+            if (mapLayer->name!="Front" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
                 for (int i = 0; i < mapData.width; i++) {
                     for (int j = 0; j < mapData.height; j++) {
 
@@ -71,6 +71,35 @@ bool Map::Update(float dt)
     return ret;
 }
 
+void Map::DrawFront() {
+    for (const auto& mapLayer : mapData.layers) {
+        //Check if the property Draw exist get the value, if it's true draw the lawyer
+        if (mapLayer->name == "Front" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+            for (int i = 0; i < mapData.width; i++) {
+                for (int j = 0; j < mapData.height; j++) {
+
+                    // L07 TODO 9: Complete the draw function
+
+                    //Get the gid from tile
+                    int gid = mapLayer->Get(i, j);
+                    //Check if the gid is different from 0 - some tiles are empty
+                    if (gid != 0) {
+                        //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
+                        TileSet* tileSet = GetTilesetFromTileId(gid);
+                        if (tileSet != nullptr) {
+                            //Get the Rect from the tileSetTexture;
+                            SDL_Rect tileRect = tileSet->GetRect(gid);
+                            //Get the screen coordinates from the tile coordinates
+                            Vector2D mapCoord = MapToWorld(i, j);
+                            //Draw the texture
+                            Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 // L09: TODO 2: Implement function to the Tileset based on a tile id
 TileSet* Map::GetTilesetFromTileId(int gid) const
 {

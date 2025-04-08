@@ -269,7 +269,7 @@ bool Scene::PostUpdate()
 		LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->feather);
 	}
 	
-
+	if (Engine::GetInstance().scene.get()->showPauseMenu == false) Engine::GetInstance().map.get()->DrawFront();
 	return ret;
 }
 
