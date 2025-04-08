@@ -176,7 +176,7 @@ bool Scene::Update(float dt)
 
 
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py-400);
+	Engine::GetInstance().render.get()->camera.y = -(Py - 550);
 
 
 	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
@@ -269,7 +269,7 @@ bool Scene::PostUpdate()
 		LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->feather);
 	}
 	
-	if (Engine::GetInstance().scene.get()->showPauseMenu == false) Engine::GetInstance().map.get()->DrawFront();
+	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false) Engine::GetInstance().map.get()->DrawFront();
 	return ret;
 }
 
@@ -288,7 +288,7 @@ Vector2D Scene::GetPlayerPosition()
 
 void Scene::GameOver_State()
 {
-	/*if (Engine::GetInstance().entityManager.get()->life<=0) {
+	if (Engine::GetInstance().entityManager.get()->wax<=0){
 
 		if (!GameOverMenu) {
 			GameOverMenu = true;
@@ -309,9 +309,9 @@ void Scene::GameOver_State()
 		SDL_Rect Continue = { 865, 760, 245, 75 };
 		SDL_Rect Exit = { 940, 860, 95, 75 };
 
-		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
-		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
-	}*/
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Continue", Continue, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Exit", Exit, this));
+	}
 		
 
 		
@@ -326,13 +326,16 @@ void Scene::Active_MenuPause() {
 		if (showPauseMenu) {
 			player->StopMovement();
 			for (Enemy* enemy : enemyList) {
-				if (enemy) {
+				if (enemy!=NULL) {
 					enemy->visible = false;
 					enemy->StopMovement();
 				}
 			}
 			for (Item* item : itemList) {
-				item->apear = false;
+				if (item != NULL) {
+					item->apear = false;
+
+				}
 			}
 		}
 		else if(!showPauseMenu){
@@ -534,6 +537,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		break;
 	case 6:	// Game Over: Continue
 		CreateItems();
+		guiBt->state = GuiControlState::DISABLED;
+		guiBt1->state = GuiControlState::DISABLED;
 		player->Start();
 		Engine::GetInstance().entityManager->wax = 3;
 		Engine::GetInstance().entityManager->feather = 0;
