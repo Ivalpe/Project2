@@ -66,7 +66,7 @@ bool Player::Start() {
 bool Player::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
-	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
+	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
 	// Move left

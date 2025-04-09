@@ -113,6 +113,9 @@ private:
 
 	Vector2D mousePos;
 
-
+	bool UI = false;
+	bool UI_pause = false;
+	int current_time;
+	int current_time_pause;
 
 };

@@ -255,7 +255,22 @@ bool Scene::PostUpdate()
 		player->SetPosition(Vector2D{ 40, 70 });
 	}
 
-	if (!showPauseMenu && !showSettingsMenu) {
+	
+	//Show UI when pressing E or velocity player 0,0
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN || player->velocity.x == 0 && player->velocity.y == 0)
+	{
+		UI = true;
+		current_time = 0;
+	}
+
+
+	if (UI) {
+		current_time++;
+
+		if (current_time > 180) UI = false; //3 seconds
+	}
+	if (!showPauseMenu && !showSettingsMenu && UI|| UI) {
+		
 		//Life texture
 		for (int i = 0; i < player->GetWax(); i++) {
 			Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 40), 10, nullptr, false);
