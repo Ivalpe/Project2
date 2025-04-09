@@ -63,7 +63,7 @@ bool Item::Start() {
 
 bool Item::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true) return true;
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
 
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 

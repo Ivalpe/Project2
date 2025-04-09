@@ -140,8 +140,8 @@ void Scene::Change_level(int level)
 		Uint32 startTime = SDL_GetTicks();
 
 		Engine::GetInstance().map.get()->CleanUp();
-		Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
-		Engine::GetInstance().entityManager.get()->RemoveAllItems();
+		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
+		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems();
 		//CreateEnemies();
@@ -292,11 +292,6 @@ void Scene::GameOver_State()
 		if (!GameOverMenu) {
 			GameOverMenu = true;
 		}
-		if (player != nullptr) {
-			player->CleanUp();
-		}
-		Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
-		Engine::GetInstance().entityManager.get()->RemoveAllItems();
 
 		if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
 
@@ -308,8 +303,11 @@ void Scene::GameOver_State()
 		SDL_Rect Continue = { 865, 760, 245, 75 };
 		SDL_Rect Exit = { 940, 860, 95, 75 };
 
-		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Continue", Continue, this));
-		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Exit", Exit, this));
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
+
+		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", 260, 600, 1400, 65);
+
 	}
 		
 
@@ -376,9 +374,9 @@ void Scene::MenuPause()
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
 
-	SDL_Rect ConitnuesButton = { 840, 520, 200, 45 };
-	SDL_Rect Settings = { 860, 595, 150, 45 };
-	SDL_Rect Exit = { 900-3, 670, 75, 35 };
+	SDL_Rect ConitnuesButton = { 862, 520, 200, 45 };
+	SDL_Rect Settings = { 882, 595, 150, 45 };
+	SDL_Rect Exit = { 919, 670, 75, 35 };
 
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Continue", ConitnuesButton, this));
 	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
@@ -536,15 +534,19 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		break;
 	case 6:	// Game Over: Continue
 		CreateItems();
+		GameOverMenu = false;
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
-		player->Start();
+		Engine::GetInstance().scene.get()->reset_level = true;
+
 		Engine::GetInstance().entityManager->wax = 3;
 		Engine::GetInstance().entityManager->feather = 0;
 		break;
 	case 7:// Game Over: Exit
+		
 		exit(0);
-		DisableGuiControlButtons();
+		guiBt->state = GuiControlState::DISABLED;
+		guiBt1->state = GuiControlState::DISABLED;
 		break;
 	}
 	return true;

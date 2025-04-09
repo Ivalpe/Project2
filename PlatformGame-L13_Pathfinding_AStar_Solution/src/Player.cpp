@@ -65,7 +65,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true) return true;
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
 	b2Vec2 velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
@@ -181,7 +181,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 		Engine::GetInstance().entityManager.get()->wax--;
 		if (Engine::GetInstance().entityManager.get()->wax > 0) {
-			Engine::GetInstance().scene.get()->PreUpdate();
+			//Engine::GetInstance().scene.get()->PreUpdate();
 			Engine::GetInstance().scene.get()->reset_level = true;
 
 
