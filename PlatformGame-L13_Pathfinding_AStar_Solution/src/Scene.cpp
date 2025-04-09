@@ -266,7 +266,6 @@ bool Scene::PostUpdate()
 		char FeatherText[64];
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 55, 40, 30);
-		LOG("Wax en pantalla: %d", Engine::GetInstance().entityManager->feather);
 	}
 	
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false) Engine::GetInstance().map.get()->DrawFront();

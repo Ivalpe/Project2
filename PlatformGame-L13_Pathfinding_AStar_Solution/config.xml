@@ -30,11 +30,16 @@
 		  <FeatherUI path="Assets/Textures/Feather_item.png"/>
 	  </textures>
     <entities>
-      <player x="784" y="600" w="128" h ="128" texture="Assets/Textures/player/caped_ikaro_placeholder2.png" gravity="true">
+      <player x="784" y="600" w="128" h ="128" texture="Assets/Textures/player/Idle_Hide.png" gravity="true">
         <animations>
           <idle loop="true" speed ="0.5">
-            <frame x="0" y="0" w="128" h="128"/>
-          </idle>
+            <frame x="0" y="0" w="256" h="256"/>
+			<frame x="256" y="0" w="256" h="256"/>
+			<frame x="512" y="0" w="256" h="256"/>
+			<frame x="768" y="0" w="256" h="256"/>
+			<frame x="1024" y="0" w="256" h="256"/>
+			<frame x="1280" y="0" w="256" h="256"/>
+		  </idle>
         </animations>
       </player>
       <items>

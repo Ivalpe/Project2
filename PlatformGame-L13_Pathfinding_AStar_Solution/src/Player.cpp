@@ -70,9 +70,9 @@ bool Player::Update(float dt)
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
 	// Move left
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) velocity.x = -0.2 * speed *dt;
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) velocity.x = -0.2 * speed;
 	// Move right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) velocity.x = 0.2 * speed*dt;
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) velocity.x = 0.2 * speed;
 
 	//Jump
 	if (isJumping && lastJump <= 25)lastJump++;
@@ -130,8 +130,8 @@ bool Player::Update(float dt)
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH );
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH - 64);
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
