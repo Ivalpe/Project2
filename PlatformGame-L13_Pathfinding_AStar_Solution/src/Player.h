@@ -45,7 +45,7 @@ public:
 public:
 
 	//Declare player parameters
-	float speed = 30.0f;
+	float speed = 6.0f;
 	SDL_Texture* texture = NULL;
 	int texW, texH;
 
