@@ -51,7 +51,7 @@ public:
 	
 	//UI items
 	void items_UI();
-	
+	void show_UI();
 	//Menus
 	void MenuSettings();
 	void MenuPause();

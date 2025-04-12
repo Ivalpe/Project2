@@ -267,6 +267,13 @@ bool Scene::PostUpdate()
 	}
 
 	
+	show_UI();
+	
+	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) Engine::GetInstance().map.get()->DrawFront();
+	return ret;
+}
+
+void Scene::show_UI() {
 	//Show UI when pressing E or velocity player 0,0
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN || player->velocity.x == 0 && player->velocity.y == 0)
 	{
@@ -280,8 +287,8 @@ bool Scene::PostUpdate()
 
 		if (current_time > 180) UI = false; //3 seconds
 	}
-	if (!showPauseMenu && !showSettingsMenu && UI|| UI) {
-		
+	if (!showPauseMenu && !showSettingsMenu && UI || UI) {
+
 		//Life texture
 		for (int i = 0; i < player->GetWax(); i++) {
 			Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 40), 10, nullptr, false);
@@ -293,11 +300,7 @@ bool Scene::PostUpdate()
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 55, 40, 30);
 	}
-	
-	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false) Engine::GetInstance().map.get()->DrawFront();
-	return ret;
 }
-
 // Called before quitting
 bool Scene::CleanUp()
 {
