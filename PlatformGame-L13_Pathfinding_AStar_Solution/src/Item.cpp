@@ -33,14 +33,13 @@ bool Item::Start() {
 	isPicked = parameters.attribute("isPicked").as_bool(false);
 	isWax = parameters.attribute("isWax").as_bool(false);
 	isFeather = parameters.attribute("isFeather").as_bool(false);
+	isStalactites = parameters.attribute("isStalactites").as_bool(false);
 
 	//Initialize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	Feather_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture1").as_string());
-	if (texture == NULL) {
-		LOG("jfjff %d", Feather_texture);
+	Stalactites_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture2").as_string());
 
-	}
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
@@ -49,15 +48,23 @@ bool Item::Start() {
 	idle_feather.LoadAnimations(parameters.child("animations").child("idle_feather"));
 	currentAnimation_feather = &idle_feather;
 
+	idle_Stalactites.LoadAnimations(parameters.child("animations").child("idle_stalactites"));
+	currentAnimation_stalactities = &idle_Stalactites;
+
+	idle_stalactites_falls.LoadAnimations(parameters.child("animations").child("idle_stalactites_falls"));
+
 	// L08 TODO 4: Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+
+	pbody->listener = this;
 
 	// L08 TODO 7: Assign collider type
 	pbody->ctype = ColliderType::ITEM;
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
-
+	
+	
 	return true;
 }
 
@@ -72,7 +79,7 @@ bool Item::Update(float dt)
 	{
 		// Comprobar la distancia entre el ítem y el jugador
 		float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
-
+		float drop = fabs(position.getX() - player->position.getX());
 		if (isWax && distance < 120.0f && isPicked == 0) {
 			isPicked = 1;
 			Engine::GetInstance().entityManager->wax++;
@@ -85,6 +92,17 @@ bool Item::Update(float dt)
 			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->feather);
 
 		}
+
+		if (isStalactites && drop < 200 && isPicked == 0)
+		{
+			pbody->ctype = ColliderType::DAMAGE;
+			pbody->body->SetGravityScale(1);			
+			b2Vec2 force(0.0f, -10.0f);
+			pbody->body->ApplyForceToCenter(force, true);
+			isPicked = 1;
+			changecolision = true;
+		}
+		
 	}
 	if (isWax && isPicked == 0) {
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
@@ -94,6 +112,23 @@ bool Item::Update(float dt)
 		Engine::GetInstance().render.get()->DrawTexture(Feather_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_feather->GetCurrentFrame());
 		currentAnimation_feather->Update();
 	}
+	if (isStalactites) {
+
+		if (changecolision && pbody->ctype == ColliderType::PLATFORM) {
+			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+			pbody = nullptr;
+
+			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH,64,32, bodyType::STATIC);		
+			pbody->listener = this;
+
+			changecolision = false;
+		}
+
+		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX(), (int)position.getY()+16, &currentAnimation_stalactities->GetCurrentFrame());
+		currentAnimation_stalactities->Update();
+		
+	}
+
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
@@ -112,6 +147,18 @@ bool Item::CleanUp()
 	}
 	Engine::GetInstance().textures.get()->UnLoad(texture);
 	Engine::GetInstance().textures.get()->UnLoad(Feather_texture);
+	Engine::GetInstance().textures.get()->UnLoad(Stalactites_texture);
 
 	return true;
+}
+void Item::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
+{
+	if (bodyA == pbody && bodyB->ctype == ColliderType::PLATFORM)
+	{
+		if (name == "stalactites") {			
+			pbody->ctype = ColliderType::PLATFORM;
+			currentAnimation_stalactities = &idle_stalactites_falls;
+		}
+		
+	}
 }

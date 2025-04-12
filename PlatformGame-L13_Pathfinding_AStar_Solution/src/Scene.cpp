@@ -43,6 +43,7 @@ bool Scene::Awake()
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
 			item->position = Vector2D(200 + (100 * i), 672);
+
 		}
 
 	}
@@ -55,7 +56,17 @@ bool Scene::Awake()
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
 			item->position = Vector2D(800 + (100 * i), 400);
+
 		}
+
+	}
+
+	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("stalactites_item"); itemNode; itemNode = itemNode.next_sibling("item"))
+	{
+		
+		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		item->SetParameters(itemNode);
+		item->position = Vector2D(1500, 1500);
 
 	}
 

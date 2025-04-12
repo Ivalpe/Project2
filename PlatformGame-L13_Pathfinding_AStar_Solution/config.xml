@@ -50,13 +50,23 @@
             </idle>
           </animations>
         </item>
-		  <feather_item name="wax" x="200" y="672" w="32" h="32" isFeather="true" isPicked="false" texture1="Assets/Textures/Feather_item.png" gravity="true">
+		  <feather_item name="feather" x="200" y="672" w="32" h="32" isFeather="true" isPicked="false" texture1="Assets/Textures/Feather_item.png" gravity="true">
 			  <animations>
 				  <idle_feather loop="true" speed ="0.5">
 					  <frame x="0" y="0" w="32" h="32"/>
 				  </idle_feather>
 			  </animations>
 		  </feather_item>
+		  <stalactites_item name="stalactites" x="2000" y="1000" w="64" h="64" isStalactites="true" isPicked="false" texture2="Assets/Textures/Stalactites.png" gravity="false">
+			  <animations>
+				  <idle_stalactites loop="true" speed ="0.5">
+					  <frame x="0" y="0" w="64" h="64"/>
+				  </idle_stalactites>
+				  <idle_stalactites_falls loop="true" speed ="0.5">
+					  <frame x="64" y="0" w="64" h="32"/>
+				  </idle_stalactites_falls>
+			  </animations>
+		  </stalactites_item>
       </items>
 
       <enemies>
