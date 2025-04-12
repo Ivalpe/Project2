@@ -78,15 +78,15 @@ bool GuiControlButton::Update(float dt)
 					Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 0, true, false);
 					break;
 				case GuiControlState::FOCUSED:
-					if (id==1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, 520+13, nullptr, false);
-					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, 595 + 15, nullptr, false);
-					if(id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, 670+5, nullptr, false);
+					if (id==1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 520+13-2, nullptr, false);
+					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 595 + 15-2, nullptr, false);
+					if(id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 670+5, nullptr, false);
 					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 0, true, false);
 					break;
 				case GuiControlState::PRESSED:
-					if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, 520 + 10, nullptr, false);
-					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, 595 + 10, nullptr, false);
-					if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, 670, nullptr, false);
+					if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 520 + 10 - 2, nullptr, false);
+					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 595 + 10 - 2, nullptr, false);
+					if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 670, nullptr, false);
 					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 255, true, false);
 					break;
 				}

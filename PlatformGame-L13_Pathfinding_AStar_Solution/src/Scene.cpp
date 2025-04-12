@@ -401,11 +401,26 @@ void Scene::MenuPause()
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
 
+	SDL_Rect backgroundRect = { 0, 0, 1920, 1080 };
+	SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 10, 10, 50, 200);
+	SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &backgroundRect);
+
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
 
-	SDL_Rect ConitnuesButton = { 862, 520, 200, 45 };
-	SDL_Rect Settings = { 882, 595, 150, 45 };
-	SDL_Rect Exit = { 919, 670, 75, 35 };
+
+	int textWidthContinue, textHeightContinue;
+	int textWidthSettings, textHeightSettings;
+	int textWidthExit, textHeightExit;
+
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
+
+
+	SDL_Rect ConitnuesButton = { 862-15, 520-15, textWidthContinue + 20, textHeightContinue + 10 };
+	SDL_Rect Settings = { 882-15, 595-10, textWidthSettings + 20, textHeightSettings + 10 };
+	SDL_Rect Exit = { 919-15, 670-5, textWidthExit + 20, textHeightExit + 10 };
+
 
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Continue", ConitnuesButton, this));
 	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
@@ -424,11 +439,33 @@ void Scene::MenuSettings()
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
 
-	Engine::GetInstance().render.get()->DrawText("Settings", 860, 325, 250, 65);
-	Engine::GetInstance().render.get()->DrawText("Music Volumen", 700, 485, 220, 35);
-	Engine::GetInstance().render.get()->DrawText("Ambient Sounds", 700, 555, 220, 35);
-	Engine::GetInstance().render.get()->DrawText("Lenguage", 700, 630, 150, 35);
-	Engine::GetInstance().render.get()->DrawText("English", 1085, 625, 100, 35);
+	float scaleFactor = 0.5f; // Reducir tamaño al 50%
+
+	int textWidthSettingsTitle, textHeightSettingsTitle;
+	int textWidthMusicVolume, textHeightMusicVolume;
+	int textWidthAmbientSounds, textHeightAmbientSounds;
+	int textWidthLanguage, textHeightLanguage;
+	int textWidthEnglish, textHeightEnglish;
+
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettingsTitle, &textHeightSettingsTitle);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Music Volume", &textWidthMusicVolume, &textHeightMusicVolume);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Ambient Sounds", &textWidthAmbientSounds, &textHeightAmbientSounds);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Language", &textWidthLanguage, &textHeightLanguage);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "English", &textWidthEnglish, &textHeightEnglish);
+
+
+	SDL_Rect SettingsTitle = { 860 - 15, 325 - 15, textWidthSettingsTitle +20, textHeightSettingsTitle +10 };
+	SDL_Rect MusicVolume = { 700 - 15, 485 - 15, static_cast<int>(textWidthMusicVolume * scaleFactor), static_cast<int>(textHeightMusicVolume * scaleFactor) };
+	SDL_Rect AmbientSounds = { 700 - 15, 555 - 15, static_cast<int>(textWidthAmbientSounds * scaleFactor), static_cast<int>(textHeightAmbientSounds * scaleFactor) };
+	SDL_Rect Language = { 700 - 15, 630 - 15, static_cast<int>(textWidthLanguage * scaleFactor), static_cast<int>(textHeightLanguage * scaleFactor) };
+	SDL_Rect English = { 1085, 625, static_cast<int>(textWidthEnglish * scaleFactor), static_cast<int>(textHeightEnglish * scaleFactor) };
+
+
+	Engine::GetInstance().render.get()->DrawText("Settings", SettingsTitle.x, SettingsTitle.y, SettingsTitle.w, SettingsTitle.h);
+	Engine::GetInstance().render.get()->DrawText("Music Volume", MusicVolume.x, MusicVolume.y, MusicVolume.w, MusicVolume.h);
+	Engine::GetInstance().render.get()->DrawText("Ambient Sounds", AmbientSounds.x, AmbientSounds.y, AmbientSounds.w, AmbientSounds.h);
+	Engine::GetInstance().render.get()->DrawText("Language", Language.x, Language.y, Language.w, Language.h);
+	Engine::GetInstance().render.get()->DrawText("English", English.x, English.y, English.w, English.h);
 
 
 	SDL_Rect MusicPosition = { musicPosX, 10, 485, 35 };

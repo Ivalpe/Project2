@@ -22,7 +22,7 @@
 	  <map path="Assets/Maps/" name="Intro.tmx"/>
 	  <map1 path="Assets/Maps/" name="MapTemplate.tmx"/>
 	  <textures>
-		  <Menu_Pause path="Assets/Textures/UI/PauseMenu.png"/>
+		  <Menu_Pause path="Assets/Textures/UI/Pause_menu.png"/>
 		  <Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
 		  <GameOver path="Assets/Textures/UI/GameOver.png"/>
 		  <Feather path="Assets/Textures/UI/Feather.png"/>

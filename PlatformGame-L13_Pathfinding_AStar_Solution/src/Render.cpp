@@ -53,7 +53,7 @@ bool Render::Awake()
 	//Initialize the TTF library
 	TTF_Init();
 	//Load a font into memory
-	font = TTF_OpenFont("Assets/Font/Rounded Elegance Regular.otf", 144);
+	font = TTF_OpenFont("Assets/Font/Rounded Elegance Regular.otf", 60);
 	return ret;
 }
 

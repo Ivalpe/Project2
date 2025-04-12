@@ -118,7 +118,7 @@ bool Item::Update(float dt)
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;
 
-			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH,64,32, bodyType::STATIC);		
+			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH-2,64,32, bodyType::STATIC);		
 			pbody->listener = this;
 
 			changecolision = false;
