@@ -118,4 +118,8 @@ private:
 	int current_time;
 	int current_time_pause;
 
+
+	bool showBlackTransition = false;
+	float blackTransitionStart;
+	int blackTransitionDuration = 4000;
 };

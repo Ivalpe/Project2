@@ -84,7 +84,9 @@ bool Scene::Awake()
 void Scene::CreateItems() 
 {
 	int WaxIndex = 0;
+	int fatherIndex = 0;
 	std::vector<Vector2D> waxPositions;
+	std::vector<Vector2D> factherPositions;
 
 	if (level == 0) {
 
@@ -94,6 +96,12 @@ void Scene::CreateItems()
 		  Vector2D(500, 672)
 		};
 
+		factherPositions = {
+		  Vector2D(900, 400),
+		  Vector2D(110, 400),
+		  Vector2D(130, 400)
+		};
+
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
@@ -101,14 +109,15 @@ void Scene::CreateItems()
 		}
 
 		for (auto& it : itemList) {
-			if (it->name == "feather" && WaxIndex < waxPositions.size()) {
-				it->position = waxPositions[WaxIndex++];
+			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
+				it->position = factherPositions[fatherIndex++];
 			}
 		}
 	}
 	else {
+
 		for (auto& it : itemList) {
-			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
+			if ((it->name == "wax" || it->name == "feather") && WaxIndex < waxPositions.size()) {
 				it->CleanUp();
 			}
 		}
@@ -145,24 +154,22 @@ bool Scene::Start()
 
 void Scene::Change_level(int level)
 {
+	
+
 
 	if (level == 0)
 	{
-		Uint32 startTime = SDL_GetTicks();
-
 		Engine::GetInstance().map.get()->CleanUp();
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems();
 		//CreateEnemies();
-
+		
 	}
 
 	if (level == 1)
 	{
-		Uint32 startTime = SDL_GetTicks();
-
 		Engine::GetInstance().map.get()->CleanUp();
 		//REMOVE // WHEN SECOND STAGE ENEMYS ADDED
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
@@ -170,7 +177,12 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 		CreateItems();
 
+		showBlackTransition = true;
+		blackTransitionStart = SDL_GetTicks();
+		
 	}
+
+	
 }
 
 // Called each loop iteration
@@ -239,6 +251,8 @@ bool Scene::Update(float dt)
 		reset_level = false;
 	}
 
+	
+
 	//Pause menu
 	Active_MenuPause();
 
@@ -270,6 +284,23 @@ bool Scene::PostUpdate()
 	show_UI();
 	
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) Engine::GetInstance().map.get()->DrawFront();
+
+	if (showBlackTransition) {
+		Uint32 now = SDL_GetTicks();
+		Uint32 elapsed = now - blackTransitionStart;
+
+		if (elapsed < blackTransitionDuration) {
+
+			Uint8 alpha = 255 * (1 - (float(elapsed) / blackTransitionDuration));  // Reduce la opacidad gradualmente
+
+			SDL_Rect BlackTransition = { 0, 0, 1920, 1080 };
+			SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 0, 0, 0, alpha);
+			SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &BlackTransition);
+		}
+		else {
+			showBlackTransition = false; // Termina la transición
+		}
+	}
 	return ret;
 }
 
