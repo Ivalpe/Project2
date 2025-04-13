@@ -287,7 +287,7 @@ void Scene::show_UI() {
 
 		if (current_time > 180) UI = false; //3 seconds
 	}
-	if (!showPauseMenu && !showSettingsMenu && UI || UI) {
+	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
 
 		//Life texture
 		for (int i = 0; i < player->GetWax(); i++) {
@@ -329,13 +329,22 @@ void Scene::GameOver_State()
 
 		Engine::GetInstance().render.get()->DrawTexture(GameOver, -cameraX, -cameraY);
 
-		SDL_Rect Continue = { 865, 760, 245, 75 };
-		SDL_Rect Exit = { 940, 860, 95, 75 };
+		int textWidthContinue, textHeightContinue;
+		int textWidthExit, textHeightExit;
+		int textWidthSentence, textHeightSentence;
+
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, don't seek the strength int the light, seek it in the shades", &textWidthSentence, &textHeightSentence);
+
+		SDL_Rect Continue = { 865, 760, textWidthContinue + 20, textHeightContinue + 10 };
+		SDL_Rect Exit = { 940, 860, textWidthExit + 20, textHeightExit + 10 };
+		SDL_Rect Sentence = { 260-85, 600, textWidthSentence + 20, textHeightSentence + 10 };
 
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
-
-		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", 260, 600, 1400, 65);
+		
+		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
 	}
 		
