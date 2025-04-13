@@ -42,7 +42,7 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(200 + (100 * i), 672);
+			item->position = Vector2D(200 + (300 * i), 672);
 
 		}
 
@@ -66,7 +66,17 @@ bool Scene::Awake()
 		
 		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 		item->SetParameters(itemNode);
-		item->position = Vector2D(1500, 1500);
+		item->position = Vector2D(2500, 1500);
+
+	}
+
+	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("blocked_wall"); itemNode; itemNode = itemNode.next_sibling("item"))
+	{
+
+		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		item->SetParameters(itemNode);
+		//item->position = Vector2D(4840, 2761);
+		item->position = Vector2D(1500, 2000);
 
 	}
 
