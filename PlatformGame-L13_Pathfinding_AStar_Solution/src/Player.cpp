@@ -42,6 +42,8 @@ bool Player::Start() {
 	}
 
 	//Load animations
+	hide.LoadAnimations(parameters.child("animations").child("hide"));
+	getUp.LoadAnimations(parameters.child("animations").child("getUp"));
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
 
@@ -94,11 +96,23 @@ bool Player::Update(float dt)
 	if(isJumping == true) velocity.y = pbody->body->GetLinearVelocity().y;
 		
 	// hide
+	
+	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_DOWN) currentAnimation = &hide;
 	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 		isJumping = false;
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 			velocity.x /= 4;
 		}
+		if (CntCrouch >= 60) {
+			if(crouch<200)crouch += 20;
+		}
+		else CntCrouch++;
+	}
+	else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
+		crouch = 0;
+		CntCrouch = 0;
+		hide.Reset();
+		currentAnimation = &idle;
 	}
 
 	//To glide

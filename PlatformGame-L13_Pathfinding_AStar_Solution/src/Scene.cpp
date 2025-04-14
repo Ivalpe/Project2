@@ -178,7 +178,6 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems();
 		//CreateEnemies();
-		
 	}
 
 	if (level == 1)
@@ -192,10 +191,7 @@ void Scene::Change_level(int level)
 
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
-		
 	}
-
-	
 }
 
 // Called each loop iteration
@@ -213,7 +209,7 @@ bool Scene::Update(float dt)
 
 
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py - 700);
+	Engine::GetInstance().render.get()->camera.y = -(Py - 600 + player->crouch);
 
 	
 	////Get mouse position and obtain the map coordinate
@@ -251,9 +247,10 @@ bool Scene::Update(float dt)
 	}
 
 	//Moon animation
+	if(level ==0){
 	Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
-
+	}
 	//Pause menu
 	Active_MenuPause();
 

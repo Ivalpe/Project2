@@ -55,6 +55,22 @@
 			<frame x="1024" y="0" w="256" h="256"/>
 			<frame x="1280" y="0" w="256" h="256"/>
 		  </idle>
+		  <hide loop="false" speed ="0.1">
+			<frame x="0" y="256" w="256" h="256"/>
+			<frame x="256" y="256" w="256" h="256"/>
+			<frame x="512" y="256" w="256" h="256"/>
+			<frame x="768" y="256" w="256" h="256"/>
+			<frame x="1024" y="256" w="256" h="256"/>
+			<frame x="1280" y="256" w="256" h="256"/>
+		  </hide>
+		  <getUp loop="false" speed ="0.3">
+			<frame x="1280" y="256" w="256" h="256"/>
+			<frame x="1024" y="256" w="256" h="256"/>
+			<frame x="768" y="256" w="256" h="256"/>
+			<frame x="512" y="256" w="256" h="256"/>
+			<frame x="256" y="256" w="256" h="256"/>
+			<frame x="0" y="256" w="256" h="256"/>
+		  </getUp>
         </animations>
       </player>
       <items>
