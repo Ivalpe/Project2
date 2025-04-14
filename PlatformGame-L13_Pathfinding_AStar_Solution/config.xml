@@ -28,11 +28,26 @@
 		  <Feather path="Assets/Textures/UI/Feather.png"/>
 		  <WaxUI path="Assets/Textures/wax.png"/>
 		  <FeatherUI path="Assets/Textures/Feather_item.png"/>
+		  <moon x="220" y="1180" texture="Assets/Textures/Moon Sprites.png">
+			  <animations>
+				  <idle loop="true" speed ="0.2">
+					  <frame x="0" y="0" w="288" h="288"/>
+					  <frame x="288" y="0" w="288" h="288"/>
+					  <frame x="576" y="0" w="288" h="288"/>
+					  <frame x="0" y="288" w="288" h="288"/>
+					  <frame x="288" y="288" w="288" h="288"/>
+					  <frame x="576" y="288" w="288" h="288"/>
+					  <frame x="0" y="576" w="288" h="288"/>
+					  <frame x="288" y="576" w="288" h="288"/>
+					  <frame x="576" y="576" w="288" h="288"/>
+				  </idle>
+			  </animations>
+		  </moon>
 	  </textures>
     <entities>
-      <player x="784" y="600" w="128" h ="128" texture="Assets/Textures/player/Idle_Hide.png" gravity="true">
+      <player x="784" y="1500" w="128" h ="128" texture="Assets/Textures/player/Idle_Hide.png" gravity="true">
         <animations>
-          <idle loop="true" speed ="0.5">
+          <idle loop="true" speed ="0.3">
             <frame x="0" y="0" w="256" h="256"/>
 			<frame x="256" y="0" w="256" h="256"/>
 			<frame x="512" y="0" w="256" h="256"/>

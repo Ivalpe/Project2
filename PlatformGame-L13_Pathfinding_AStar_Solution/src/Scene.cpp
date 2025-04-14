@@ -34,7 +34,7 @@ bool Scene::Awake()
 	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
-	
+
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
@@ -158,15 +158,18 @@ bool Scene::Start()
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
+	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
+
+	idle.LoadAnimations(configParameters.child("textures").child("moon").child("animations").child("idle"));
+	currentAnimation = &idle;
+	MoonPos.setX(configParameters.child("textures").child("moon").attribute("x").as_int());
+	MoonPos.setY(configParameters.child("textures").child("moon").attribute("y").as_int());
 
 	return true;
 }
 
 void Scene::Change_level(int level)
 {
-	
-
-
 	if (level == 0)
 	{
 		Engine::GetInstance().map.get()->CleanUp();
@@ -212,46 +215,32 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
 	Engine::GetInstance().render.get()->camera.y = -(Py - 700);
 
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-
-	// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
 	
-	//Get mouse position and obtain the map coordinate
-	Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
-	Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x,
-																     mousePos.getY() - Engine::GetInstance().render.get()->camera.y);
+	////Get mouse position and obtain the map coordinate
+	//Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
+	//Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x,
+	//															     mousePos.getY() - Engine::GetInstance().render.get()->camera.y);
 
 
-	//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
-	Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(),mouseTile.getY());
-	SDL_Rect rect = { 0,0,32,32 };
-	Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
-													highlightTile.getX(),
-													highlightTile.getY(),
-													&rect);
+	////Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
+	//Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(),mouseTile.getY());
+	//SDL_Rect rect = { 0,0,32,32 };
+	//Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
+	//												highlightTile.getX(),
+	//												highlightTile.getY(),
+	//												&rect);
 
-	// saves the tile pos for debugging purposes
-	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
-		tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
-		once = true;
-	}
+	//// saves the tile pos for debugging purposes
+	//if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
+	//	tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
+	//	once = true;
+	//}
 
-	//If mouse button is pressed modify enemy position
-	if (Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_DOWN) {
-		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-		enemyList[0]->ResetPath();
-	}
+	////If mouse button is pressed modify enemy position
+	//if (Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_DOWN) {
+	//	enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
+	//	enemyList[0]->ResetPath();
+	//}
 
 	//Reset level
 	if (reset_level) {
@@ -261,7 +250,9 @@ bool Scene::Update(float dt)
 		reset_level = false;
 	}
 
-	
+	//Moon animation
+	Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
 
 	//Pause menu
 	Active_MenuPause();

@@ -6,6 +6,7 @@
 #include "Item.h"
 #include <vector>
 #include "GuiControlButton.h"
+#include "Animation.h"
 
 struct SDL_Texture;
 
@@ -118,6 +119,10 @@ private:
 	int current_time;
 	int current_time_pause;
 
+	SDL_Texture* MoonTexture = nullptr;
+	Animation* currentAnimation = nullptr;
+	Animation idle;
+	Vector2D MoonPos;
 
 	bool showBlackTransition = false;
 	float blackTransitionStart;
