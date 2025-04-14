@@ -9,6 +9,8 @@
 #include "Physics.h"
 #include "EntityManager.h"
 
+#define GRAVITY 2.0f
+
 Player::Player() : Entity(EntityType::PLAYER)
 {
 	name = "Player";
@@ -43,10 +45,16 @@ bool Player::Start() {
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
-	currentAnimation = &idle;
+	walk.LoadAnimations(parameters.child("animations").child("walk"));
+	hide.LoadAnimations(parameters.child("animations").child("hide"));
+	crawl.LoadAnimations(parameters.child("animations").child("crawl"));
+	unhide.LoadAnimations(parameters.child("animations").child("unhide"));
+	/*currentAnimation = &idle;*/
+	playerState = IDLE;
+	hide.Reset();
 
 	// L08 TODO 5: Add physics to the player - initialize physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texW / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
 
 	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
 	pbody->listener = this;
@@ -55,7 +63,7 @@ bool Player::Start() {
 	pbody->ctype = ColliderType::PLAYER;
 
 	// Set the gravity of the body
-	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(1);
+	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(GRAVITY);
 
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
@@ -70,13 +78,31 @@ bool Player::Update(float dt)
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
 	// Move left
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) velocity.x = -0.2 * speed;
-	// Move right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) velocity.x = 0.2 * speed;
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
 
+		velocity.x = -0.2 * speed;
+		dir = RIGHT;
+		playerState = WALK; 
+	}
+	// Move right
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
+		velocity.x = 0.2 * speed;
+		dir = LEFT;
+		playerState = WALK;
+	}
+
+	if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE && velocity.x == 0) {
+		
+		playerState = IDLE;
+		
+	}
+	
+
+	
 	//Jump
-	if (isJumping && lastJump <= 25)lastJump++;
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+	if (isJumping && lastJump <= 25) lastJump++;
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN /*|| Engine::GetInstance().input.get()->pads[0].b*/) {
+		
 		if (!isJumping) {
 			// Apply an initial upward force
 			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
@@ -91,19 +117,52 @@ bool Player::Update(float dt)
 	}
 
 	// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
-	if(isJumping == true) velocity.y = pbody->body->GetLinearVelocity().y;
+	
 		
 	// hide
-	if (!isClimbing && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+	
+	if (!isClimbing && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
+
 		isJumping = false;
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
-			velocity.x /= 4;
+		if (playerState != CRAWL) {
+			playerState = HIDE;
 		}
+
+		// crawl
+		if (playerState == HIDE && hide.HasFinished()) {
+			
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT
+				/*|| Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
+				velocity.x /= 4;
+				playerState = CRAWL;
+
+			}
+			else {
+				playerState = HIDE;
+			}
+		}
+
+	}
+	
+
+	
+	//Unhide
+	if (/*playerState == CRAWL && */Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP /*|| !Engine::GetInstance().input.get()->pads[0].zl*/) {
+		playerState = UNHIDE;
+		isCrawling = false;
+	}
+	
+
+	if (isJumping == true) {
+		velocity.y = pbody->body->GetLinearVelocity().y;
+		if (velocity.y > 0) playerState = JUMP;
+		else playerState = FALL;
 	}
 
 	//To glide
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
 	{
+		playerState = GLIDE;
 		++glid_time;
 		if (fallForce >= 1.0 &&glid_time > glid_reduce) {
 			fallForce -= 0.1;
@@ -123,17 +182,70 @@ bool Player::Update(float dt)
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) velocity.y = 0.3 * 16;
 	}
 	else {
-		pbody->body->SetGravityScale(1);
+		pbody->body->SetGravityScale(GRAVITY);
 
 	}
 	// Apply the velocity to the player
 	pbody->body->SetLinearVelocity(velocity);
 
+
+	switch (playerState) {
+	case IDLE:
+		currentAnimation = &idle;
+		break;
+	case WALK:
+		currentAnimation = &walk;
+		hide.Reset();
+		
+		break;
+	case JUMP:
+	//	currentAnimation = &jump;
+		break;
+	case FALL:
+	//	currentAnimation = &fall;
+		break;
+	case CLIMB:
+	//	currentAnimation = &hurt;
+		break;
+	case HIDE:
+		if (currentAnimation != &hide) {
+			hide.Reset();
+			currentAnimation = &hide;
+		}
+		break;
+	case CRAWL:
+		currentAnimation = &crawl;
+		unhide.Reset();
+		break;
+	case UNHIDE:
+		if (currentAnimation != &unhide) {
+			unhide.Reset();
+			currentAnimation = &unhide;
+		} 
+
+		if (unhide.HasFinished()) {
+			playerState = IDLE;
+			/*unhide.Reset();
+			hide.Reset();*/
+		}
+	
+		break;
+	case DEAD:
+		/*currentAnimation = &death;*/
+		break;
+	}
+
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH );
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH - 64);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH );
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	if (dir == LEFT) {
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + texH/2, (int)position.getY() + texH/3, &currentAnimation->GetCurrentFrame());
+	}
+	else {
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX() + texH / 2, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
+	}
+	
 	currentAnimation->Update();
 	return true;
 }
@@ -209,7 +321,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 	case ColliderType::CLIMBABLE:
 		isClimbing = false;
-		pbody->body->SetGravityScale(1);
+		pbody->body->SetGravityScale(GRAVITY);
 
 		LOG("End Collision CLIMABLE");
 		break;
@@ -259,7 +371,7 @@ void Player::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH* 1.5, texW / 2, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 3, texW / 3, bodyType::STATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
 
@@ -270,7 +382,7 @@ void Player::ResumeMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH * 1.5, texW / 2, bodyType::DYNAMIC);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 3, texW / 3, bodyType::DYNAMIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
 

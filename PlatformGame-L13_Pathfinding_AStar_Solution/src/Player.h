@@ -4,9 +4,30 @@
 #include "SDL2/SDL.h"
 #include "Box2D/Box2D.h"
 #include "Animation.h"
+#include "Timer.h"
+
+enum Direction {
+
+	LEFT,
+	RIGHT
+};
+
+enum State {
+	IDLE = 0,
+	WALK,
+	JUMP,
+	FALL,
+	HIDE,
+	CRAWL,
+	UNHIDE,
+	CLIMB,
+	GLIDE,
+	DEAD
+};
 
 struct SDL_Texture;
 #define glidDuration 40
+
 
 class Player : public Entity
 {
@@ -54,8 +75,10 @@ public:
 
 	// L08 TODO 5: Add physics to the player - declare a Physics body
 	PhysBody* pbody;
-	float jumpForce = 60.0f; // The force to apply when jumping
+	float jumpForce = 200.0f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
+	bool isHiding = false; // Flag to check if the player is currently hiding
+	bool isCrawling = false;
 	bool canDoubleJump = false;
 	int lastJump = 0;
 	int glid_time = 0;
@@ -67,9 +90,17 @@ public:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+	Animation walk;
+	Animation hide;
+	Animation unhide;
+	Animation crawl;
 
 	bool change_level = false;
 	bool cleanup_pbody = false;
 
 	b2Vec2 velocity;
+	Direction dir = LEFT;
+	State playerState;
+
+	Timer hideTimer;
 };
