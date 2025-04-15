@@ -45,7 +45,6 @@ bool Player::Start() {
 
 	//Load animations
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
-	getUp.LoadAnimations(parameters.child("animations").child("getUp"));
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
