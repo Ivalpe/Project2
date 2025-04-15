@@ -15,6 +15,7 @@
 #include "GuiControl.h"
 #include "GuiManager.h"
 
+
 Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
 {
 	name = "scene";
