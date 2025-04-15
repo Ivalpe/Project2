@@ -15,7 +15,6 @@
 #include "GuiControl.h"
 #include "GuiManager.h"
 
-
 Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
 {
 	name = "scene";
@@ -31,10 +30,10 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 
-	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
-	
+
+
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
@@ -42,7 +41,7 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(200 + (100 * i), 672);
+			item->position = Vector2D(200 + (300 * i), 672);
 
 		}
 
@@ -66,7 +65,18 @@ bool Scene::Awake()
 		
 		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 		item->SetParameters(itemNode);
-		item->position = Vector2D(1500, 1500);
+		item->position = Vector2D(2500, 1500);
+
+	}
+
+	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("blocked_wall"); itemNode; itemNode = itemNode.next_sibling("item"))
+
+	{
+
+		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		item->SetParameters(itemNode);
+		//item->position = Vector2D(4840, 2761);
+		item->position = Vector2D(1500, 2000);
 
 	}
 
@@ -84,7 +94,9 @@ bool Scene::Awake()
 void Scene::CreateItems() 
 {
 	int WaxIndex = 0;
+	int fatherIndex = 0;
 	std::vector<Vector2D> waxPositions;
+	std::vector<Vector2D> factherPositions;
 
 	if (level == 0) {
 
@@ -94,6 +106,12 @@ void Scene::CreateItems()
 		  Vector2D(500, 672)
 		};
 
+		factherPositions = {
+		  Vector2D(900, 400),
+		  Vector2D(110, 400),
+		  Vector2D(130, 400)
+		};
+
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
@@ -101,14 +119,15 @@ void Scene::CreateItems()
 		}
 
 		for (auto& it : itemList) {
-			if (it->name == "feather" && WaxIndex < waxPositions.size()) {
-				it->position = waxPositions[WaxIndex++];
+			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
+				it->position = factherPositions[fatherIndex++];
 			}
 		}
 	}
 	else {
+
 		for (auto& it : itemList) {
-			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
+			if ((it->name == "wax" || it->name == "feather") && WaxIndex < waxPositions.size()) {
 				it->CleanUp();
 			}
 		}
@@ -120,7 +139,6 @@ void Scene::CreateItems()
 // Called before the first frame
 bool Scene::Start()
 {
-	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 
 	// Texture to highligh mouse position 
@@ -139,30 +157,30 @@ bool Scene::Start()
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
+	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
+
+	idle.LoadAnimations(configParameters.child("textures").child("moon").child("animations").child("idle"));
+	currentAnimation = &idle;
+	MoonPos.setX(configParameters.child("textures").child("moon").attribute("x").as_int());
+	MoonPos.setY(configParameters.child("textures").child("moon").attribute("y").as_int());
 
 	return true;
 }
 
 void Scene::Change_level(int level)
 {
-
 	if (level == 0)
 	{
-		Uint32 startTime = SDL_GetTicks();
-
 		Engine::GetInstance().map.get()->CleanUp();
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems();
 		//CreateEnemies();
-
 	}
 
 	if (level == 1)
 	{
-		Uint32 startTime = SDL_GetTicks();
-
 		Engine::GetInstance().map.get()->CleanUp();
 		//REMOVE // WHEN SECOND STAGE ENEMYS ADDED
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
@@ -170,6 +188,8 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 		CreateItems();
 
+		showBlackTransition = true;
+		blackTransitionStart = SDL_GetTicks();
 	}
 }
 
@@ -188,48 +208,34 @@ bool Scene::Update(float dt)
 
 
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py - 700);
+	Engine::GetInstance().render.get()->camera.y = -(Py - 600 + player->crouch);
 
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
-
-	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	//	Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-
-	// L10 TODO 6: Implement a method that repositions the player in the map with a mouse click
 	
-	//Get mouse position and obtain the map coordinate
-	Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
-	Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x,
-																     mousePos.getY() - Engine::GetInstance().render.get()->camera.y);
+	////Get mouse position and obtain the map coordinate
+	//Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
+	//Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x,
+	//															     mousePos.getY() - Engine::GetInstance().render.get()->camera.y);
 
 
-	//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
-	Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(),mouseTile.getY());
-	SDL_Rect rect = { 0,0,32,32 };
-	Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
-													highlightTile.getX(),
-													highlightTile.getY(),
-													&rect);
+	////Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
+	//Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(),mouseTile.getY());
+	//SDL_Rect rect = { 0,0,32,32 };
+	//Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
+	//												highlightTile.getX(),
+	//												highlightTile.getY(),
+	//												&rect);
 
-	// saves the tile pos for debugging purposes
-	if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
-		tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
-		once = true;
-	}
+	//// saves the tile pos for debugging purposes
+	//if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
+	//	tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
+	//	once = true;
+	//}
 
-	//If mouse button is pressed modify enemy position
-	if (Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_DOWN) {
-		enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-		enemyList[0]->ResetPath();
-	}
+	////If mouse button is pressed modify enemy position
+	//if (Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_DOWN) {
+	//	enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
+	//	enemyList[0]->ResetPath();
+	//}
 
 	//Reset level
 	if (reset_level) {
@@ -239,6 +245,11 @@ bool Scene::Update(float dt)
 		reset_level = false;
 	}
 
+	//Moon animation
+	if(level ==0){
+	Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
+	}
 	//Pause menu
 	Active_MenuPause();
 
@@ -270,6 +281,23 @@ bool Scene::PostUpdate()
 	show_UI();
 	
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) Engine::GetInstance().map.get()->DrawFront();
+
+	if (showBlackTransition) {
+		Uint32 now = SDL_GetTicks();
+		Uint32 elapsed = now - blackTransitionStart;
+
+		if (elapsed < blackTransitionDuration) {
+
+			Uint8 alpha = 255 * (1 - (float(elapsed) / blackTransitionDuration));  // Reduce la opacidad gradualmente
+
+			SDL_Rect BlackTransition = { 0, 0, 1920, 1080 };
+			SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 0, 0, 0, alpha);
+			SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &BlackTransition);
+		}
+		else {
+			showBlackTransition = false; // Termina la transiciï¿½n
+		}
+	}
 	return ret;
 }
 
@@ -287,7 +315,7 @@ void Scene::show_UI() {
 
 		if (current_time > 180) UI = false; //3 seconds
 	}
-	if (!showPauseMenu && !showSettingsMenu && UI || UI) {
+	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
 
 		//Life texture
 		for (int i = 0; i < player->GetWax(); i++) {
@@ -329,13 +357,22 @@ void Scene::GameOver_State()
 
 		Engine::GetInstance().render.get()->DrawTexture(GameOver, -cameraX, -cameraY);
 
-		SDL_Rect Continue = { 865, 760, 245, 75 };
-		SDL_Rect Exit = { 940, 860, 95, 75 };
+		int textWidthContinue, textHeightContinue;
+		int textWidthExit, textHeightExit;
+		int textWidthSentence, textHeightSentence;
+
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, don't seek the strength int the light, seek it in the shades", &textWidthSentence, &textHeightSentence);
+
+		SDL_Rect Continue = { 865, 760, textWidthContinue + 20, textHeightContinue + 10 };
+		SDL_Rect Exit = { 940, 860, textWidthExit + 20, textHeightExit + 10 };
+		SDL_Rect Sentence = { 260-85, 600, textWidthSentence + 20, textHeightSentence + 10 };
 
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
-
-		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", 260, 600, 1400, 65);
+		
+		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
 	}
 		
@@ -439,7 +476,7 @@ void Scene::MenuSettings()
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
 
-	float scaleFactor = 0.5f; // Reducir tamaño al 50%
+	float scaleFactor = 0.5f; // Reducir tamaï¿½o al 50%
 
 	int textWidthSettingsTitle, textHeightSettingsTitle;
 	int textWidthMusicVolume, textHeightMusicVolume;

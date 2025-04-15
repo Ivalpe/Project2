@@ -6,6 +6,7 @@
 #include "Item.h"
 #include <vector>
 #include "GuiControlButton.h"
+#include "Animation.h"
 
 struct SDL_Texture;
 
@@ -101,8 +102,6 @@ private:
 	SDL_Texture* mouseTileTex = nullptr;
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
-	
-	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
 	Enemy* enemy;
 	std::vector<Enemy*> enemyList;
@@ -118,4 +117,12 @@ private:
 	int current_time;
 	int current_time_pause;
 
+	SDL_Texture* MoonTexture = nullptr;
+	Animation* currentAnimation = nullptr;
+	Animation idle;
+	Vector2D MoonPos;
+
+	bool showBlackTransition = false;
+	float blackTransitionStart;
+	int blackTransitionDuration = 4000;
 };

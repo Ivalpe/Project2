@@ -101,6 +101,9 @@ public:
 	bool change_level = false;
 	bool cleanup_pbody = false;
 
+	int crouch = 0;
+	int CntCrouch = 0;
+
 	b2Vec2 velocity;
 	Direction dir = LEFT;
 	State playerState;

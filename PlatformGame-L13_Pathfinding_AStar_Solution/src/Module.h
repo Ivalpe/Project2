@@ -54,7 +54,6 @@ public:
 		return true;
 	}
 	
-	//L05 TODO 4a: Declare a function to read the XML parameters	
 	virtual bool LoadParameters(pugi::xml_node parameters)
 	{
 		configParameters = parameters;
@@ -70,7 +69,6 @@ public:
 
 	std::string name;
 	bool active;
-	//L05 TODO 4a: Declare a pugi::xml_node to store the module configuration parameters
 	pugi::xml_node configParameters;
 
 };

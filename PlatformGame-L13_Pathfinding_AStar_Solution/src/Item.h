@@ -31,25 +31,30 @@ public:
 	bool isWax = false;
 	bool isFeather = false;
 	bool isStalactites = false;
+	bool isWall = false;
 	int apear = true;
 private:
 
 	SDL_Texture* texture;
 	SDL_Texture* Feather_texture;
 	SDL_Texture* Stalactites_texture;
+	SDL_Texture* Wall_texture;
 	const char* texturePath;
 	int texW, texH;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation* currentAnimation_feather = nullptr;
 	Animation* currentAnimation_stalactities = nullptr;
+	Animation* currentAnimation_wall = nullptr;
 	Animation idle;
 	Animation idle_feather;
 	Animation idle_Stalactites;
 	Animation idle_stalactites_falls;
-	//L08 TODO 4: Add a physics to an item
+	Animation idle_wall;
+	Animation idle_raise;
+  
 	PhysBody* pbody;
-
-
 	bool changecolision = false;
+
+	bool Wallraise = false;
 };

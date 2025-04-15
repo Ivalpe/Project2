@@ -37,7 +37,6 @@ bool Map::Update(float dt)
 
     if (mapLoaded) {
 
-        // L07 TODO 5: Prepare the loop to draw all tiles in a layer + DrawTexture()
         // iterate all tiles in a layer
         for (const auto& mapLayer : mapData.layers) {
             //Check if the property Draw exist get the value, if it's true draw the lawyer
@@ -45,13 +44,10 @@ bool Map::Update(float dt)
                 for (int i = 0; i < mapData.width; i++) {
                     for (int j = 0; j < mapData.height; j++) {
 
-                        // L07 TODO 9: Complete the draw function
-
                         //Get the gid from tile
                         int gid = mapLayer->Get(i, j);
                         //Check if the gid is different from 0 - some tiles are empty
                         if (gid != 0) {
-                            //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
                             TileSet* tileSet = GetTilesetFromTileId(gid);
                             if (tileSet != nullptr) {
                                 //Get the Rect from the tileSetTexture;
@@ -100,7 +96,6 @@ void Map::DrawFront() {
         }
     }
 }
-// L09: TODO 2: Implement function to the Tileset based on a tile id
 TileSet* Map::GetTilesetFromTileId(int gid) const
 {
 	TileSet* set = nullptr;
@@ -126,13 +121,11 @@ bool Map::CleanUp()
     }
     Engine::GetInstance().physics->listToDelete.clear();
 
-    // L06: TODO 2: Make sure you clean up any memory allocated from tilesets/map
     for (const auto& tileset : mapData.tilesets) {
         delete tileset;
     }
     mapData.tilesets.clear();
 
-    // L07 TODO 2: clean up all layer data
     for (const auto& layer : mapData.layers)
     {
         delete layer;
@@ -162,14 +155,12 @@ bool Map::Load(std::string path, std::string fileName)
     }
     else {
 
-        // L06: TODO 3: Implement LoadMap to load the map properties
         // retrieve the paremeters of the <map> node and store the into the mapData struct
         mapData.width = mapFileXML.child("map").attribute("width").as_int();
         mapData.height = mapFileXML.child("map").attribute("height").as_int();
         mapData.tileWidth = mapFileXML.child("map").attribute("tilewidth").as_int();
         mapData.tileHeight = mapFileXML.child("map").attribute("tileheight").as_int();
 
-        // L10: TODO 2: Define a property to store the MapType and Load it from the map
         std::string orientationStr = mapFileXML.child("map").attribute("orientation").as_string();
         if (orientationStr == "orthogonal") {
             mapData.orientation = MapOrientation::ORTOGRAPHIC;
@@ -181,8 +172,6 @@ bool Map::Load(std::string path, std::string fileName)
             LOG("Map orientation not found");
             ret = false;
         }
-
-        // L06: TODO 4: Implement the LoadTileSet function to load the tileset properties
        
         //Iterate the Tileset
         for(pugi::xml_node tilesetNode = mapFileXML.child("map").child("tileset"); tilesetNode!=NULL; tilesetNode = tilesetNode.next_sibling("tileset"))
@@ -205,10 +194,8 @@ bool Map::Load(std::string path, std::string fileName)
 			mapData.tilesets.push_back(tileSet);
 		}
 
-        // L07: TODO 3: Iterate all layers in the TMX and load each of them
         for (pugi::xml_node layerNode = mapFileXML.child("map").child("layer"); layerNode != NULL; layerNode = layerNode.next_sibling("layer")) {
 
-            // L07: TODO 4: Implement the load of a single layer 
             //Load the attributes and saved in a new MapLayer
             MapLayer* mapLayer = new MapLayer();
             mapLayer->id = layerNode.attribute("id").as_int();
@@ -216,7 +203,6 @@ bool Map::Load(std::string path, std::string fileName)
             mapLayer->width = layerNode.attribute("width").as_int();
             mapLayer->height = layerNode.attribute("height").as_int();
 
-            //L09: TODO 6 Call Load Layer Properties
             LoadProperties(layerNode, mapLayer->properties);
 
             //Iterate over all the tiles and assign the values in the data array
@@ -228,8 +214,6 @@ bool Map::Load(std::string path, std::string fileName)
             mapData.layers.push_back(mapLayer);
         }
 
-        // L08 TODO 3: Create colliders
-        // L08 TODO 7: Assign collider type
         // Later you can create a function here to load and create the colliders from the map
 
         //Iterate the layer and create colliders
@@ -243,24 +227,6 @@ bool Map::Load(std::string path, std::string fileName)
                             PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX()+ mapData.tileWidth/2, mapCoord.getY()+ mapData.tileHeight/2, mapData.tileWidth, mapData.tileHeight, STATIC);
                             c1->ctype = ColliderType::PLATFORM;
                             Engine::GetInstance().physics->listToDelete.push_back(c1);
-
-                        }
-                    }
-                }
-            }
-        }
-
-        for (const auto& mapLayer : mapData.layers) {
-            if (mapLayer->name == "Damage") {
-                for (int i = 0; i < mapData.width; i++) {
-                    for (int j = 0; j < mapData.height; j++) {
-                        int gid = mapLayer->Get(i, j);
-                        if (gid == 50) {
-                            Vector2D mapCoord = MapToWorld(i, j);
-                            PhysBody* damage = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + mapData.tileWidth / 2, mapCoord.getY() + mapData.tileHeight / 2, mapData.tileWidth, mapData.tileHeight, STATIC);
-                            damage->ctype = ColliderType::DAMAGE;
-                            Engine::GetInstance().physics->listToDelete.push_back(damage);
-                            LOG("Collider de DAMAGE creado en: (%f, %f)", mapCoord.getX(), mapCoord.getY());
 
                         }
                     }
@@ -293,17 +259,27 @@ bool Map::Load(std::string path, std::string fileName)
                 if (layerName == "Climb") {
                     colliderType = ColliderType::CLIMBABLE;
 
-                    // Crear el objeto de colisión con el tipo determinado
+                    // Crear el objeto de colisiï¿½n con el tipo determinado
                     PhysBody* rect = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
                     rect->ctype = ColliderType::CLIMBABLE;
                     Engine::GetInstance().physics->listToDelete.push_back(rect);
 
                 }
 
+                if (layerName == "Damage") {
+                    colliderType = ColliderType::DAMAGE;
+
+                    // Crear el objeto de colisiï¿½n con el tipo determinado
+                    PhysBody* damage = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+                    damage->ctype = ColliderType::DAMAGE;
+                    Engine::GetInstance().physics->listToDelete.push_back(damage);
+
+                }
+
                 if (layerName == "Exit") {
                     colliderType = ColliderType::CHANGE_LEVEL;
 
-                    // Crear el objeto de colisión con el tipo determinado
+                    // Crear el objeto de colisiï¿½n con el tipo determinado
                     PhysBody* Change_level = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
                     Change_level->ctype = ColliderType::CHANGE_LEVEL;
                     Engine::GetInstance().physics->listToDelete.push_back(Change_level);
@@ -314,7 +290,6 @@ bool Map::Load(std::string path, std::string fileName)
 
         ret = true;
         
-        // L06: TODO 5: LOG all the data loaded iterate all tilesetsand LOG everything
         if (ret == true)
         {
             LOG("Successfully parsed map XML file :%s", fileName.c_str());
@@ -349,12 +324,10 @@ bool Map::Load(std::string path, std::string fileName)
     return ret;
 }
 
-// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 Vector2D Map::MapToWorld(int x, int y) const
 {
     Vector2D ret;
 
-    // L09: TODO 3: Get the screen coordinates of tile positions for isometric maps 
     if (mapData.orientation == MapOrientation::ORTOGRAPHIC) {
         ret.setX(x * mapData.tileWidth);
         ret.setY(y * mapData.tileHeight);
@@ -367,7 +340,6 @@ Vector2D Map::MapToWorld(int x, int y) const
     return ret;
 }
 
-// L10: TODO 5: Add method WorldToMap to obtain  map coordinates from screen coordinates 
 Vector2D Map::WorldToMap(int x, int y) {
 
     Vector2D ret(0, 0);
@@ -387,7 +359,6 @@ Vector2D Map::WorldToMap(int x, int y) {
     return ret;
 }
 
-// L09: TODO 6: Load a group of properties from a node and fill a list with it
 bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
     bool ret = false;
@@ -415,7 +386,6 @@ MapLayer* Map::GetNavigationLayer() {
 	return nullptr;
 }
 
-// L09: TODO 7: Implement a method to get the value of a custom property
 Properties::Property* Properties::GetProperty(const char* name)
 {
     for (const auto& property : propertyList) {

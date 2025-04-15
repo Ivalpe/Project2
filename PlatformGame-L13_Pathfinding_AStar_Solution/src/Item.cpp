@@ -34,11 +34,13 @@ bool Item::Start() {
 	isWax = parameters.attribute("isWax").as_bool(false);
 	isFeather = parameters.attribute("isFeather").as_bool(false);
 	isStalactites = parameters.attribute("isStalactites").as_bool(false);
+	isWall = parameters.attribute("isWall").as_bool(false);
 
 	//Initialize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	Feather_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture1").as_string());
 	Stalactites_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture2").as_string());
+	Wall_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture3").as_string());
 
 
 	//Load animations
@@ -53,13 +55,28 @@ bool Item::Start() {
 
 	idle_stalactites_falls.LoadAnimations(parameters.child("animations").child("idle_stalactites_falls"));
 
-	// L08 TODO 4: Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	idle_wall.LoadAnimations(parameters.child("animations").child("idle_wall"));
+	currentAnimation_wall = &idle_wall;
 
-	pbody->listener = this;
+	idle_stalactites_falls.LoadAnimations(parameters.child("animations").child("idle_stalactites_falls"));
+	idle_raise.LoadAnimations(parameters.child("animations").child("idle_raise"));
 
-	// L08 TODO 7: Assign collider type
-	pbody->ctype = ColliderType::ITEM;
+
+	if (name == "wall") 
+	{
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2 , (int)position.getY() - texH/2 , texW, texH, bodyType::STATIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::PLATFORM;
+
+	}
+	else {
+		// L08 TODO 4: Add a physics to an item - initialize the physics body
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+
+		pbody->listener = this;
+		// L08 TODO 7: Assign collider type
+		pbody->ctype = ColliderType::ITEM;
+	}
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -72,26 +89,29 @@ bool Item::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
 
-	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 
 	Player* player = Engine::GetInstance().scene.get()->GetPlayer();
 	if (player != nullptr)
 	{
-		// Comprobar la distancia entre el ítem y el jugador
+		// Comprobar la distancia entre el ï¿½tem y el jugador
 		float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
 		float drop = fabs(position.getX() - player->position.getX());
-		if (isWax && distance < 120.0f && isPicked == 0) {
+		if (isWax && distance < 224.5f && isPicked == 0) {
+			LOG("%f", distance);
+
 			isPicked = 1;
 			Engine::GetInstance().entityManager->wax++;
-			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
+			LOG("ï¿½Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
 
 		}
-		if (isFeather && distance < 130.0f && isPicked == 0) {
+		if (isFeather && distance < 281.0f && isPicked == 0) {
+
 			isPicked = 1;
 			Engine::GetInstance().entityManager->feather++;
-			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->feather);
+			LOG("ï¿½Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->feather);
 
 		}
+
 
 		if (isStalactites && drop < 200 && isPicked == 0)
 		{
@@ -118,7 +138,7 @@ bool Item::Update(float dt)
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;
 
-			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH-2,64,32, bodyType::STATIC);		
+			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH,64,32, bodyType::STATIC);		
 			pbody->listener = this;
 
 			changecolision = false;
@@ -129,10 +149,33 @@ bool Item::Update(float dt)
 		
 	}
 
+	if (isWall) {
 
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+		if(!Wallraise&& Engine::GetInstance().entityManager->feather>=2)
+		{
+
+			currentAnimation_wall = &idle_raise;
+
+			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+			pbody = nullptr;
+
+
+
+			Wallraise = true;
+		}
+
+		Engine::GetInstance().render.get()->DrawTexture(Wall_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_wall->GetCurrentFrame());
+		currentAnimation_wall->Update();
+	}
+
+	if (pbody != NULL) {
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+	}
+
+	
+
 
 	
 
