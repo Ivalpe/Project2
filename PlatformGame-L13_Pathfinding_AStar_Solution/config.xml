@@ -12,7 +12,7 @@
 
   <window>
     <resolution width="1920" height="1080" scale="1"/>
-    <fullscreen value="true"/>
+    <fullscreen value="false"/>
     <borderless value="false"/>
     <resizable value="false"/>
     <fullscreen_window value="false"/>
@@ -45,32 +45,67 @@
 		  </moon>
 	  </textures>
     <entities>
-      <player x="784" y="1500" w="128" h ="128" texture="Assets/Textures/player/Idle_Hide.png" gravity="true">
+      <player x="784" y="600" w="256" h = "256" texture="Assets/Textures/player/ikaro_sheet.png" gravity="true">
         <animations>
-          <idle loop="true" speed ="0.3">
-            <frame x="0" y="0" w="256" h="256"/>
-			<frame x="256" y="0" w="256" h="256"/>
-			<frame x="512" y="0" w="256" h="256"/>
-			<frame x="768" y="0" w="256" h="256"/>
-			<frame x="1024" y="0" w="256" h="256"/>
-			<frame x="1280" y="0" w="256" h="256"/>
-		  </idle>
-		  <hide loop="false" speed ="0.1">
-			<frame x="0" y="256" w="256" h="256"/>
-			<frame x="256" y="256" w="256" h="256"/>
-			<frame x="512" y="256" w="256" h="256"/>
-			<frame x="768" y="256" w="256" h="256"/>
-			<frame x="1024" y="256" w="256" h="256"/>
-			<frame x="1280" y="256" w="256" h="256"/>
-		  </hide>
-		  <getUp loop="false" speed ="0.3">
-			<frame x="1280" y="256" w="256" h="256"/>
-			<frame x="1024" y="256" w="256" h="256"/>
-			<frame x="768" y="256" w="256" h="256"/>
-			<frame x="512" y="256" w="256" h="256"/>
-			<frame x="256" y="256" w="256" h="256"/>
-			<frame x="0" y="256" w="256" h="256"/>
-		  </getUp>
+          <idle loop = "true" speed ="0.3f">
+            <frame x ="0" y="0" w="256" h="256"/>
+            <frame x ="256" y="0" w="256" h="256"/>
+            <frame x ="512" y="0" w="256" h="256"/>
+            <frame x ="768" y="0" w="256" h="256"/>
+            <frame x ="1024" y="0" w="256" h="256"/>
+          </idle>
+          <walk loop = "true" speed ="0.5f">
+            <frame x ="0" y="256" w="256" h="256"/>
+            <frame x ="256" y="256" w="256" h="256"/>
+            <frame x ="512" y="256" w="256" h="256"/>
+            <frame x ="768" y="256" w="256" h="256"/>
+            <frame x ="1024" y="256" w="256" h="256"/>
+            <frame x ="1280" y="256" w="256" h="256"/>
+            <frame x ="1536" y="256" w="256" h="256"/>
+            <frame x ="1792" y="256" w="256" h="256"/>
+          </walk>
+          <hide loop = "false" speed ="0.5f">
+            <frame x ="0" y="512" w="256" h="256"/>
+            <frame x ="256" y="512" w="256" h="256"/>
+            <frame x ="512" y="512" w="256" h="256"/>
+            <frame x ="768" y="512" w="256" h="256"/>
+            <frame x ="1024" y="512" w="256" h="256"/>
+            <frame x ="1280" y="512" w="256" h="256"/>
+          </hide>
+          <crawl loop ="true" speed ="0.1f"> <!-- piece of hide anims -->
+            <frame x ="0" y="768" w="256" h="256"/>
+            <frame x ="256" y="768" w="256" h="256"/>
+          </crawl>
+          <unhide loop ="false"  speed ="0.5f">
+            <frame x ="0" y="768" w="256" h="256"/>
+            <frame x ="256" y="768" w="256" h="256"/>
+            <frame x ="512" y="768" w="256" h="256"/>
+            <frame x ="768" y="768" w="256" h="256"/>
+            <frame x ="1024" y="768" w="256" h="256"/>
+            <frame x ="1280" y="768" w="256" h="256"/>
+          </unhide>
+          <jump loop ="false" speed ="1.0f">
+            <frame x ="0" y="1024" w="256" h="256"/>
+            <frame x ="256" y="1024" w="256" h="256"/>
+            <frame x ="512" y="1024" w="256" h="256"/>
+            <frame x ="768" y="1024" w="256" h="256"/>
+          </jump>
+          <fall loop ="false" speed ="0.7f">
+            <frame x ="1024" y="1024" w="256" h="256"/>
+            <frame x ="1280" y="1024" w="256" h="256"/>
+          </fall>
+          <death loop ="false" speed ="0.5f">
+            <frame x ="0" y="1280" w="256" h="256"/>
+            <frame x ="256" y="1280" w="256" h="256"/>
+            <frame x ="512" y="1280" w="256" h="256"/>
+            <frame x ="768" y="1280" w="256" h="256"/>
+            <frame x ="1024" y="1280" w="256" h="256"/>
+            <frame x ="1280" y="1280" w="256" h="256"/>
+            <frame x ="1536" y="1280" w="256" h="256"/>
+            <frame x ="1792" y="1280" w="256" h="256"/>
+            <frame x ="2048" y="1280" w="256" h="256"/>
+            <frame x ="2304" y="1280" w="256" h="256"/>
+          </death>
         </animations>
       </player>
       <items>
