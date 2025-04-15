@@ -78,9 +78,6 @@ bool Item::Start() {
 		pbody->ctype = ColliderType::ITEM;
 	}
 
-
-
-
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 	
@@ -92,12 +89,11 @@ bool Item::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
 
-	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 
 	Player* player = Engine::GetInstance().scene.get()->GetPlayer();
 	if (player != nullptr)
 	{
-		// Comprobar la distancia entre el ítem y el jugador
+		// Comprobar la distancia entre el ï¿½tem y el jugador
 		float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
 		float drop = fabs(position.getX() - player->position.getX());
 		if (isWax && distance < 224.5f && isPicked == 0) {
@@ -105,14 +101,14 @@ bool Item::Update(float dt)
 
 			isPicked = 1;
 			Engine::GetInstance().entityManager->wax++;
-			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
+			LOG("ï¿½Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
 
 		}
 		if (isFeather && distance < 281.0f && isPicked == 0) {
 
 			isPicked = 1;
 			Engine::GetInstance().entityManager->feather++;
-			LOG("¡Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->feather);
+			LOG("ï¿½Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->feather);
 
 		}
 

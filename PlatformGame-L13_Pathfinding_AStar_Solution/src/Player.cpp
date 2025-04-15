@@ -191,7 +191,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		cleanup_pbody = true;
 		break;
 	case ColliderType::DAMAGE:
-		LOG("Colisión con daño detectada");
+		LOG("ColisiÃ³n con daÃ±o detectada");
 
 		Engine::GetInstance().entityManager.get()->wax--;
 		if (Engine::GetInstance().entityManager.get()->wax > 0) {
@@ -234,7 +234,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		if (cleanup_pbody) {
 
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-			pbody = nullptr;  // Eliminar el cuerpo físico del jugador
+			pbody = nullptr;  // Eliminar el cuerpo fÃ­sico del jugador
 
 			Start();
 

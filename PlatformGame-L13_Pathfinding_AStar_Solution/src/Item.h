@@ -52,7 +52,7 @@ private:
 	Animation idle_stalactites_falls;
 	Animation idle_wall;
 	Animation idle_raise;
-	//L08 TODO 4: Add a physics to an item
+  
 	PhysBody* pbody;
 	bool changecolision = false;
 

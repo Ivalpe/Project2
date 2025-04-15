@@ -31,9 +31,9 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 
-	//L04: TODO 3b: Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
+
 
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
@@ -71,6 +71,7 @@ bool Scene::Awake()
 	}
 
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("blocked_wall"); itemNode; itemNode = itemNode.next_sibling("item"))
+
 	{
 
 		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
@@ -88,6 +89,12 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
+	for (pugi::xml_node platfromNode = configParameters.child("entities").child("platforms").child("platform"); platfromNode; platfromNode = platfromNode.next_sibling("platform"))
+	{
+		Platform* platform = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
+		platform->SetParameters(platfromNode);
+		platformList.push_back(platform);
+	}
 	return ret;
 }
 
@@ -139,7 +146,6 @@ void Scene::CreateItems()
 // Called before the first frame
 bool Scene::Start()
 {
-	//L06 TODO 3: Call the function to load the map. 
 	Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 
 	// Texture to highligh mouse position 
@@ -296,7 +302,7 @@ bool Scene::PostUpdate()
 			SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &BlackTransition);
 		}
 		else {
-			showBlackTransition = false; // Termina la transición
+			showBlackTransition = false; // Termina la transiciï¿½n
 		}
 	}
 	return ret;
@@ -477,7 +483,7 @@ void Scene::MenuSettings()
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
 
-	float scaleFactor = 0.5f; // Reducir tamaño al 50%
+	float scaleFactor = 0.5f; // Reducir tamaï¿½o al 50%
 
 	int textWidthSettingsTitle, textHeightSettingsTitle;
 	int textWidthMusicVolume, textHeightMusicVolume;
