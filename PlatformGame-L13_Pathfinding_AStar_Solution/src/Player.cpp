@@ -49,6 +49,9 @@ bool Player::Start() {
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
 	crawl.LoadAnimations(parameters.child("animations").child("crawl"));
 	unhide.LoadAnimations(parameters.child("animations").child("unhide"));
+	jump.LoadAnimations(parameters.child("animations").child("jump"));
+	fall.LoadAnimations(parameters.child("animations").child("fall"));
+	death.LoadAnimations(parameters.child("animations").child("death"));
 	/*currentAnimation = &idle;*/
 	playerState = IDLE;
 	hide.Reset();
@@ -77,116 +80,137 @@ bool Player::Update(float dt)
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
-	// Move left
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
 
-		velocity.x = -0.2 * speed;
-		dir = RIGHT;
-		playerState = WALK; 
-	}
-	// Move right
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
-		velocity.x = 0.2 * speed;
-		dir = LEFT;
-		playerState = WALK;
+	// press F to die for absolutely no reason lmao (akshually yes, debugging purposes)
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
+		playerState = DEAD;
 	}
 
-	if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE && velocity.x == 0) {
-		
-		playerState = IDLE;
-		
-	}
-	
+	if (playerState != DEAD) {
 
-	
-	//Jump
-	if (isJumping && lastJump <= 25) lastJump++;
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN /*|| Engine::GetInstance().input.get()->pads[0].b*/) {
 		
-		if (!isJumping) {
-			// Apply an initial upward force
-			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
-			isJumping = true;
-			canDoubleJump = true;
+		// Move left
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
+
+			velocity.x = -0.2 * speed;
+			dir = RIGHT;
+			if (playerState != FALL && playerState != JUMP) playerState = WALK;
 		}
-		else if (canDoubleJump && lastJump>25) {
-			pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
-			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
-			canDoubleJump = false;
-		}
-	}
-
-	// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
-	
-		
-	// hide
-	
-	if (!isClimbing && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
-
-		isJumping = false;
-		if (playerState != CRAWL) {
-			playerState = HIDE;
+		// Move right
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
+			velocity.x = 0.2 * speed;
+			dir = LEFT;
+			if (playerState != FALL && playerState != JUMP) playerState = WALK;
 		}
 
-		// crawl
-		if (playerState == HIDE && hide.HasFinished()) {
-			
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT
-				/*|| Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
-				velocity.x /= 4;
-				playerState = CRAWL;
-
+		if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE) {
+			if (velocity.x == 0) {
+				playerState = IDLE;
 			}
-			else {
+		}
+
+
+		//Jump
+		if (isJumping && lastJump <= 25) lastJump++;
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN /*|| Engine::GetInstance().input.get()->pads[0].b*/) {
+
+			if (!isJumping) {
+				// Apply an initial upward force
+				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+				isJumping = true;
+				canDoubleJump = true;
+			}
+			else if (canDoubleJump && lastJump > 25) {
+				pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
+				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+				canDoubleJump = false;
+			}
+		}
+
+		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
+
+
+		// hide
+
+		if (!isClimbing && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
+
+			isJumping = false;
+			if (playerState != CRAWL) {
 				playerState = HIDE;
 			}
+
+			// crawl
+			if (playerState == HIDE && hide.HasFinished()) {
+
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT
+					/*|| Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
+					velocity.x /= 4;
+					playerState = CRAWL;
+
+				}
+				else {
+					playerState = HIDE;
+				}
+			}
+
 		}
 
-	}
-	
-
-	
-	//Unhide
-	if (/*playerState == CRAWL && */Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP /*|| !Engine::GetInstance().input.get()->pads[0].zl*/) {
-		playerState = UNHIDE;
-		isCrawling = false;
-	}
-	
-
-	if (isJumping == true) {
-		velocity.y = pbody->body->GetLinearVelocity().y;
-		if (velocity.y > 0) playerState = JUMP;
-		else playerState = FALL;
-	}
-
-	//To glide
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
-	{
-		playerState = GLIDE;
-		++glid_time;
-		if (fallForce >= 1.0 &&glid_time > glid_reduce) {
-			fallForce -= 0.1;
-			glid_reduce += glidDuration;
+		if (playerState == FALL && velocity.y == 0) {
+			if (velocity.x != 0) playerState = WALK;
+			else playerState = IDLE;
 		}
-		velocity.y = pbody->body->GetLinearVelocity().y/ fallForce;
+
+		//Unhide
+		if (/*playerState == CRAWL && */Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP /*|| !Engine::GetInstance().input.get()->pads[0].zl*/) {
+			playerState = UNHIDE;
+			isCrawling = false;
+		}
+
+
+		if (isJumping == true) {
+			velocity.y = pbody->body->GetLinearVelocity().y;
+			if (velocity.y < 0) playerState = JUMP;
+			/*else playerState = FALL;*/
+		}
+
+		printf("%f\n", velocity.y);
+
+		if (velocity.y > 1.0f) {
+
+			playerState = FALL;
+		}
+
+
+		//To glide
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
+		{
+			playerState = GLIDE;
+			++glid_time;
+			if (fallForce >= 1.0 && glid_time > glid_reduce) {
+				fallForce -= 0.1;
+				glid_reduce += glidDuration;
+			}
+			velocity.y = pbody->body->GetLinearVelocity().y / fallForce;
+		}
+
+		if (isClimbing) {
+			velocity.y = 0;
+			pbody->body->SetGravityScale(0);
+
+			// Move Up
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) velocity.y = -0.3 * 16;
+
+			// Move down
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) velocity.y = 0.3 * 16;
+		}
+		else {
+			pbody->body->SetGravityScale(GRAVITY);
+
+		}
+		// Apply the velocity to the player
+		pbody->body->SetLinearVelocity(velocity);
+
 	}
-
-	if (isClimbing) {
-		velocity.y = 0;
-		pbody->body->SetGravityScale(0);
-
-		// Move Up
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) velocity.y = -0.3 * 16;
-
-		// Move down
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) velocity.y = 0.3 * 16;
-	}
-	else {
-		pbody->body->SetGravityScale(GRAVITY);
-
-	}
-	// Apply the velocity to the player
-	pbody->body->SetLinearVelocity(velocity);
 
 
 	switch (playerState) {
@@ -196,13 +220,19 @@ bool Player::Update(float dt)
 	case WALK:
 		currentAnimation = &walk;
 		hide.Reset();
-		
 		break;
 	case JUMP:
-	//	currentAnimation = &jump;
+		if (currentAnimation != &jump) {
+			jump.Reset();
+			currentAnimation = &jump;
+		}
+
 		break;
 	case FALL:
-	//	currentAnimation = &fall;
+		if (currentAnimation != &fall) {
+			fall.Reset();
+			currentAnimation = &fall;
+		}
 		break;
 	case CLIMB:
 	//	currentAnimation = &hurt;
@@ -231,7 +261,16 @@ bool Player::Update(float dt)
 	
 		break;
 	case DEAD:
-		/*currentAnimation = &death;*/
+		if (currentAnimation != &death) {
+			currentAnimation = &death;
+			deathTimer.Start();
+		}
+		
+		if (deathTimer.ReadSec() >= 2.0f) {
+			Engine::GetInstance().scene.get()->reset_level = true;
+			playerState = IDLE;
+			
+		}
 		break;
 	}
 

@@ -94,6 +94,9 @@ public:
 	Animation hide;
 	Animation unhide;
 	Animation crawl;
+	Animation jump;
+	Animation fall;
+	Animation death;
 
 	bool change_level = false;
 	bool cleanup_pbody = false;
@@ -103,4 +106,5 @@ public:
 	State playerState;
 
 	Timer hideTimer;
+	Timer deathTimer;
 };

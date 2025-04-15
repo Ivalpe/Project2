@@ -12,7 +12,7 @@
 
   <window>
     <resolution width="1920" height="1080" scale="1"/>
-    <fullscreen value="true"/>
+    <fullscreen value="false"/>
     <borderless value="false"/>
     <resizable value="false"/>
     <fullscreen_window value="false"/>
@@ -69,6 +69,28 @@
             <frame x ="1024" y="768" w="256" h="256"/>
             <frame x ="1280" y="768" w="256" h="256"/>
           </unhide>
+          <jump loop ="false" speed ="1.0f">
+            <frame x ="0" y="1024" w="256" h="256"/>
+            <frame x ="256" y="1024" w="256" h="256"/>
+            <frame x ="512" y="1024" w="256" h="256"/>
+            <frame x ="768" y="1024" w="256" h="256"/>
+          </jump>
+          <fall loop ="false" speed ="0.7f">
+            <frame x ="1024" y="1024" w="256" h="256"/>
+            <frame x ="1280" y="1024" w="256" h="256"/>
+          </fall>
+          <death loop ="false" speed ="0.5f">
+            <frame x ="0" y="1280" w="256" h="256"/>
+            <frame x ="256" y="1280" w="256" h="256"/>
+            <frame x ="512" y="1280" w="256" h="256"/>
+            <frame x ="768" y="1280" w="256" h="256"/>
+            <frame x ="1024" y="1280" w="256" h="256"/>
+            <frame x ="1280" y="1280" w="256" h="256"/>
+            <frame x ="1536" y="1280" w="256" h="256"/>
+            <frame x ="1792" y="1280" w="256" h="256"/>
+            <frame x ="2048" y="1280" w="256" h="256"/>
+            <frame x ="2304" y="1280" w="256" h="256"/>
+          </death>
         </animations>
       </player>
       <items>
