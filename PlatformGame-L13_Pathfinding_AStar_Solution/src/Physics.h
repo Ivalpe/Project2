@@ -30,6 +30,8 @@ enum class ColliderType {
 	M_PLATFORM,
 	ENEMY,
 	CLIMBABLE,
+	CHANGE_LEVEL,
+	DAMAGE,
 	UNKNOWN
 	// ..
 };
@@ -83,6 +85,11 @@ public:
 
 	void DeletePhysBody(PhysBody* physBody);
 
+	std::list<PhysBody*> listToDelete;
+
+	// List of physics bodies
+	std::list<PhysBody*> bodiesToDelete;
+
 private:
 
 	// Debug mode
@@ -91,6 +98,5 @@ private:
 	// Box2D World
 	b2World* world;
 
-	// List of physics bodies
-	std::list<PhysBody*> bodiesToDelete;
+	
 };

@@ -40,7 +40,7 @@ bool Map::Update(float dt)
         // iterate all tiles in a layer
         for (const auto& mapLayer : mapData.layers) {
             //Check if the property Draw exist get the value, if it's true draw the lawyer
-            if (mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+            if (mapLayer->name!="Front" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
                 for (int i = 0; i < mapData.width; i++) {
                     for (int j = 0; j < mapData.height; j++) {
 
@@ -67,6 +67,35 @@ bool Map::Update(float dt)
     return ret;
 }
 
+void Map::DrawFront() {
+    for (const auto& mapLayer : mapData.layers) {
+        //Check if the property Draw exist get the value, if it's true draw the lawyer
+        if (mapLayer->name == "Front" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+            for (int i = 0; i < mapData.width; i++) {
+                for (int j = 0; j < mapData.height; j++) {
+
+                    // L07 TODO 9: Complete the draw function
+
+                    //Get the gid from tile
+                    int gid = mapLayer->Get(i, j);
+                    //Check if the gid is different from 0 - some tiles are empty
+                    if (gid != 0) {
+                        //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
+                        TileSet* tileSet = GetTilesetFromTileId(gid);
+                        if (tileSet != nullptr) {
+                            //Get the Rect from the tileSetTexture;
+                            SDL_Rect tileRect = tileSet->GetRect(gid);
+                            //Get the screen coordinates from the tile coordinates
+                            Vector2D mapCoord = MapToWorld(i, j);
+                            //Draw the texture
+                            Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 TileSet* Map::GetTilesetFromTileId(int gid) const
 {
 	TileSet* set = nullptr;
@@ -85,6 +114,12 @@ TileSet* Map::GetTilesetFromTileId(int gid) const
 bool Map::CleanUp()
 {
     LOG("Unloading map");
+
+    for (PhysBody* body : Engine::GetInstance().physics->listToDelete)
+    {
+        Engine::GetInstance().physics->DeletePhysBody(body);
+    }
+    Engine::GetInstance().physics->listToDelete.clear();
 
     for (const auto& tileset : mapData.tilesets) {
         delete tileset;
@@ -191,25 +226,65 @@ bool Map::Load(std::string path, std::string fileName)
                             Vector2D mapCoord = MapToWorld(i, j);
                             PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX()+ mapData.tileWidth/2, mapCoord.getY()+ mapData.tileHeight/2, mapData.tileWidth, mapData.tileHeight, STATIC);
                             c1->ctype = ColliderType::PLATFORM;
+                            Engine::GetInstance().physics->listToDelete.push_back(c1);
+
                         }
                     }
                 }
             }
         }
 
-        //Iterate the layer and create climb
-        for (const auto& mapLayer : mapData.layers) {
-            if (mapLayer->name == "Climb") {
-                for (int i = 0; i < mapData.width; i++) {
-                    for (int j = 0; j < mapData.height; j++) {
-                        int gid = mapLayer->Get(i, j);
-                        if (gid == 50) {
-                            Vector2D mapCoord = MapToWorld(i, j);
-                            PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + mapData.tileWidth / 2, mapCoord.getY() + mapData.tileHeight / 2, mapData.tileWidth, mapData.tileHeight, STATIC);
-                            c1->ctype = ColliderType::CLIMBABLE;
-                        }
-                    }
+        // L08 TODO 3: Create colliders
+        float x = 0.0f;
+        float y = 0.0f;
+        float width = 0.0f;
+        float height = 0.0f;
+
+        for (pugi::xml_node layerNode = mapFileXML.child("map").child("objectgroup"); layerNode != NULL; layerNode = layerNode.next_sibling("objectgroup")) {
+
+            //Get objet group name(PLATFORM OR SPIKE)
+            std::string layerName = layerNode.attribute("name").as_string();
+
+            for (pugi::xml_node tileNode = layerNode.child("object"); tileNode != NULL; tileNode = tileNode.next_sibling("object")) {
+
+                // Asigna los valores correctos desde el XML
+                x = tileNode.attribute("x").as_float();
+                y = tileNode.attribute("y").as_float();
+                width = tileNode.attribute("width").as_float();
+                height = tileNode.attribute("height").as_float();
+
+                ColliderType colliderType = ColliderType::PLATFORM; // Valor por defecto
+
+                // If layer name is "spike" then asign type spike AQUI ES LO DE LAS CAPAS
+                if (layerName == "Climb") {
+                    colliderType = ColliderType::CLIMBABLE;
+
+                    // Crear el objeto de colisi�n con el tipo determinado
+                    PhysBody* rect = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+                    rect->ctype = ColliderType::CLIMBABLE;
+                    Engine::GetInstance().physics->listToDelete.push_back(rect);
+
                 }
+
+                if (layerName == "Damage") {
+                    colliderType = ColliderType::DAMAGE;
+
+                    // Crear el objeto de colisi�n con el tipo determinado
+                    PhysBody* damage = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+                    damage->ctype = ColliderType::DAMAGE;
+                    Engine::GetInstance().physics->listToDelete.push_back(damage);
+
+                }
+
+                if (layerName == "Exit") {
+                    colliderType = ColliderType::CHANGE_LEVEL;
+
+                    // Crear el objeto de colisi�n con el tipo determinado
+                    PhysBody* Change_level = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+                    Change_level->ctype = ColliderType::CHANGE_LEVEL;
+                    Engine::GetInstance().physics->listToDelete.push_back(Change_level);
+                }
+                
             }
         }
 

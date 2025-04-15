@@ -16,6 +16,8 @@ class Audio;
 class Scene;
 class EntityManager;
 class Map;
+class GuiManager;
+
 class Physics;
 
 class Engine
@@ -97,9 +99,12 @@ public:
 
 	std::shared_ptr<EntityManager> entityManager;
 	std::shared_ptr<Map> map;
-
+	std::shared_ptr<GuiManager> guiManager;
 	std::shared_ptr<Physics> physics;
 
+	int maxFrameDuration = 16; 	//Maximun frame duration in miliseconds.
+
+	bool limitFPS;
 
 private: 
 
@@ -107,6 +112,7 @@ private:
 	float dt; 
 	//Frames since startup
 	int frames;
+	int timer;
 
 	// Calculate timing measures
 	// required variables are provided:
@@ -121,8 +127,6 @@ private:
 	float averageFps = 0.0f;
 	int secondsSinceStartup = 0;
 
-	//Maximun frame duration in miliseconds.
-	int maxFrameDuration = 16;
 
 	std::string gameTitle = "Platformer Game";
 

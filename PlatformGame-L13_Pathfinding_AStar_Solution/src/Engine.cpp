@@ -13,6 +13,8 @@
 #include "EntityManager.h"
 #include "Map.h"
 #include "Physics.h"
+#include "GuiManager.h"
+
 
 // Constructor
 Engine::Engine() {
@@ -37,6 +39,7 @@ Engine::Engine() {
     scene = std::make_shared<Scene>();
     map = std::make_shared<Map>();
     entityManager = std::make_shared<EntityManager>();
+    guiManager = std::make_shared<GuiManager>();
 
     // Ordered for awake / Start / Update
     // Reverse order of CleanUp
@@ -49,6 +52,7 @@ Engine::Engine() {
     AddModule(std::static_pointer_cast<Module>(map));
     AddModule(std::static_pointer_cast<Module>(scene));
     AddModule(std::static_pointer_cast<Module>(entityManager));
+    AddModule(std::static_pointer_cast<Module>(guiManager));
 
     // Render last 
     AddModule(std::static_pointer_cast<Module>(render));
@@ -126,6 +130,12 @@ bool Engine::Update() {
 
     if (input->GetWindowEvent(WE_QUIT) == true)
         ret = false;
+    
+    //--------------------------------- DEBUG MODE CODE -------------------------------------
+    if (input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
+        limitFPS = !limitFPS; // Alternar el límite de FPS
+        maxFrameDuration = limitFPS ? 34 : 16; // 33 ms para ~30 FPS, 16 ms para ~60 FPS
+    }
 
     if (ret == true)
         ret = PreUpdate();

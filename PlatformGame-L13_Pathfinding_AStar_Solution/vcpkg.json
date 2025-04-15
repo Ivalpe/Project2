@@ -4,6 +4,10 @@
     "pugixml",
     "sdl2",
     "sdl2-image",
-    "sdl2-mixer"
+    "sdl2-mixer",
+    "sdl2-ttf",
+    "tracy",
+    "vcpkg-cmake",
+    "vcpkg-cmake-config"
   ]
 }

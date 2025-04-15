@@ -53,6 +53,9 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true) return true;
+
+
 	// Pathfinding testing inputs
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 		Vector2D pos = GetPosition();
@@ -115,12 +118,15 @@ bool Enemy::Update(float dt)
 
 	// Draw pathfinding 
 	pathfinding->DrawPath();
-
 	return true;
 }
 
 bool Enemy::CleanUp()
 {
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
+	}
 	return true;
 }
 
@@ -128,17 +134,42 @@ void Enemy::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	pbody->body->SetTransform(bodyPos, 0);
+	if(pbody!=NULL)	pbody->body->SetTransform(bodyPos, 0);	
+
 }
 
 Vector2D Enemy::GetPosition() {
-	b2Vec2 bodyPos = pbody->body->GetTransform().p;
-	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
-	return pos;
+	if (pbody != NULL) {
+		b2Vec2 bodyPos = pbody->body->GetTransform().p;
+		Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
+		return pos;
+	}
+	return Vector2D{ 0,0 };
 }
 
 void Enemy::ResetPath() {
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 	pathfinding->ResetPath(tilePos);
+}
+
+void Enemy::StopMovement() {
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::ENEMY;
+
+	}
+}
+
+void Enemy::ResumeMovement() {
+	if (pbody == nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::ENEMY;
+
+	}
 }
