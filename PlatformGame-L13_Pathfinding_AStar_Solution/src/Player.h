@@ -89,14 +89,8 @@ public:
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle;
-	Animation walk;
-	Animation hide;
-	Animation unhide;
-	Animation crawl;
-	Animation jump;
-	Animation fall;
-	Animation death;
+	Animation idle, walk, hide, unhide, crawl, jump, fall, land, death;
+	
 
 	bool change_level = false;
 	bool cleanup_pbody = false;

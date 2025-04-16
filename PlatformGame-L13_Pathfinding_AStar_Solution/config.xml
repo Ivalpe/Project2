@@ -47,7 +47,7 @@
     <entities>
       <player x="784" y="600" w="256" h = "256" texture="Assets/Textures/player/ikaro_sheet.png" gravity="true">
         <animations>
-          <idle loop = "true" speed ="0.3f">
+          <idle loop = "true" speed ="0.2f">
             <frame x ="0" y="0" w="256" h="256"/>
             <frame x ="256" y="0" w="256" h="256"/>
             <frame x ="512" y="0" w="256" h="256"/>
@@ -90,21 +90,30 @@
             <frame x ="512" y="1024" w="256" h="256"/>
             <frame x ="768" y="1024" w="256" h="256"/>
           </jump>
-          <fall loop ="false" speed ="0.7f">
-            <frame x ="1024" y="1024" w="256" h="256"/>
-            <frame x ="1280" y="1024" w="256" h="256"/>
-          </fall>
-          <death loop ="false" speed ="0.5f">
-            <frame x ="0" y="1280" w="256" h="256"/>
+          <fall loop ="false" speed ="0.3f">
+            <frame x ="0"    y="1280" w="256" h="256"/>
             <frame x ="256" y="1280" w="256" h="256"/>
             <frame x ="512" y="1280" w="256" h="256"/>
             <frame x ="768" y="1280" w="256" h="256"/>
             <frame x ="1024" y="1280" w="256" h="256"/>
-            <frame x ="1280" y="1280" w="256" h="256"/>
-            <frame x ="1536" y="1280" w="256" h="256"/>
+            <!--<frame x ="1280" y="1280" w="256" h="256"/>-->
+          </fall>
+          <land loop="false" speed =" 0.2f">
+            <!--<frame x ="1536" y="1280" w="256" h="256"/>-->
             <frame x ="1792" y="1280" w="256" h="256"/>
             <frame x ="2048" y="1280" w="256" h="256"/>
-            <frame x ="2304" y="1280" w="256" h="256"/>
+          </land>
+          <death loop ="false" speed ="0.5f">
+            <frame x ="0"   y="1536" w="256" h="256"/>
+            <frame x ="256" y="1536" w="256" h="256"/>
+            <frame x ="512" y="1536" w="256" h="256"/>
+            <frame x ="768" y="1536" w="256" h="256"/>
+            <frame x ="1024" y="1536" w="256" h="256"/>
+            <frame x ="1280" y="1536" w="256" h="256"/>
+            <frame x ="1536" y="1536" w="256" h="256"/>
+            <frame x ="1792" y="1536" w="256" h="256"/>
+            <frame x ="2048" y="1536" w="256" h="256"/>
+            <frame x ="2304" y="1536" w="256" h="256"/>
           </death>
         </animations>
       </player>

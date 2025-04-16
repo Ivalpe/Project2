@@ -52,6 +52,7 @@ bool Player::Start() {
 	unhide.LoadAnimations(parameters.child("animations").child("unhide"));
 	jump.LoadAnimations(parameters.child("animations").child("jump"));
 	fall.LoadAnimations(parameters.child("animations").child("fall"));
+	land.LoadAnimations(parameters.child("animations").child("land"));
 	death.LoadAnimations(parameters.child("animations").child("death"));
 	/*currentAnimation = &idle;*/
 	playerState = IDLE;
@@ -216,7 +217,17 @@ bool Player::Update(float dt)
 
 	switch (playerState) {
 	case IDLE:
-		currentAnimation = &idle;
+		if (currentAnimation == &fall) {
+			land.Reset();
+			currentAnimation = &land;
+		}
+		else if (currentAnimation == &land) {
+			if (land.HasFinished()) currentAnimation = &idle;
+		}
+		else {
+			currentAnimation = &idle;
+		}
+		
 		break;
 	case WALK:
 		currentAnimation = &walk;
