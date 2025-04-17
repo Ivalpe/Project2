@@ -173,3 +173,23 @@ void Enemy::ResumeMovement() {
 
 	}
 }
+
+void Enemy::SetPath(pugi::xml_node pathNode) {
+	route.clear();
+
+	if (pathNode) {
+		for (pugi::xml_node point : pathNode) {
+			float x = point.attribute("x").as_float();
+			float y = point.attribute("y").as_float();
+			route.emplace_back(x, y);
+		}
+
+		//center coordinates
+		/*for (int i = 0; i < route.size(); ++i) {
+			route[i] = Engine::GetInstance().map.get()->WorldToWorldCenteredOnTile(route[i].getX(), route[i].getY());
+		}*/
+
+		int routeDestPointInd = 0;
+		destPoint = route[routeDestPointInd];
+	}
+}

@@ -80,11 +80,21 @@ bool Scene::Awake()
 
 	}
 
-	// Create a enemy using the entity manager 
-	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
+	 //Create a enemy using the entity manager 
+	/*for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
 	{
 		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 		enemy->SetParameters(enemyNode);
+		enemyList.push_back(enemy);
+	}*/
+
+	for (pugi::xml_node instanceNode = configParameters.child("entities").child("enemies").child("instances").child(GetCurrentLevelName().c_str()).child("instance"); instanceNode; instanceNode = instanceNode.next_sibling("instance")) {
+		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity((EntityType)instanceNode.attribute("entityType").as_int());
+		pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child(instanceNode.attribute("enemyType").as_string());
+		enemy->SetParameters(enemyNode);
+		enemy->SetPlayer(player);
+		enemy->SetInstanceParameters(instanceNode);
+		enemy->SetPath(instanceNode);
 		enemyList.push_back(enemy);
 	}
 
@@ -171,6 +181,7 @@ void Scene::Change_level(int level)
 {
 	if (level == 0)
 	{
+		
 		Engine::GetInstance().map.get()->CleanUp();
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
@@ -653,4 +664,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		break;
 	}
 	return true;
+}
+
+std::string Scene::GetCurrentLevelName() {
+	return ;
 }

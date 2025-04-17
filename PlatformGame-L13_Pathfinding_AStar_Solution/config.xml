@@ -99,7 +99,7 @@
             <!--<frame x ="1280" y="1280" w="256" h="256"/>-->
           </fall>
           <land loop="false" speed =" 0.2f">
-            <!--<frame x ="1536" y="1280" w="256" h="256"/>-->
+            <frame x ="1536" y="1280" w="256" h="256"/>
             <frame x ="1792" y="1280" w="256" h="256"/>
             <frame x ="2048" y="1280" w="256" h="256"/>
           </land>
@@ -161,21 +161,21 @@
       </items>
 
       <enemies>
-        <enemy name="badguy" x="448" y="350" w="32" h="32" texture="Assets/Textures/enemy/Idle.png" gravity="true">
+        <soldier  x="448" y="350" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
           <animations>
-            <idle loop="true" speed ="0.5">
-              <frame x="0" y="0" w="32" h="32"/>
-              <frame x="32" y="0" w="32" h="32"/>
-              <frame x="64" y="0" w="32" h="32"/>
-              <frame x="96" y="0" w="32" h="32"/>
-              <frame x="128" y="0" w="32" h="32"/>
-              <frame x="160" y="0" w="32" h="32"/>
-              <frame x="192" y="0" w="32" h="32"/>
-              <frame x="224" y="0" w="32" h="32"/>
-              <frame x="256" y="0" w="32" h="32"/>
+            <idle loop="true" speed ="0.5f">
+              <frame x="0" y="0" w="256" h="256"/>
             </idle>
           </animations>
-          </enemy>
+        </soldier>
+        <instances>
+          <lvl0>
+            <instance enemyType="soldier" entityType ="3">
+              <point x="2560" y="1727"/>
+              <point x="3392" y ="1727"/>
+            </instance>
+          </lvl0>
+        </instances>
       </enemies>
 		<platforms>
 			<platform name="platform" x="800" y="650" w="100" h="32" texture="Assets/Textures/platform.png" gravity="true">
