@@ -4,26 +4,32 @@
 #include "SDL2/SDL.h"
 #include "Animation.h"
 #include "Pathfinding.h"
+#include "Timer.h"
 
+
+class Player;
 struct SDL_Texture;
 
-enum eState {
-	PATROL = 0,
-	CHASING
-};
+
 
 class Enemy : public Entity
 {
 public:
+
+	enum eState {
+		PATROL = 0,
+		CHASING,
+		DEAD
+	};
 
 	Enemy();
 	virtual ~Enemy();
 
 	bool Awake();
 
-	bool Start();
+	virtual bool Start();
 
-	bool Update(float dt);
+	virtual bool Update(float dt);
 
 	bool CleanUp();
 
@@ -35,9 +41,7 @@ public:
 		this->instanceParameters = _instanceParameters;
 	}
 
-	void SetPlayer(Player* _player) {
-		this->player = _player;
-	}
+	void SetPlayer(Player* player);
 
 	void SetPosition(Vector2D pos);
 
@@ -47,13 +51,16 @@ public:
 
 	void SetPath(pugi::xml_node pathNode);
 
+	void OnCollision(PhysBody* physA, PhysBody* physB) override;
+
+	void OnCollisionEnd(PhysBody* physA, PhysBody* physB) override;
 
 	void StopMovement();
 	void ResumeMovement();
 public:
 	int visible = true;
 
-private:
+
 
 	SDL_Texture* texture;
 	const char* texturePath;
@@ -71,5 +78,10 @@ private:
 	//path: list of points the soldier moves across
 	std::vector<Vector2D> route;
 	Vector2D destPoint;
+
+	int speed;
+	int lives;
+	int chaseArea;
+	int attackArea;
 
 };

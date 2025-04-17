@@ -1,29 +1,23 @@
-#include "Enemy.h"
+#include "Soldier.h"
 #include "Engine.h"
 #include "Textures.h"
-#include "Audio.h"
-#include "Input.h"
-#include "Render.h"
-#include "Scene.h"
-#include "Log.h"
 #include "Physics.h"
-#include "Map.h"
+#include "Scene.h"
 #include "Player.h"
+#include "LOG.h"
+#include "Audio.h"
 
-Enemy::Enemy() : Entity(EntityType::ENEMY)
+Soldier::Soldier()
 {
 
 }
 
-Enemy::~Enemy() {
-	delete pathfinding;
+Soldier::~Soldier() {
+	
 }
 
-bool Enemy::Awake() {
-	return true;
-}
 
-bool Enemy::Start() {
+bool Soldier::Start() {
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
@@ -35,7 +29,7 @@ bool Enemy::Start() {
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
-	
+
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
@@ -52,7 +46,7 @@ bool Enemy::Start() {
 	return true;
 }
 
-bool Enemy::Update(float dt)
+bool Soldier::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true) return true;
 
@@ -64,7 +58,7 @@ bool Enemy::Update(float dt)
 	// Pathfinding testing inputs
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 		Vector2D pos = GetPosition();
-		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(),pos.getY());
+		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 		pathfinding->ResetPath(tilePos);
 	}
 
@@ -126,112 +120,9 @@ bool Enemy::Update(float dt)
 	return true;
 }
 
-bool Enemy::CleanUp()
-{
-	if (pbody != nullptr) {
-		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		pbody = nullptr;
-	}
-	return true;
-}
-
-void Enemy::SetPlayer(Player* _player)
-{
-	player = _player;
-}
-
-void Enemy::SetPosition(Vector2D pos) {
-	pos.setX(pos.getX() + texW / 2);
-	pos.setY(pos.getY() + texH / 2);
-	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	if(pbody!=NULL)	pbody->body->SetTransform(bodyPos, 0);	
-
-}
-
-Vector2D Enemy::GetPosition() {
-	if (pbody != NULL) {
-		b2Vec2 bodyPos = pbody->body->GetTransform().p;
-		Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
-		return pos;
-	}
-	return Vector2D{ 0,0 };
-}
-
-void Enemy::ResetPath() {
-	Vector2D pos = GetPosition();
-	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
-	pathfinding->ResetPath(tilePos);
-}
-
-void Enemy::StopMovement() {
-	if (pbody != nullptr) {
-		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
-		pbody->listener = this;
-		pbody->ctype = ColliderType::ENEMY;
-
-	}
-}
-
-void Enemy::ResumeMovement() {
-	if (pbody == nullptr) {
-		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
-		pbody->listener = this;
-		pbody->ctype = ColliderType::ENEMY;
-
-	}
-}
-
-void Enemy::SetPath(pugi::xml_node pathNode) {
-	route.clear();
-
-	if (pathNode) {
-		for (pugi::xml_node point : pathNode) {
-			float x = point.attribute("x").as_float();
-			float y = point.attribute("y").as_float();
-			route.emplace_back(x, y);
-		}
-
-		//center coordinates
-		/*for (int i = 0; i < route.size(); ++i) {
-			route[i] = Engine::GetInstance().map.get()->WorldToWorldCenteredOnTile(route[i].getX(), route[i].getY());
-		}*/
-
-		int routeDestPointInd = 0;
-		destPoint = route[routeDestPointInd];
-	}
-}
-
-void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
-
-
-	switch (physB->ctype)
-	{
-	//case ColliderType::WEAPON:
-	//	if (enemyState != DEAD) {
-	//		
-	//	}
-	//	break;
-	case ColliderType::UNKNOWN:
-		break;
-
-	default:
-		break;
-	}
-}
-
-void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
-{
-	switch (physB->ctype)
-	{
-	case ColliderType::PLATFORM:
-		break;
-
-	case ColliderType::UNKNOWN:
-		break;
-	default:
+void Soldier::OnCollision(PhysBody* physA, PhysBody* physB) {
+	switch (physB->ctype) {
+	case ColliderType::PLAYER:
 		break;
 	}
 }

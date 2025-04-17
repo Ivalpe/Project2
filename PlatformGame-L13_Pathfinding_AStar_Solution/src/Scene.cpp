@@ -12,6 +12,7 @@
 #include "Map.h"
 #include "Item.h"
 #include "Enemy.h"
+#include "Soldier.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
 
@@ -89,7 +90,7 @@ bool Scene::Awake()
 	}*/
 
 	for (pugi::xml_node instanceNode = configParameters.child("entities").child("enemies").child("instances").child(GetCurrentLevelName().c_str()).child("instance"); instanceNode; instanceNode = instanceNode.next_sibling("instance")) {
-		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity((EntityType)instanceNode.attribute("entityType").as_int());
+		Enemy* enemy = (Soldier*)Engine::GetInstance().entityManager->CreateEntity((EntityType)instanceNode.attribute("entityType").as_int());
 		pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child(instanceNode.attribute("enemyType").as_string());
 		enemy->SetParameters(enemyNode);
 		enemy->SetPlayer(player);
@@ -667,5 +668,5 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 }
 
 std::string Scene::GetCurrentLevelName() {
-	return ;
+	return ("lvl" + std::to_string(level));
 }
