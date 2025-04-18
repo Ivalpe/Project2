@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "Item.h"
+#include "InteractiveObject.h"
 #include "Enemy.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
@@ -61,23 +62,23 @@ bool Scene::Awake()
 
 	}
 
-	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("stalactites_item"); itemNode; itemNode = itemNode.next_sibling("item"))
+	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
 	{
 		
-		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-		item->SetParameters(itemNode);
-		item->position = Vector2D(2500, 1500);
+		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
+		interactiveObject->SetParameters(InteractiveObjectNode);
+		interactiveObject->position = Vector2D(2500, 1500);
 
 	}
 
-	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("blocked_wall"); itemNode; itemNode = itemNode.next_sibling("item"))
+	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("blocked_wall"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
 
 	{
 
-		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-		item->SetParameters(itemNode);
+		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
+		interactiveObject->SetParameters(InteractiveObjectNode);
 		//item->position = Vector2D(4840, 2761);
-		item->position = Vector2D(1500, 2000);
+		interactiveObject->position = Vector2D(1500, 2000);
 
 	}
 

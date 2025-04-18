@@ -156,6 +156,7 @@
     <ClCompile Include="src\GuiControlButton.cpp" />
     <ClCompile Include="src\GuiManager.cpp" />
     <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\InteractiveObject.cpp" />
     <ClCompile Include="src\Item.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Map.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="src\GuiControlButton.h" />
     <ClInclude Include="src\GuiManager.h" />
     <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\InteractiveObject.h" />
     <ClInclude Include="src\Item.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Map.h" />
