@@ -123,6 +123,8 @@
 				  </idle_feather>
 			  </animations>
 		  </feather_item>
+	  </items>
+	  <interactiveObject>
 		  <stalactites_item name="stalactites" x="2000" y="1000" w="64" h="64" isStalactites="true" isPicked="false" texture2="Assets/Textures/Stalactites.png" gravity="false">
 			  <animations>
 				  <idle_stalactites loop="true" speed ="0.5">
@@ -148,8 +150,8 @@
 				  </idle_raise>
 			  </animations>
 		  </blocked_wall>
-		  
-      </items>
+	   </interactiveObject>
+   
 
       <enemies>
         <enemy name="badguy" x="448" y="350" w="32" h="32" texture="Assets/Textures/enemy/Idle.png" gravity="true">
