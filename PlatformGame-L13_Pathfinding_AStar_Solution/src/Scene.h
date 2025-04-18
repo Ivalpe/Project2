@@ -123,6 +123,15 @@ private:
 	Animation idle;
 	Vector2D MoonPos;
 
+
+	SDL_Texture* WaxTexture = nullptr;
+	Animation* currentAnimation_wax = nullptr;
+	Animation idle_wax;
+	Animation level1_wax;
+	Animation level2_wax;
+	Animation level3_wax;
+	Animation level4_wax;
+
 	bool showBlackTransition = false;
 	float blackTransitionStart;
 	int blackTransitionDuration = 4000;

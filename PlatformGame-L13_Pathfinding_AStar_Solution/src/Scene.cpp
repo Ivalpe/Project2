@@ -43,7 +43,7 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(200 + (300 * i), 672);
+			item->position = Vector2D(200 + (300 * i), 2761);
 
 		}
 
@@ -56,7 +56,7 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(800 + (100 * i), 400);
+			item->position = Vector2D(800 + (100 * i), 2761);
 
 		}
 
@@ -159,6 +159,15 @@ bool Scene::Start()
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
+
+	idle_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("idle"));
+	currentAnimation_wax = &idle_wax;
+
+	level1_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level1"));
+	level2_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level2"));
+	level3_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level3"));
+	level4_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level4"));
+	
 	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
 
 	idle.LoadAnimations(configParameters.child("textures").child("moon").child("animations").child("idle"));
@@ -318,10 +327,10 @@ void Scene::show_UI() {
 		if (current_time > 180) UI = false; //3 seconds
 	}
 	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
-
+		SDL_Rect sourceRect = { 0, 0, 128, 128 };
 		//Life texture
 		for (int i = 0; i < player->GetWax(); i++) {
-			Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 40), 10, nullptr, false);
+			Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 40), 10, &sourceRect, false);
 		}
 
 		//Wax texture
