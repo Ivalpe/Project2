@@ -37,92 +37,37 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 	
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	//pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
-	//Assign collider type
-	pbody->ctype = ColliderType::ENEMY;
+	////Assign collider type
+	//pbody->ctype = ColliderType::ENEMY;
+	//pbody->listener = this;
 
-	// Set the gravity of the body
-	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+	//// Set the gravity of the body
+	//if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
-	// Initialize pathfinding
-	pathfinding = new Pathfinding();
-	ResetPath();
+	//// Initialize pathfinding
+	//pathfinding = new Pathfinding();
+	//ResetPath();
 
 	return true;
 }
 
 bool Enemy::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true) return true;
-
-	if (enemyState == PATROL) {
-
-	}
+	 return true;
 
 
-	// Pathfinding testing inputs
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-		Vector2D pos = GetPosition();
-		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(),pos.getY());
-		pathfinding->ResetPath(tilePos);
-	}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) {
-		pathfinding->PropagateBFS();
-	}
+	//b2Transform pbodyPos = pbody->body->GetTransform();
+	//position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	//position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateBFS();
-	}
+	//Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	//currentAnimation->Update();
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
-		pathfinding->PropagateDijkstra();
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateDijkstra();
-	}
-
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
-		pathfinding->PropagateAStar(MANHATTAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(MANHATTAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_DOWN) {
-		pathfinding->PropagateAStar(EUCLIDEAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(EUCLIDEAN);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
-		pathfinding->PropagateAStar(SQUARED);
-	}
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_REPEAT &&
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-		pathfinding->PropagateAStar(SQUARED);
-	}
-
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
-
-	// Draw pathfinding 
-	pathfinding->DrawPath();
+	//// Draw pathfinding 
+	//pathfinding->DrawPath();
 	return true;
 }
 
@@ -130,8 +75,12 @@ bool Enemy::CleanUp()
 {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		
 		pbody = nullptr;
 	}
+
+	pathfinding->CleanUp();
+	delete pathfinding;
 	return true;
 }
 
@@ -141,20 +90,14 @@ void Enemy::SetPlayer(Player* _player)
 }
 
 void Enemy::SetPosition(Vector2D pos) {
-	pos.setX(pos.getX() + texW / 2);
-	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	if(pbody!=NULL)	pbody->body->SetTransform(bodyPos, 0);	
-
+	pbody->body->SetTransform(bodyPos, 0);
 }
 
 Vector2D Enemy::GetPosition() {
-	if (pbody != NULL) {
-		b2Vec2 bodyPos = pbody->body->GetTransform().p;
-		Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
-		return pos;
-	}
-	return Vector2D{ 0,0 };
+	b2Vec2 bodyPos = pbody->body->GetTransform().p;
+	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
+	return pos;
 }
 
 void Enemy::ResetPath() {
@@ -184,24 +127,33 @@ void Enemy::ResumeMovement() {
 	}
 }
 
-void Enemy::SetPath(pugi::xml_node pathNode) {
+void Enemy::SetPath(pugi::xml_node pathNode)
+{
 	route.clear();
 
-	if (pathNode) {
-		for (pugi::xml_node point : pathNode) {
-			float x = point.attribute("x").as_float();
-			float y = point.attribute("y").as_float();
+	if (pathNode)
+	{
+		for (pugi::xml_node pointNode : pathNode.children("point")) {
+
+			float x = pointNode.attribute("x").as_float();
+			float y = pointNode.attribute("y").as_float();
+
 			route.emplace_back(x, y);
 		}
 
-		//center coordinates
-		/*for (int i = 0; i < route.size(); ++i) {
-			route[i] = Engine::GetInstance().map.get()->WorldToWorldCenteredOnTile(route[i].getX(), route[i].getY());
-		}*/
-
-		int routeDestPointInd = 0;
-		destPoint = route[routeDestPointInd];
+		if (!route.empty()) {
+			destPointIndex = 0;
+			destPoint = route[destPointIndex];
+		}
+	
 	}
+}
+
+
+bool Enemy::CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance)
+{
+	b2Vec2 vectorBetweenPoints = { point1.getX() - point2.getX(), point1.getY() - point2.getY() };
+	return vectorBetweenPoints.Length() < nearDistance;
 }
 
 void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {

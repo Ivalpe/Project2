@@ -19,7 +19,13 @@ public:
 	enum eState {
 		PATROL = 0,
 		CHASING,
+		ATTACK,
 		DEAD
+	};
+
+	enum Direction {
+		LEFT,
+		RIGHT
 	};
 
 	Enemy();
@@ -57,6 +63,9 @@ public:
 
 	void StopMovement();
 	void ResumeMovement();
+
+
+	bool CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance);
 public:
 	int visible = true;
 
@@ -74,14 +83,21 @@ public:
 
 
 	Player* player;
-	eState enemyState = PATROL;
+	eState state = PATROL;
+	Direction dir = LEFT;
+
 	//path: list of points the soldier moves across
 	std::vector<Vector2D> route;
 	Vector2D destPoint;
+	int destPointIndex;
 
 	int speed;
 	int lives;
 	int chaseArea;
 	int attackArea;
+
+	Timer deathTimer;
+	float deathTime;
+	bool dead;
 
 };

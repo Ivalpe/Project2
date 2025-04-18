@@ -42,6 +42,9 @@ bool Map::Update(float dt)
             //Check if the property Draw exist get the value, if it's true draw the lawyer
             if (mapLayer->name!="Front" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
                 for (int i = 0; i < mapData.width; i++) {
+
+
+
                     for (int j = 0; j < mapData.height; j++) {
 
                         //Get the gid from tile
@@ -96,6 +99,7 @@ void Map::DrawFront() {
         }
     }
 }
+
 TileSet* Map::GetTilesetFromTileId(int gid) const
 {
 	TileSet* set = nullptr;
@@ -328,18 +332,38 @@ Vector2D Map::MapToWorld(int x, int y) const
 {
     Vector2D ret;
 
-    if (mapData.orientation == MapOrientation::ORTOGRAPHIC) {
-        ret.setX(x * mapData.tileWidth);
-        ret.setY(y * mapData.tileHeight);
-    }
-	else if (mapData.orientation == MapOrientation::ISOMETRIC) {
-        ret.setX(x * mapData.tileWidth / 2 - y * mapData.tileWidth / 2);
-        ret.setY(x * mapData.tileHeight / 2 + y * mapData.tileHeight / 2);
-    }
+    ret.setX(x * mapData.tileWidth);
+    ret.setY(y * mapData.tileHeight);
 
     return ret;
 }
 
+Vector2D Map::MapToWorldCentered(int x, int y)
+{
+    Vector2D ret;
+
+    ret.setX(x * mapData.tileWidth + mapData.tileWidth / 2);
+    ret.setY(y * mapData.tileHeight + mapData.tileWidth / 2);
+
+    return ret;
+}
+
+Vector2D Map::WorldToWorldCenteredOnTile(int x, int y)
+{
+    Vector2D ret;
+
+    int tileX = x / mapData.tileWidth;
+    int tileY = y / mapData.tileHeight;
+
+    ret.setX(tileX * mapData.tileWidth + mapData.tileWidth / 2);
+    ret.setY(tileY * mapData.tileHeight + mapData.tileHeight / 2);
+
+    return ret;
+}
+
+
+
+// L10: TODO 5: Add method WorldToMap to obtain  map coordinates from screen coordinates 
 Vector2D Map::WorldToMap(int x, int y) {
 
     Vector2D ret(0, 0);

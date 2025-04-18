@@ -175,7 +175,7 @@ bool Player::Update(float dt)
 			/*else playerState = FALL;*/
 		}
 
-		printf("%f\n", velocity.y);
+		//printf("%f\n", velocity.y);
 
 		if (velocity.y > 1.0f) {
 

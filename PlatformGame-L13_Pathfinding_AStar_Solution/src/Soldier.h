@@ -23,12 +23,15 @@ public:
 	bool Update(float dt) override;
 
 	void OnCollision(PhysBody* physA, PhysBody* physB) override;
-
+	PhysBody* chaseSensor;
 
 
 private:
 
 
-	Vector2D destinationPoint;
+	float dist;
+
+	float attackTime;
+	Timer attackTimer;
 	
 };

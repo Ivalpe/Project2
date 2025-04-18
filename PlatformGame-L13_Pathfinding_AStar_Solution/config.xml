@@ -161,7 +161,8 @@
       </items>
 
       <enemies>
-        <soldier  x="448" y="350" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
+        <soldier  x="2560" y="1727" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
+          <properties chaseArea ="400" attackArea ="20" speed ="5" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
           <animations>
             <idle loop="true" speed ="0.5f">
               <frame x="0" y="0" w="256" h="256"/>
@@ -171,7 +172,7 @@
         <instances>
           <lvl0>
             <instance enemyType="soldier" entityType ="3">
-              <point x="2560" y="1727"/>
+              <point x="3000" y="1727"/>
               <point x="3392" y ="1727"/>
             </instance>
           </lvl0>
