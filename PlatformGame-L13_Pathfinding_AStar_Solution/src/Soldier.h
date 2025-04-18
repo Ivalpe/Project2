@@ -25,6 +25,7 @@ public:
 	void OnCollision(PhysBody* physA, PhysBody* physB) override;
 	PhysBody* chaseSensor;
 
+	void MoveToPoint();
 
 private:
 
