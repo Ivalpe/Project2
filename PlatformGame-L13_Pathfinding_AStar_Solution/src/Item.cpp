@@ -123,6 +123,16 @@ bool Item::Update(float dt)
 			changecolision = true;
 		}
 		
+		if (isWall && distance < 370.0f)
+		{
+			LOG("%d", distance);
+			blockText = true;
+						
+		}
+		else {
+			blockText = false;
+
+		}
 	}
 	if (isWax && isPicked == 0) {
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
@@ -144,6 +154,7 @@ bool Item::Update(float dt)
 			changecolision = false;
 		}
 
+
 		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX(), (int)position.getY()+16, &currentAnimation_stalactities->GetCurrentFrame());
 		currentAnimation_stalactities->Update();
 		
@@ -158,14 +169,51 @@ bool Item::Update(float dt)
 
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;
-
-
-
 			Wallraise = true;
-		}
 
+			
+		}
 		Engine::GetInstance().render.get()->DrawTexture(Wall_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_wall->GetCurrentFrame());
 		currentAnimation_wall->Update();
+
+		if (blockText == true)
+		{
+			int textWidthSentence, textHeightSentence;
+
+			if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2)
+			{
+				TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, tiene plumas", &textWidthSentence, &textHeightSentence);
+
+			}
+			else {
+				TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, busca plumas", &textWidthSentence, &textHeightSentence);
+
+			}
+
+			float scale = 0.5;
+			SDL_Rect Sentence = { 960 - 20, 850 + 10,  static_cast<int>(textWidthSentence * scale),  static_cast<int>(textHeightSentence * scale) };
+
+			SDL_Rect Rect = { 960 - 20, 850 + 10, static_cast<int>(textWidthSentence * scale), static_cast<int>(textHeightSentence * scale) };
+			SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 0, 0, 0, 150);
+			SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &Rect);
+
+
+			if (Engine::GetInstance().entityManager->feather >= 2)
+			{
+				LOG("Tiene plumas");
+				Engine::GetInstance().render.get()->DrawText("Ikaros, tiene plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+
+			}
+			else {
+				Engine::GetInstance().render.get()->DrawText("Ikaros, busca plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+
+			}
+		}
+		
+
+
+		
+
 	}
 
 	if (pbody != NULL) {
@@ -173,11 +221,6 @@ bool Item::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 	}
-
-	
-
-
-	
 
 	return true;
 }

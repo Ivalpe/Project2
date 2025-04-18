@@ -57,4 +57,6 @@ private:
 	bool changecolision = false;
 
 	bool Wallraise = false;
+	bool blockText;
+
 };
