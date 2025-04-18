@@ -89,12 +89,15 @@ bool Soldier::Update(float dt) {
             destPoint = route[destPointIndex];
             pathfinding->PropagateAStar(SQUARED, destPoint); // Generar camino hacia el siguiente punto
         }
-       
+        MoveToPoint();
+
         break;
     }
     case CHASING: {
-        Vector2D playerPos = player->pbody->GetPhysBodyWorldPosition();
-     
+		destPoint = player->pbody->GetPhysBodyWorldPosition();
+		pathfinding->PropagateAStar(SQUARED, destPoint); 
+		MoveToPoint();
+
         break;
     }
     case ATTACK: {
@@ -106,7 +109,6 @@ bool Soldier::Update(float dt) {
         break;
     }
 
-    MoveToPoint();
 
     if (Engine::GetInstance().physics.get()->GetDebug()) {
         Engine::GetInstance().render.get()->DrawCircle(position.getX() + texW / 2, position.getY() + texH / 2, chaseArea, 255, 255, 255);
