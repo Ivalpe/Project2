@@ -38,6 +38,7 @@ public:
 public:
 
 	std::list<Entity*> entities;
+	int maxWaxLevel = 1;
 	int wax = 1;
 	int feather = 0;
 };

@@ -43,7 +43,7 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(200 + (300 * i), 2761);
+			item->position = Vector2D(200 + (300 * i), 700);
 
 		}
 
@@ -56,7 +56,7 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(800 + (100 * i), 2761);
+			item->position = Vector2D(800 + (100 * i), 700);
 
 		}
 
@@ -327,6 +327,24 @@ void Scene::show_UI() {
 		if (current_time > 180) UI = false; //3 seconds
 	}
 	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
+
+		if (Engine::GetInstance().entityManager->wax < Engine::GetInstance().entityManager->maxWaxLevel) {
+			Engine::GetInstance().entityManager->wax++;
+			
+			switch (Engine::GetInstance().entityManager->wax) {
+			case 1: currentAnimation = &level1_wax; break;
+			case 2: currentAnimation = &level2_wax; break;
+			case 3: currentAnimation = &level3_wax; break;
+			case 4: currentAnimation = &level4_wax; break;
+			default: currentAnimation = &idle_wax; break;
+			}
+		}
+		else {
+			Engine::GetInstance().entityManager->wax = 1;
+		}
+		currentAnimation->Update();
+
+
 		SDL_Rect sourceRect = { 0, 0, 128, 128 };
 		//Life texture
 		for (int i = 0; i < player->GetWax(); i++) {
