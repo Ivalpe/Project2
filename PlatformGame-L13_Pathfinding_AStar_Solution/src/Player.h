@@ -89,7 +89,7 @@ public:
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, walk, hide, unhide, crawl, jump, fall, land, death;
+	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, death;
 	
 
 	bool change_level = false;
@@ -103,5 +103,6 @@ public:
 	State playerState;
 
 	Timer hideTimer;
+	Timer turnTimer;
 	Timer deathTimer;
 };

@@ -223,7 +223,7 @@ bool Scene::Update(float dt)
 
 
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py - 600 + player->crouch);
+	Engine::GetInstance().render.get()->camera.y = -(Py - 600 /*+ player->crouch*/);
 
 	
 	//Reset level

@@ -67,11 +67,11 @@ bool Soldier::Start() {
 }
 
 bool Soldier::Update(float dt) {
-    if (dead) return false;
+    if (dead) return true;
 
     dist = pbody->GetPhysBodyWorldPosition().distanceEuclidean(player->pbody->GetPhysBodyWorldPosition());
 
-    if (dist > chaseArea) {
+    if (dist > chaseArea && state != PATROL) {
         state = PATROL;
     }
     else if (dist <= chaseArea && dist > attackArea) {
@@ -79,7 +79,8 @@ bool Soldier::Update(float dt) {
     }
     else if (dist <= attackArea) {
         state = ATTACK;
-    }
+    } 
+
 
     switch (state) {
     case PATROL: {
@@ -87,6 +88,7 @@ bool Soldier::Update(float dt) {
         if (CheckIfTwoPointsNear(destPoint, { physPos.getX(), physPos.getY() }, 3)) {
             destPointIndex = (destPointIndex + 1) % route.size();
             destPoint = route[destPointIndex];
+			ResetPath();
             pathfinding->PropagateAStar(SQUARED, destPoint); // Generar camino hacia el siguiente punto
         }
         MoveToPoint();
@@ -94,9 +96,19 @@ bool Soldier::Update(float dt) {
         break;
     }
     case CHASING: {
-		destPoint = player->pbody->GetPhysBodyWorldPosition();
-		pathfinding->PropagateAStar(SQUARED, destPoint); 
-		MoveToPoint();
+
+		if (destPoint != player->pbody->GetPhysBodyWorldPosition()) {
+			destPoint = player->pbody->GetPhysBodyWorldPosition();
+
+		}		
+
+		while (pathfinding->pathTiles.empty()) {
+			
+			pathfinding->PropagateAStar(SQUARED, destPoint);
+			MoveToPoint();
+		}
+		
+		ResetPath();
 
         break;
     }
@@ -109,6 +121,13 @@ bool Soldier::Update(float dt) {
         break;
     }
 
+	//DIRECTION
+	if (pbody->body->GetLinearVelocity().x > 0.2f) {
+		dir = RIGHT;
+	}
+	else if (pbody->body->GetLinearVelocity().x < -0.2f) {
+		dir = LEFT;
+	}
 
     if (Engine::GetInstance().physics.get()->GetDebug()) {
         Engine::GetInstance().render.get()->DrawCircle(position.getX() + texW / 2, position.getY() + texH / 2, chaseArea, 255, 255, 255);
@@ -341,17 +360,20 @@ void Soldier::MoveToPoint() {
 		Vector2D nextTile = pathfinding->pathTiles.back();
 		Vector2D nextTileWorld = Engine::GetInstance().map.get()->MapToWorldCentered(nextTile.getX(), nextTile.getY());
 
-		float nextTileXPhysics = PIXEL_TO_METERS(nextTileWorld.getX());
-		float directionX = nextTileXPhysics - pbody->body->GetPosition().x;
+		Vector2D nextTilePhysics = { PIXEL_TO_METERS(nextTileWorld.getX()), PIXEL_TO_METERS(nextTileWorld.getY()) };
+		b2Vec2 direction = { nextTilePhysics.getX() - pbody->body->GetPosition().x, nextTilePhysics.getY() - pbody->body->GetPosition().y };
+		direction.Normalize();
+		/*float magnitude = abs(directionX);
+		directionX = (magnitude != 0) ? (directionX / magnitude) : 0;*/
 
-		float magnitude = abs(directionX);
-		directionX = (magnitude != 0) ? (directionX / magnitude) : 0;
+		
 
-		pbody->body->SetLinearVelocity({ directionX * speed, 0 }); 
+		pbody->body->SetLinearVelocity({ direction.x * speed, 0 }); 
 
 		if (CheckIfTwoPointsNear({ nextTileWorld.getX(), 0 },
 			{ (float)METERS_TO_PIXELS(pbody->body->GetPosition().x), 0 }, 3)) {
 			pathfinding->pathTiles.pop_back(); 
+			/*ResetPath();*/
 		}
 	}
 }

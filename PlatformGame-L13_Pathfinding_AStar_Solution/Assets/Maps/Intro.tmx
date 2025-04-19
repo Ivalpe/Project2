@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="420" height="67" tilewidth="32" tileheight="32" infinite="0" nextlayerid="23" nextobjectid="13">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="420" height="67" tilewidth="32" tileheight="32" infinite="0" nextlayerid="24" nextobjectid="15">
  <properties>
   <property name="Draw" type="bool" value="true"/>
  </properties>
@@ -140829,5 +140829,9 @@
  </objectgroup>
  <objectgroup id="9" name="Exit">
   <object id="9" x="13138" y="734.126" width="292.738" height="436.596"/>
+ </objectgroup>
+ <objectgroup id="23" name="Climb">
+  <object id="13" x="4096" y="797" width="28" height="736"/>
+  <object id="14" x="4479" y="799" width="26" height="732"/>
  </objectgroup>
 </map>

@@ -53,8 +53,11 @@ bool Player::Start() {
 	jump.LoadAnimations(parameters.child("animations").child("jump"));
 	fall.LoadAnimations(parameters.child("animations").child("fall"));
 	land.LoadAnimations(parameters.child("animations").child("land"));
+	turn2back.LoadAnimations(parameters.child("animations").child("turn2back"));
+	climb.LoadAnimations(parameters.child("animations").child("climb"));
+	turn2front.LoadAnimations(parameters.child("animations").child("turn2front"));
 	death.LoadAnimations(parameters.child("animations").child("death"));
-	/*currentAnimation = &idle;*/
+	
 	playerState = IDLE;
 	hide.Reset();
 
@@ -196,17 +199,33 @@ bool Player::Update(float dt)
 		}
 
 		if (isClimbing) {
+
 			velocity.y = 0;
 			pbody->body->SetGravityScale(0);
 
+			
+			
 			// Move Up
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) velocity.y = -0.3 * 16;
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+				velocity.y = -0.3 * 16;
+				playerState = CLIMB;
+				
+			}
 
 			// Move down
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) velocity.y = 0.3 * 16;
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+				velocity.y = 0.3 * 16;
+				playerState = CLIMB;
+				/*currentAnimation = &climb;*/
+			}
+
+			if (velocity.y != 0) {
+
+			}
 		}
 		else {
 			pbody->body->SetGravityScale(GRAVITY);
+			/*playerState = IDLE;*/
 
 		}
 		// Apply the velocity to the player
@@ -247,7 +266,10 @@ bool Player::Update(float dt)
 		}
 		break;
 	case CLIMB:
-	//	currentAnimation = &hurt;
+		
+		currentAnimation = &climb;
+		
+
 		break;
 	case HIDE:
 		if (currentAnimation != &hide) {
@@ -327,9 +349,21 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::CLIMBABLE:
 
+		
+
+		if (currentAnimation != &turn2back) {
+			turn2back.Reset();
+			currentAnimation = &turn2back;
+			turnTimer.Start();
+
+		}
+		
 		isClimbing = true;
+		playerState = CLIMB;
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		pbody->body->SetGravityScale(0);
+		
+		
 
 		break;
 	case ColliderType::CHANGE_LEVEL:
