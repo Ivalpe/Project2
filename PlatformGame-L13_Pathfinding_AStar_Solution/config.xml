@@ -28,10 +28,10 @@
 		  <Feather path="Assets/Textures/UI/Feather.png"/>
 		  <WaxUI  w="128" h = "128" path="Assets/Textures/wax Sprites.png">
 			  <animations>
-				  <idle loop="false" speed ="0.2">
+				  <idle loop="true" speed ="0.5">
 					  <frame x="0" y="0" w="128" h="128"/>
 				  </idle>
-				  <level1 loop="true" speed ="0.2">
+				  <level1 loop="false" speed ="0.5">
 					  <frame x="0" y="128" w="128" h="128"/>
 					  <frame x="128" y="128" w="128" h="128"/>
 					  <frame x="256" y="128" w="128" h="128"/>
@@ -46,7 +46,7 @@
 					  <frame x="1408" y="128" w="128" h="128"/>
 					  <frame x="1536" y="128" w="128" h="128"/>
 				  </level1>
-				  <level2 loop="true" speed ="0.2">
+				  <level2 loop="false" speed ="0.5">
 					  <frame x="0" y="256" w="128" h="128"/>
 					  <frame x="128" y="256" w="128" h="128"/>
 					  <frame x="256" y="256" w="128" h="128"/>
@@ -61,7 +61,7 @@
 					  <frame x="1408" y="256" w="128" h="128"/>
 					  <frame x="1536" y="256" w="128" h="128"/>
 				  </level2>
-				  <level3 loop="true" speed ="0.2">
+				  <level3 loop="false" speed ="0.5">
 					  <frame x="0" y="384" w="128" h="128"/>
 					  <frame x="128" y="384" w="128" h="128"/>
 					  <frame x="256" y="384" w="128" h="128"/>
@@ -76,7 +76,7 @@
 					  <frame x="1408" y="384" w="128" h="128"/>
 					  <frame x="1536" y="384" w="128" h="128"/>
 				  </level3>
-				  <level4 loop="true" speed ="0.2">
+				  <level4 loop="false" speed ="0.5">
 					  <frame x="0" y="512" w="128" h="128"/>
 					  <frame x="128" y="512" w="128" h="128"/>
 					  <frame x="256" y="512" w="128" h="128"/>

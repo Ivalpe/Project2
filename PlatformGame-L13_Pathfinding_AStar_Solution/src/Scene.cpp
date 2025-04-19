@@ -39,7 +39,7 @@ bool Scene::Awake()
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
@@ -265,6 +265,21 @@ bool Scene::Update(float dt)
 	Active_MenuPause();
 
 	GameOver_State();
+
+	if (Engine::GetInstance().entityManager->wax < Engine::GetInstance().entityManager->maxWaxLevel) {
+		switch (Engine::GetInstance().entityManager->wax % 4) {
+		case 1: currentAnimation_wax = &level1_wax; break;
+		case 2: currentAnimation_wax = &level2_wax; break;
+		case 3: currentAnimation_wax = &level3_wax;   currentAnimation_wax = &level4_wax; break;
+		case 0: currentAnimation_wax = &level4_wax; break;
+		default: currentAnimation_wax = &idle_wax; break;
+		}
+	}
+	/*else {
+		Engine::GetInstance().entityManager->wax = 1;
+	}*/
+	currentAnimation_wax->Update();
+
 	return true;
 }
 
@@ -328,28 +343,46 @@ void Scene::show_UI() {
 	}
 	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
 
-		if (Engine::GetInstance().entityManager->wax < Engine::GetInstance().entityManager->maxWaxLevel) {
-			Engine::GetInstance().entityManager->wax++;
-			
-			switch (Engine::GetInstance().entityManager->wax) {
-			case 1: currentAnimation = &level1_wax; break;
-			case 2: currentAnimation = &level2_wax; break;
-			case 3: currentAnimation = &level3_wax; break;
-			case 4: currentAnimation = &level4_wax; break;
-			default: currentAnimation = &idle_wax; break;
+		int totalWax = Engine::GetInstance().entityManager->wax;
+		int fullChains = totalWax / 4;     // cadenas completas
+		int remainingWax = totalWax % 4;   // wax parcial de la siguiente cadena
+
+		bool showLastAsLevel4 = (remainingWax == 0 && totalWax > 0);
+
+		if (showLastAsLevel4) {
+			fullChains--;
+			level4_wax.Update();
+			currentAnimation_wax->Update();
+		}
+
+		for (int chain = 0; chain < fullChains; chain++) {
+			for (int i = 0; i < 4; i++) {
+				SDL_Rect animRect = idle_wax.GetCurrentFrame(); // siempre llena para las completas
+				Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + ((chain * 4 + i) * 120), 10, &animRect, false);
+			}
+		}
+
+		if (showLastAsLevel4) {
+			for (int i = 0; i < 4; i++) {
+				SDL_Rect animRect = level4_wax.GetCurrentFrame();
+				Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + ((fullChains * 4 + i) * 120), 10, &animRect, false);
 			}
 		}
 		else {
-			Engine::GetInstance().entityManager->wax = 1;
+			// Si no está completa, se muestra como parcial con animación actual
+			for (int i = 0; i < remainingWax; i++) {
+				SDL_Rect animRect = currentAnimation_wax->GetCurrentFrame();
+				Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + ((fullChains * 4 + i) * 120), 10, &animRect, false);
+			}
 		}
-		currentAnimation->Update();
 
+		
+		//SDL_Rect animRect = currentAnimation_wax->GetCurrentFrame();
 
-		SDL_Rect sourceRect = { 0, 0, 128, 128 };
-		//Life texture
-		for (int i = 0; i < player->GetWax(); i++) {
-			Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 40), 10, &sourceRect, false);
-		}
+		////Life texture
+		//for (int i = 0; i < player->GetWax(); i++) {
+		//	Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 120), 10, &animRect, false);
+		//}
 
 		//Wax texture
 		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 50, nullptr, false);
