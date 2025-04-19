@@ -11,6 +11,7 @@
 
 struct SDL_Texture;
 
+
 class Scene : public Module
 {
 public:
@@ -60,6 +61,8 @@ public:
 	void Active_MenuPause();
 	void GameOver_State();
 
+	std::string GetCurrentLevelName();
+
 
 public:
 	// Get tilePosDebug value
@@ -67,6 +70,7 @@ public:
 		return tilePosDebug;
 
 	}
+
 
 	int level = 0;
 	bool reset_level = false;

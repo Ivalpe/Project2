@@ -31,9 +31,10 @@ public:
     int MovementCost(int x, int y);
     void ComputePath(int x, int y);
     void PropagateDijkstra();
+    bool CleanUp();
 
     // L13: A* Pathfinding methods
-    void PropagateAStar(ASTAR_HEURISTICS heuristic);
+    void PropagateAStar(ASTAR_HEURISTICS heuristic, Vector2D destination);
 
 private:
     int Find(std::vector<Vector2D> vector, Vector2D elem);
@@ -48,6 +49,8 @@ public:
     SDL_Texture* pathTex = nullptr;
     Vector2D destination;
 
+
+
     // L12: Dijkstra Pathfinding variables
     std::priority_queue<std::pair<int, Vector2D>, std::vector<std::pair<int, Vector2D>>, std::greater<std::pair<int, Vector2D>> > frontierDijkstra;
     std::vector<Vector2D> breadcrumbs; //list of tiles that form the path
@@ -57,6 +60,14 @@ public:
 
     // L13: A* Pathfinding variables
     std::priority_queue<std::pair<int, Vector2D>, std::vector<std::pair<int, Vector2D>>, std::greater<std::pair<int, Vector2D>> > frontierAStar;
+
+
+    float lowestDistance;
+    Vector2D nearestTile;
+
+
+    int maxIterations = 20;
+    int iterations;
 
     int blockedGid = 49; //Gid of the tiles that block the path - Important adjust this value to your map
     int highCostGid = 50; //Gid of the tiles that have high cost - Important adjust this value to your map

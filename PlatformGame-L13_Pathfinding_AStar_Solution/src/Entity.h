@@ -5,10 +5,11 @@
 
 enum class EntityType
 {
-	PLAYER,
+	PLAYER = 0,
 	ITEM,
 	INTERACTIVEOBJECT,
 	ENEMY,
+	SOLDIER,
 	PLATFORM,
 	UNKNOWN
 };
@@ -67,7 +68,19 @@ public:
 
 	};
 
+
+	/*virtual void SetParameters(pugi::xml_node _parameters) {
+		parameters = _parameters;
+	}
+
+	virtual void SetInstanceParameters(pugi::xml_node _parameters) {
+		instanceParameters = _parameters;
+	}*/
+
 public:
+
+	//pugi::xml_node parameters;
+	//pugi::xml_node instanceParameters;
 
 	std::string name;
 	EntityType type;
@@ -77,4 +90,6 @@ public:
 	// want our Entity class, maybe it's not renderable...
 	Vector2D position;       
 	bool renderable = true;
+
+	
 };

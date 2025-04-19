@@ -12,9 +12,10 @@
 
 Physics::Physics() : Module()
 {
+	debug = true;
 	// Initialise all the internal class variables, at least to NULL pointer
 	world = NULL;
-	debug = true;
+	
 }
 
 // Destructor
@@ -132,6 +133,46 @@ PhysBody* Physics::CreateCircle(int x, int y, int radious, bodyType type)
 	// Return our PhysBody class
 	return pbody;
 }
+
+PhysBody* Physics::CreateCircleSensor(int x, int y, int radious, bodyType type)
+{
+	// Create BODY at position x,y
+	b2BodyDef body;
+
+	if (type == DYNAMIC) body.type = b2_dynamicBody;
+	if (type == STATIC) body.type = b2_staticBody;
+	if (type == KINEMATIC) body.type = b2_kinematicBody;
+
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	// Add BODY to the world
+	b2Body* b = world->CreateBody(&body);
+
+	// Create SHAPE
+	b2CircleShape circle;
+	circle.m_radius = PIXEL_TO_METERS(radious);
+
+	// Create FIXTURE
+	b2FixtureDef fixture;
+	fixture.shape = &circle;
+	fixture.density = 1.0f;
+	fixture.isSensor = true;
+	b->ResetMassData();
+
+	// Add fixture to the BODY
+	b->CreateFixture(&fixture);
+
+	// Create our custom PhysBody class
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	b->GetUserData().pointer = (uintptr_t)pbody;
+	pbody->width = radious * 0.5f;
+	pbody->height = radious * 0.5f;
+
+	// Return our PhysBody class
+	return pbody;
+}
+
 
 PhysBody* Physics::CreateRectangleSensor(int x, int y, int width, int height, bodyType type)
 {
@@ -391,11 +432,11 @@ void Physics::DeletePhysBody(PhysBody* physBody) {
 
 //--------------- PhysBody
 
-void PhysBody::GetPosition(int& x, int& y) const
-{
+Vector2D PhysBody::GetPosition(){
 	b2Vec2 pos = body->GetPosition();
-	x = METERS_TO_PIXELS(pos.x) - (width);
-	y = METERS_TO_PIXELS(pos.y) - (height);
+	float x = METERS_TO_PIXELS(pos.x) - (width);
+	float y = METERS_TO_PIXELS(pos.y) - (height);
+	return { x,y };
 }
 
 float PhysBody::GetRotation() const
@@ -451,4 +492,12 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 	}
 
 	return ret;
+}
+
+Vector2D PhysBody::GetPhysBodyWorldPosition(){
+	return { (float)METERS_TO_PIXELS(body->GetPosition().x), (float)METERS_TO_PIXELS(body->GetPosition().y) };
+}
+
+bool Physics::GetDebug() {
+	return debug;
 }

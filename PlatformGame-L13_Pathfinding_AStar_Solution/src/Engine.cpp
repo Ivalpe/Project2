@@ -66,6 +66,7 @@ Engine& Engine::GetInstance() {
     return instance;
 }
 
+
 void Engine::AddModule(std::shared_ptr<Module> module){
     module->Init();
     moduleList.push_back(module);
@@ -133,9 +134,12 @@ bool Engine::Update() {
     
     //--------------------------------- DEBUG MODE CODE -------------------------------------
     if (input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
+        
         limitFPS = !limitFPS; // Alternar el límite de FPS
         maxFrameDuration = limitFPS ? 34 : 16; // 33 ms para ~30 FPS, 16 ms para ~60 FPS
     }
+
+    
 
     if (ret == true)
         ret = PreUpdate();
@@ -294,5 +298,4 @@ bool Engine::LoadConfig()
 
     return ret;
 }
-
 
