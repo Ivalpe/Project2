@@ -86,6 +86,7 @@ public:
 	float fallForce = 1.5f;
 
 	bool isClimbing=false;
+	bool isTurning = false;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
