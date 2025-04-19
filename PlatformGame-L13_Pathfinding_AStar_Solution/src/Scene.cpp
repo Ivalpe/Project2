@@ -169,6 +169,8 @@ bool Scene::Start()
 	level3_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level3"));
 	level4_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level4"));
 
+	Candle= Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Candle").attribute("path").as_string());
+
 	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
 
 	idle.LoadAnimations(configParameters.child("textures").child("moon").child("animations").child("idle"));
@@ -267,19 +269,16 @@ bool Scene::Update(float dt)
 
 	GameOver_State();
 
-	if (Engine::GetInstance().entityManager->wax < Engine::GetInstance().entityManager->maxWaxLevel) {
-		switch (Engine::GetInstance().entityManager->wax % 4) {
-		case 1: currentAnimation_wax = &level1_wax; break;
-		case 2: currentAnimation_wax = &level2_wax; break;
-		case 3: currentAnimation_wax = &level3_wax; break;
-		case 4: currentAnimation_wax = &level4_wax; break;
-		case 0: currentAnimation_wax = &level4_wax; break;
-		default: currentAnimation_wax = &idle_wax; break;
-		}
+	//Wax animation
+	switch (Engine::GetInstance().entityManager->wax) {
+	case 1: currentAnimation_wax = &level1_wax; break;
+	case 2: currentAnimation_wax = &level2_wax; break;
+	case 3: currentAnimation_wax = &level3_wax; break;
+	case 4: currentAnimation_wax = &level4_wax; break;
+	case 0: currentAnimation_wax = &idle_wax; break;
+	default: currentAnimation_wax = &idle_wax; break;
 	}
-	/*else {
-		Engine::GetInstance().entityManager->wax = 1;
-	}*/
+	
 	currentAnimation_wax->Update();
 
 	return true;
@@ -345,37 +344,13 @@ void Scene::show_UI() {
 	}
 	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
 
-		int totalWax = Engine::GetInstance().entityManager->wax;
-		int fullChains = totalWax / 4;     // cadenas completas
-		int remainingWax = totalWax % 4;   // wax parcial de la siguiente cadena
+		//Crea
+		SDL_Rect animRect = currentAnimation_wax->GetCurrentFrame();
+		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &animRect, false);
 
-		bool showLastAsLevel4 = (remainingWax == 0 && totalWax > 0);
-
-		if (showLastAsLevel4) {
-			fullChains--;
-			level4_wax.Update();
-			currentAnimation_wax->Update();
-		}
-
-		for (int chain = 0; chain < fullChains; chain++) {
-			for (int i = 0; i < 4; i++) {
-				SDL_Rect animRect = idle_wax.GetCurrentFrame(); // siempre llena para las completas
-				Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + ((chain * 4 + i) * 120), 10, &animRect, false);
-			}
-		}
-
-		if (showLastAsLevel4) {
-			for (int i = 0; i < 4; i++) {
-				SDL_Rect animRect = level4_wax.GetCurrentFrame();
-				Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + ((fullChains * 4 + i) * 120), 10, &animRect, false);
-			}
-		}
-		else {
-			// Si no está completa, se muestra como parcial con animación actual
-			for (int i = 0; i < remainingWax; i++) {
-				SDL_Rect animRect = currentAnimation_wax->GetCurrentFrame();
-				Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + ((fullChains * 4 + i) * 120), 10, &animRect, false);
-			}
+		//vela
+		for (int i = 0; i < Engine::GetInstance().entityManager->candle; i++) {
+			Engine::GetInstance().render.get()->DrawTexture(Candle, 120 + (i * 40), 10, nullptr, false);
 		}
 
 
@@ -408,7 +383,7 @@ Vector2D Scene::GetPlayerPosition()
 
 void Scene::GameOver_State()
 {
-	if (Engine::GetInstance().entityManager.get()->wax <= 0) {
+	if (Engine::GetInstance().entityManager->candle <= 0) {
 
 		if (!GameOverMenu) {
 			GameOverMenu = true;

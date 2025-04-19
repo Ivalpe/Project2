@@ -71,6 +71,7 @@ bool Item::Update(float dt)
 
 			isPicked = 1;
 			Engine::GetInstance().entityManager->wax++;
+			player->UpdateWaxToCandle();
 			LOG("�Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
 
 		}

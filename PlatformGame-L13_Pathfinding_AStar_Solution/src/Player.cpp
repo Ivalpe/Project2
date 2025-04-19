@@ -404,8 +404,18 @@ Vector2D Player::GetPosition() {
 }
 
 int Player::GetWax() {
-	return Engine::GetInstance().entityManager.get()->wax;
+
+	return Engine::GetInstance().entityManager->wax;
+
 }
+
+void Player::UpdateWaxToCandle() {
+	if (Engine::GetInstance().entityManager->wax >= 4) {
+		Engine::GetInstance().entityManager->candle += 1;
+		Engine::GetInstance().entityManager->wax = 0;
+	}
+}
+
 
 void Player::StopMovement() {
 	if (pbody != nullptr) {

@@ -82,6 +82,7 @@ public:
 	SDL_Texture* Feather = NULL;
 	SDL_Texture* Feather_UI = NULL;
 	SDL_Texture* Wax = NULL;
+	SDL_Texture* Candle = NULL;
 
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;

@@ -26,6 +26,7 @@
 		  <Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
 		  <GameOver path="Assets/Textures/UI/GameOver.png"/>
 		  <Feather path="Assets/Textures/UI/Feather.png"/>
+		  <Candle path="Assets/Textures/UI/candle ui.png"/>
 		  <WaxUI  w="128" h = "128" path="Assets/Textures/wax Sprites.png">
 			  <animations>
 				  <idle loop="true" speed ="0.5">
