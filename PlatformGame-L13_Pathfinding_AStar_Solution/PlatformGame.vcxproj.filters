@@ -1,64 +1,184 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Audio.cpp" />
-    <ClCompile Include="src\Enemy.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\EntityManager.cpp" />
-    <ClCompile Include="src\GuiControlButton.cpp" />
-    <ClCompile Include="src\GuiManager.cpp" />
-    <ClCompile Include="src\Input.cpp" />
-    <ClCompile Include="src\Item.cpp" />
-    <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\Map.cpp" />
-    <ClCompile Include="src\Pathfinding.cpp" />
-    <ClCompile Include="src\PerfTimer.cpp" />
-    <ClCompile Include="src\Physics.cpp" />
-    <ClCompile Include="src\Platform.cpp" />
-    <ClCompile Include="src\PlatformGame.cpp" />
-    <ClCompile Include="src\Player.cpp" />
-    <ClCompile Include="src\Render.cpp" />
-    <ClCompile Include="src\Scene.cpp" />
-    <ClCompile Include="src\Textures.cpp" />
-    <ClCompile Include="src\Timer.cpp" />
-    <ClCompile Include="src\Vector2D.cpp" />
-    <ClCompile Include="src\Window.cpp" />
-    <ClCompile Include="src\Soldier.cpp" />
+    <ClCompile Include="src\Audio.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Map.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pathfinding.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlatformGame.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Textures.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Window.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GuiControlButton.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GuiManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Enemy.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Item.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PerfTimer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Timer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vector2D.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InteractiveObject.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Animation.h" />
-    <ClInclude Include="src\Audio.h" />
-    <ClInclude Include="src\Enemy.h" />
-    <ClInclude Include="src\Engine.h" />
-    <ClInclude Include="src\Entity.h" />
-    <ClInclude Include="src\EntityManager.h" />
-    <ClInclude Include="src\GuiControl.h" />
-    <ClInclude Include="src\GuiControlButton.h" />
-    <ClInclude Include="src\GuiManager.h" />
-    <ClInclude Include="src\Input.h" />
-    <ClInclude Include="src\Item.h" />
-    <ClInclude Include="src\Log.h" />
-    <ClInclude Include="src\Map.h" />
-    <ClInclude Include="src\Module.h" />
-    <ClInclude Include="src\Pathfinding.h" />
-    <ClInclude Include="src\PerfTimer.h" />
-    <ClInclude Include="src\Physics.h" />
-    <ClInclude Include="src\Platform.h" />
-    <ClInclude Include="src\Player.h" />
-    <ClInclude Include="src\Render.h" />
-    <ClInclude Include="src\Scene.h" />
-    <ClInclude Include="src\Textures.h" />
-    <ClInclude Include="src\Timer.h" />
-    <ClInclude Include="src\Vector2D.h" />
-    <ClInclude Include="src\Window.h" />
-    <ClInclude Include="src\Soldier.h" />
+    <ClInclude Include="src\Audio.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntityManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Map.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Module.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pathfinding.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Textures.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Window.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GuiControl.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GuiControlButton.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GuiManager.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Enemy.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Item.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Player.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Animation.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PerfTimer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Timer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vector2D.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InteractiveObject.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="config.xml" />
+    <None Include=".gitignore">
+      <Filter>Configuration Flles</Filter>
+    </None>
+    <None Include="vcpkg-configuration.json">
+      <Filter>Configuration Flles</Filter>
+    </None>
+    <None Include="vcpkg.json">
+      <Filter>Configuration Flles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".gitignore" />
-    <None Include="vcpkg-configuration.json" />
-    <None Include="vcpkg.json" />
+    <Filter Include="Configuration Flles">
+      <UniqueIdentifier>{78919f73-4063-4a07-9bdb-1287a045fcdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{7e0e5d30-f82f-4062-9bd0-043179193dab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{f599ea0e-4586-4f3c-8679-5c1bb44f2f75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{971bab9d-0cd1-49df-a407-b997b0031ad7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config.xml">
+      <Filter>Configuration Flles</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

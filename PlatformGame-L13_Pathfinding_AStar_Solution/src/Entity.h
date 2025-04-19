@@ -7,6 +7,7 @@ enum class EntityType
 {
 	PLAYER = 0,
 	ITEM,
+	INTERACTIVEOBJECT,
 	ENEMY,
 	SOLDIER,
 	PLATFORM,

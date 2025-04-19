@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Item.h"
+#include "InteractiveObject.h"
 #include <vector>
 #include "GuiControlButton.h"
 #include "Animation.h"
