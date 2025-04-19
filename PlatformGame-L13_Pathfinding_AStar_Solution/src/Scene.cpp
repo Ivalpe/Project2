@@ -24,7 +24,8 @@ Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOv
 
 // Destructor
 Scene::~Scene()
-{}
+{
+}
 
 // Called before render is available
 bool Scene::Awake()
@@ -51,7 +52,7 @@ bool Scene::Awake()
 
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("feather_item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
-	
+
 		for (int i = 0; i < 3; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
@@ -64,7 +65,7 @@ bool Scene::Awake()
 
 	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
 	{
-		
+
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		interactiveObject->position = Vector2D(2500, 1500);
@@ -93,7 +94,7 @@ bool Scene::Awake()
 	return ret;
 }
 
-void Scene::CreateItems() 
+void Scene::CreateItems()
 {
 	int WaxIndex = 0;
 	int fatherIndex = 0;
@@ -134,7 +135,7 @@ void Scene::CreateItems()
 			}
 		}
 	}
-	
+
 }
 
 
@@ -167,7 +168,7 @@ bool Scene::Start()
 	level2_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level2"));
 	level3_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level3"));
 	level4_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level4"));
-	
+
 	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
 
 	idle.LoadAnimations(configParameters.child("textures").child("moon").child("animations").child("idle"));
@@ -221,7 +222,7 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
 	Engine::GetInstance().render.get()->camera.y = -(Py - 600 + player->crouch);
 
-	
+
 	////Get mouse position and obtain the map coordinate
 	//Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
 	//Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x,
@@ -251,15 +252,15 @@ bool Scene::Update(float dt)
 	//Reset level
 	if (reset_level) {
 		Change_level(level);
-		if(level==0) player->SetPosition(Vector2D{ 40,70 });
+		if (level == 0) player->SetPosition(Vector2D{ 40,70 });
 
 		reset_level = false;
 	}
 
 	//Moon animation
-	if(level ==0){
-	Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
+	if (level == 0) {
+		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
 	}
 	//Pause menu
 	Active_MenuPause();
@@ -270,7 +271,8 @@ bool Scene::Update(float dt)
 		switch (Engine::GetInstance().entityManager->wax % 4) {
 		case 1: currentAnimation_wax = &level1_wax; break;
 		case 2: currentAnimation_wax = &level2_wax; break;
-		case 3: currentAnimation_wax = &level3_wax;   currentAnimation_wax = &level4_wax; break;
+		case 3: currentAnimation_wax = &level3_wax; break;
+		case 4: currentAnimation_wax = &level4_wax; break;
 		case 0: currentAnimation_wax = &level4_wax; break;
 		default: currentAnimation_wax = &idle_wax; break;
 		}
@@ -290,7 +292,7 @@ bool Scene::PostUpdate()
 
 	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 	//	ret = false;
-	
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_0) == KEY_DOWN) {
 		Change_level(0);
 		level = 0;
@@ -303,9 +305,9 @@ bool Scene::PostUpdate()
 		player->SetPosition(Vector2D{ 40, 70 });
 	}
 
-	
+
 	show_UI();
-	
+
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) Engine::GetInstance().map.get()->DrawFront();
 
 	if (showBlackTransition) {
@@ -376,7 +378,7 @@ void Scene::show_UI() {
 			}
 		}
 
-		
+
 		//SDL_Rect animRect = currentAnimation_wax->GetCurrentFrame();
 
 		////Life texture
@@ -406,7 +408,7 @@ Vector2D Scene::GetPlayerPosition()
 
 void Scene::GameOver_State()
 {
-	if (Engine::GetInstance().entityManager.get()->wax<=0){
+	if (Engine::GetInstance().entityManager.get()->wax <= 0) {
 
 		if (!GameOverMenu) {
 			GameOverMenu = true;
@@ -429,19 +431,19 @@ void Scene::GameOver_State()
 
 		SDL_Rect Continue = { 865, 760, textWidthContinue + 20, textHeightContinue + 10 };
 		SDL_Rect Exit = { 940, 860, textWidthExit + 20, textHeightExit + 10 };
-		SDL_Rect Sentence = { 260-85, 600, textWidthSentence + 20, textHeightSentence + 10 };
+		SDL_Rect Sentence = { 260 - 85, 600, textWidthSentence + 20, textHeightSentence + 10 };
 
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
-		
+
 		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
 	}
-		
 
-		
-	
-	
+
+
+
+
 }
 
 void Scene::Active_MenuPause() {
@@ -451,7 +453,7 @@ void Scene::Active_MenuPause() {
 		if (showPauseMenu) {
 			player->StopMovement();
 			for (Enemy* enemy : enemyList) {
-				if (enemy!=NULL) {
+				if (enemy != NULL) {
 					enemy->visible = false;
 					enemy->StopMovement();
 				}
@@ -463,7 +465,7 @@ void Scene::Active_MenuPause() {
 				}
 			}
 		}
-		else if(!showPauseMenu){
+		else if (!showPauseMenu) {
 			player->ResumeMovement();
 			for (Enemy* enemy : enemyList) {
 				if (enemy) {
@@ -484,7 +486,7 @@ void Scene::Active_MenuPause() {
 		MenuPause();
 		if (showSettingsMenu) {
 			MenuSettings();
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) 
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
 			{
 				showSettingsMenu = false;
 			}
@@ -516,9 +518,9 @@ void Scene::MenuPause()
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
 
-	SDL_Rect ConitnuesButton = { 862-15, 520-15, textWidthContinue + 20, textHeightContinue + 10 };
-	SDL_Rect Settings = { 882-15, 595-10, textWidthSettings + 20, textHeightSettings + 10 };
-	SDL_Rect Exit = { 919-15, 670-5, textWidthExit + 20, textHeightExit + 10 };
+	SDL_Rect ConitnuesButton = { 862 - 15, 520 - 15, textWidthContinue + 20, textHeightContinue + 10 };
+	SDL_Rect Settings = { 882 - 15, 595 - 10, textWidthSettings + 20, textHeightSettings + 10 };
+	SDL_Rect Exit = { 919 - 15, 670 - 5, textWidthExit + 20, textHeightExit + 10 };
 
 
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Continue", ConitnuesButton, this));
@@ -553,7 +555,7 @@ void Scene::MenuSettings()
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "English", &textWidthEnglish, &textHeightEnglish);
 
 
-	SDL_Rect SettingsTitle = { 860 - 15, 325 - 15, textWidthSettingsTitle +20, textHeightSettingsTitle +10 };
+	SDL_Rect SettingsTitle = { 860 - 15, 325 - 15, textWidthSettingsTitle + 20, textHeightSettingsTitle + 10 };
 	SDL_Rect MusicVolume = { 700 - 15, 485 - 15, static_cast<int>(textWidthMusicVolume * scaleFactor), static_cast<int>(textHeightMusicVolume * scaleFactor) };
 	SDL_Rect AmbientSounds = { 700 - 15, 555 - 15, static_cast<int>(textWidthAmbientSounds * scaleFactor), static_cast<int>(textHeightAmbientSounds * scaleFactor) };
 	SDL_Rect Language = { 700 - 15, 630 - 15, static_cast<int>(textWidthLanguage * scaleFactor), static_cast<int>(textHeightLanguage * scaleFactor) };
@@ -576,7 +578,7 @@ void Scene::MenuSettings()
 	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "  ", FxPosition, this));
 
 	// Prevent both ambient sounds and Music Volume from moving at the same time. Check the mouse position on the Y axis
-	if (mousePos.getX() >= musicPosX && mousePos.getX() <= musicPosX + 6 &&	mousePos.getY() >= 511 - 5 && mousePos.getY() <= 511 + 10)
+	if (mousePos.getX() >= musicPosX && mousePos.getX() <= musicPosX + 6 && mousePos.getY() >= 511 - 5 && mousePos.getY() <= 511 + 10)
 	{
 		mouseOverMusicControl = true; // Mouse is over the music volume control
 	}
@@ -632,10 +634,10 @@ void Scene::MenuSettings()
 		}
 	}
 
-	SDL_Rect newMusicPos = { musicPosX, 511-5, 6, 15 }; // New music volume position 
+	SDL_Rect newMusicPos = { musicPosX, 511 - 5, 6, 15 }; // New music volume position 
 	guiBt->bounds = newMusicPos;
 
-	SDL_Rect newFxPos = { ambient_soundsPosX, 571-5, 6, 15 }; // New music ambient sounds position
+	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5, 6, 15 }; // New music ambient sounds position
 	guiBt1->bounds = newFxPos;
 
 	// Adjust music volume
@@ -660,7 +662,7 @@ void Scene::MenuSettings()
 	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 }
 
-void Scene::DisableGuiControlButtons() 
+void Scene::DisableGuiControlButtons()
 {
 	guiBt->state = GuiControlState::DISABLED;
 	guiBt1->state = GuiControlState::DISABLED;
@@ -708,7 +710,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		Engine::GetInstance().entityManager->feather = 0;
 		break;
 	case 7:// Game Over: Exit
-		
+
 		exit(0);
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
