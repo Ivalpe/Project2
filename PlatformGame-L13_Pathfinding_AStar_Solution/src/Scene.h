@@ -46,14 +46,13 @@ public:
 
 	Player* GetPlayer() const { return player; }
 
-	void CreateItems();
+	void CreateItems(int level);
 
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
 	void DisableGuiControlButtons();
 	
 	//UI items
-	void items_UI();
 	void show_UI();
 	//Menus
 	void MenuSettings();
