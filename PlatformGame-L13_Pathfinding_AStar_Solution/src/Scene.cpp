@@ -17,6 +17,8 @@
 #include "GuiManager.h"
 
 
+
+
 Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
 {
 	name = "scene";
@@ -161,15 +163,19 @@ bool Scene::Start()
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
 
-	idle_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("idle"));
-	currentAnimation_wax = &idle_wax;
+	/*idle_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("idle"));
+	currentAnimation_wax = &idle_wax;*/
+	empty.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("empty"));
+	fill2lvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl1"));
+	staticlvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("still_lvl1"));
+	fill2lvl2.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl2"));
+	staticlvl2.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("still_lvl2"));
+	fill2lvl3.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl3"));
+	staticlvl3.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("still_lvl3"));
+	fill2full.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_full"));
+	full.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("full"));
 
-	level1_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level1"));
-	level2_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level2"));
-	level3_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level3"));
-	level4_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("level4"));
-
-	Candle= Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Candle").attribute("path").as_string());
+	candle = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Candle").attribute("path").as_string());
 
 	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
 
@@ -269,17 +275,63 @@ bool Scene::Update(float dt)
 
 	GameOver_State();
 
+	
+	if (!filledWaxy) {
+		if (waxState == FULL) resetWax.Start();
+		
+		FillWaxy();
+	}
+
+	if (!drainedWaxy) {
+		if (waxState == EMPTY) resetWax.Start();
+		DrainWaxy();
+	}
+
 	//Wax animation
-	switch (Engine::GetInstance().entityManager->wax) {
-	case 1: currentAnimation_wax = &level1_wax; break;
-	case 2: currentAnimation_wax = &level2_wax; break;
-	case 3: currentAnimation_wax = &level3_wax; break;
-	case 4: currentAnimation_wax = &level4_wax; break;
-	case 0: currentAnimation_wax = &idle_wax; break;
-	default: currentAnimation_wax = &idle_wax; break;
+	switch (waxState) 
+	{
+	case EMPTY: 
+		currentWaxAnim = &empty;
+		break;
+	case FILL_TO_LOW:
+		if (currentWaxAnim != &fill2lvl1) {
+			fill2lvl1.Reset();
+			currentWaxAnim = &fill2lvl1;
+		}
+		break;
+	case QUARTER_FULL:
+		currentWaxAnim = &staticlvl1;
+		break;
+	case FILL_TO_HALF:
+		if (currentWaxAnim != &fill2lvl2) {
+			fill2lvl2.Reset();
+			currentWaxAnim = &fill2lvl2;
+		}
+		break;
+	case HALF_FULL:
+		currentWaxAnim = &staticlvl2;
+		break;
+	case FILL_TO_HIGH:
+		if (currentWaxAnim != &fill2lvl3) {
+			fill2lvl3.Reset();
+			currentWaxAnim = &fill2lvl3;
+		}
+		break;
+	case ALMOST_FULL:
+		currentWaxAnim = &staticlvl3;
+		break;
+	case FILL_TO_FULL:
+		if (currentWaxAnim != &fill2full) {
+			fill2full.Reset();
+			currentWaxAnim = &fill2full;
+		}
+		break;
+	case FULL: 
+		currentWaxAnim = &full; 
+		break;
 	}
 	
-	currentAnimation_wax->Update();
+	currentWaxAnim->Update();
 
 	return true;
 }
@@ -345,12 +397,12 @@ void Scene::show_UI() {
 	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
 
 		//Crea
-		SDL_Rect animRect = currentAnimation_wax->GetCurrentFrame();
-		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &animRect, false);
+		
+		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &currentWaxAnim->GetCurrentFrame(), false);
 
 		//vela
-		for (int i = 0; i < Engine::GetInstance().entityManager->candle; i++) {
-			Engine::GetInstance().render.get()->DrawTexture(Candle, 120 + (i * 40), 10, nullptr, false);
+		for (int i = 0; i < candleNum; i++) {
+			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 50, nullptr, false);
 		}
 
 
@@ -362,10 +414,10 @@ void Scene::show_UI() {
 		//}
 
 		//Wax texture
-		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 50, nullptr, false);
+		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 150, nullptr, false);
 		char FeatherText[64];
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
-		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 55, 40, 30);
+		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 155, 40, 30);
 	}
 }
 // Called before quitting
@@ -692,4 +744,109 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		break;
 	}
 	return true;
+}
+
+void Scene::FillWaxy(){
+
+	currentWaxAnim->playReverse = false;
+	switch (waxState) 
+	{
+	case EMPTY:
+		waxState = FILL_TO_LOW;
+	case FILL_TO_LOW:
+		
+		if (currentWaxAnim == &fill2lvl1 && fill2lvl1.HasFinished()) {
+			waxState = QUARTER_FULL;
+			filledWaxy = true;
+		}
+		break;
+	case QUARTER_FULL:
+		waxState = FILL_TO_HALF;
+	case FILL_TO_HALF:
+		if (fill2lvl2.HasFinished()) {
+			waxState = HALF_FULL;
+			filledWaxy = true;
+		}
+		break;
+	case HALF_FULL:
+		waxState = FILL_TO_HIGH;
+	case FILL_TO_HIGH:
+		
+		if (fill2lvl3.HasFinished()) {
+			waxState = ALMOST_FULL;
+			filledWaxy = true;
+		}
+		break;
+	case ALMOST_FULL:
+		waxState = FILL_TO_FULL;
+	case FILL_TO_FULL:
+		if (fill2full.HasFinished()) {
+			waxState = FULL;
+			filledWaxy = true;
+		}
+		break;
+	case FULL:
+
+		/*if (resetWax.ReadSec() >= 1.0f) {*/
+		waxState = EMPTY;
+		candleNum++;
+		filledWaxy = true;
+		
+		break;
+	}
+
+	
+	
+}
+
+void Scene::DrainWaxy() {
+
+	currentWaxAnim->playReverse = true;
+	
+	switch (waxState) {
+	case FULL:
+		waxState = FILL_TO_FULL;
+	case FILL_TO_FULL:
+		if (fill2full.HasFinished()) {
+			waxState = ALMOST_FULL;
+			drainedWaxy = true;
+		}
+		break;
+	case ALMOST_FULL:
+		waxState = FILL_TO_HIGH;
+	case FILL_TO_HIGH:
+		if (fill2lvl3.HasFinished()) {
+			waxState = HALF_FULL;
+			drainedWaxy = true;
+		}
+		break;
+	case FILL_TO_HALF:
+		waxState = FILL_TO_HALF;
+	case HALF_FULL:
+		
+		if (fill2lvl2.HasFinished()) {
+			waxState = QUARTER_FULL;
+			drainedWaxy = true;
+		}
+		break;
+	case QUARTER_FULL:
+		waxState = FILL_TO_LOW;
+	case FILL_TO_LOW:
+		if (fill2lvl1.HasFinished()) {
+			waxState = EMPTY;
+			
+			drainedWaxy = true;
+		}
+		break;
+
+	case EMPTY:
+		if (resetWax.ReadSec() >= 1.0f) {
+			candleNum--;
+			waxState = FULL;
+			drainedWaxy = true;
+		}
+		break;
+	}
+	
+	
 }

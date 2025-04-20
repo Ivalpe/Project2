@@ -87,6 +87,8 @@ public:
 	float fallForce = 1.5f;
 
 	bool isClimbing=false;
+	bool takenDMG = false;
+	bool pickedItem = true;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;

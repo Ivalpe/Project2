@@ -10,6 +10,18 @@
 #include "Animation.h"
 
 struct SDL_Texture;
+enum WaxState {
+	EMPTY,
+	FILL_TO_LOW,
+	QUARTER_FULL,
+	FILL_TO_HALF,
+	HALF_FULL,
+	FILL_TO_HIGH,
+	ALMOST_FULL,
+	FILL_TO_FULL,
+	FULL
+};
+
 
 class Scene : public Module
 {
@@ -60,6 +72,9 @@ public:
 	void Active_MenuPause();
 	void GameOver_State();
 
+	void FillWaxy();
+	void DrainWaxy();
+
 
 public:
 	// Get tilePosDebug value
@@ -82,12 +97,17 @@ public:
 	SDL_Texture* Feather = NULL;
 	SDL_Texture* Feather_UI = NULL;
 	SDL_Texture* Wax = NULL;
-	SDL_Texture* Candle = NULL;
+	SDL_Texture* candle = NULL;
 
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;
 	GuiControlButton* guiBt2 = nullptr;
 
+
+	//WAXY
+	bool filledWaxy, drainedWaxy;
+	int candleNum = 0;
+	Timer resetWax;
 
 	//Sounds
 	bool musicButtonHeld = false;
@@ -124,14 +144,14 @@ private:
 	Animation idle;
 	Vector2D MoonPos;
 
+	//waxy
+	WaxState waxState = EMPTY;
 
-	SDL_Texture* WaxTexture = nullptr;
-	Animation* currentAnimation_wax = nullptr;
-	Animation idle_wax;
-	Animation level1_wax;
-	Animation level2_wax;
-	Animation level3_wax;
-	Animation level4_wax;
+
+	SDL_Texture* WaxTex = nullptr;
+	Animation* currentWaxAnim = nullptr;
+	Animation empty, fill2lvl1, staticlvl1, fill2lvl2, staticlvl2, fill2lvl3, staticlvl3, fill2full, full;
+
 
 	bool showBlackTransition = false;
 	float blackTransitionStart;
