@@ -16,6 +16,8 @@
 #include "Soldier.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
+#include "Physics.h"
+
 
 
 
@@ -47,7 +49,9 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(200 + (300 * i), 700);
+			item->name = "wax";
+			//item->position = Vector2D(200 + (300 * i), 700);
+			itemList.push_back(item);
 
 		}
 
@@ -60,7 +64,10 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(800 + (100 * i), 700);
+			item->name = "feather";
+
+			//item->position = Vector2D(800 + (100 * i), 700);
+			itemList.push_back(item);
 
 		}
 
@@ -71,9 +78,9 @@ bool Scene::Awake()
 
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
-		interactiveObject->position = Vector2D(2500, 1500);
+		//interactiveObject->position = Vector2D(2500, 1500);
 		interactiveObjectList.push_back(interactiveObject);
-
+		interactiveObject->name = "stalactites";
 	}
 
 	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("blocked_wall"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
@@ -83,8 +90,10 @@ bool Scene::Awake()
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		//item->position = Vector2D(4840, 2761);
-		interactiveObject->position = Vector2D(1500, 2000);
+		//interactiveObject->position = Vector2D(1500, 2000);
 		interactiveObjectList.push_back(interactiveObject);
+		interactiveObject->name = "wall";
+
 	}
 
 	 //Create a enemy using the entity manager 
@@ -104,6 +113,8 @@ bool Scene::Awake()
 		enemy->SetPath(instanceNode);
 		enemyList.push_back(enemy);
 	}
+
+	CreateItems(level);
 
 	return ret;
 }
@@ -130,11 +141,23 @@ void Scene::CreateItems(int level)
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
 			}
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
 		}
 
 		for (auto& it : itemList) {
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
 				it->position = factherPositions[fatherIndex++];
+			}
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
 			}
 		}
 
@@ -147,22 +170,43 @@ void Scene::CreateItems(int level)
 			else {
 				it->position = Vector2D(1500, 200);
 			}
+
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
 		}
 	}
-	else {
+	else if(level==1){
 
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
-				it->position = Vector2D(-1000, -1000);
+				it->position = Vector2D(-10000, -10000);
+
 			}
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-				it->position = Vector2D(-1000, -1000);
+				it->position = Vector2D(-10000, -10000);
+			}
+
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
 			}
 		}
 
 		for (auto& it : interactiveObjectList) {
-			it->position = Vector2D(-1000, -1000);
+			it->position = Vector2D(-10000, -10000);
 
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
 		}
 	}
 
@@ -283,71 +327,21 @@ bool Scene::Update(float dt)
 		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 	}
+
+	// Wax animation
+	animationWaxy();
+
 	//Pause menu
 	Active_MenuPause();
 
 	GameOver_State();
 
 	
-	if (!filledWaxy) {
-		if (waxState == FULL) resetWax.Start();
-		
-		FillWaxy();
-	}
-
-	if (!drainedWaxy) {
-		if (waxState == EMPTY) resetWax.Start();
-		DrainWaxy();
-	}
-
-	//Wax animation
-	switch (waxState) 
-	{
-	case EMPTY: 
-		currentWaxAnim = &empty;
-		break;
-	case FILL_TO_LOW:
-		if (currentWaxAnim != &fill2lvl1) {
-			fill2lvl1.Reset();
-			currentWaxAnim = &fill2lvl1;
-		}
-		break;
-	case QUARTER_FULL:
-		currentWaxAnim = &staticlvl1;
-		break;
-	case FILL_TO_HALF:
-		if (currentWaxAnim != &fill2lvl2) {
-			fill2lvl2.Reset();
-			currentWaxAnim = &fill2lvl2;
-		}
-		break;
-	case HALF_FULL:
-		currentWaxAnim = &staticlvl2;
-		break;
-	case FILL_TO_HIGH:
-		if (currentWaxAnim != &fill2lvl3) {
-			fill2lvl3.Reset();
-			currentWaxAnim = &fill2lvl3;
-		}
-		break;
-	case ALMOST_FULL:
-		currentWaxAnim = &staticlvl3;
-		break;
-	case FILL_TO_FULL:
-		if (currentWaxAnim != &fill2full) {
-			fill2full.Reset();
-			currentWaxAnim = &fill2full;
-		}
-		break;
-	case FULL: 
-		currentWaxAnim = &full; 
-		break;
-	}
 	
-	currentWaxAnim->Update();
 
 	return true;
 }
+
 
 // Called each loop iteration
 bool Scene::PostUpdate()
@@ -424,6 +418,66 @@ void Scene::show_UI() {
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 155, 40, 30);
 	}
+}
+
+void Scene::animationWaxy()
+{
+	if (!filledWaxy) {
+		if (waxState == FULL) resetWax.Start();
+
+		FillWaxy();
+	}
+
+	if (!drainedWaxy) {
+		if (waxState == EMPTY) resetWax.Start();
+		DrainWaxy();
+	}
+
+	//Wax animation
+	switch (waxState)
+	{
+	case EMPTY:
+		currentWaxAnim = &empty;
+		break;
+	case FILL_TO_LOW:
+		if (currentWaxAnim != &fill2lvl1) {
+			fill2lvl1.Reset();
+			currentWaxAnim = &fill2lvl1;
+		}
+		break;
+	case QUARTER_FULL:
+		currentWaxAnim = &staticlvl1;
+		break;
+	case FILL_TO_HALF:
+		if (currentWaxAnim != &fill2lvl2) {
+			fill2lvl2.Reset();
+			currentWaxAnim = &fill2lvl2;
+		}
+		break;
+	case HALF_FULL:
+		currentWaxAnim = &staticlvl2;
+		break;
+	case FILL_TO_HIGH:
+		if (currentWaxAnim != &fill2lvl3) {
+			fill2lvl3.Reset();
+			currentWaxAnim = &fill2lvl3;
+		}
+		break;
+	case ALMOST_FULL:
+		currentWaxAnim = &staticlvl3;
+		break;
+	case FILL_TO_FULL:
+		if (currentWaxAnim != &fill2full) {
+			fill2full.Reset();
+			currentWaxAnim = &fill2full;
+		}
+		break;
+	case FULL:
+		currentWaxAnim = &full;
+		break;
+	}
+
+	currentWaxAnim->Update();
 }
 
 // Called before quitting

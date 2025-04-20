@@ -66,6 +66,8 @@ public:
 	
 	//UI items
 	void show_UI();
+	void animationWaxy();
+
 	//Menus
 	void MenuSettings();
 	void MenuPause();

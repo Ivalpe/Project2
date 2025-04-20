@@ -47,6 +47,8 @@ bool Item::Start() {
 
 
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	pbody->listener = this;
+
 	pbody->ctype = ColliderType::ITEM;
 	
 	// Set the gravity of the body
@@ -60,29 +62,6 @@ bool Item::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
 
-
-	Player* player = Engine::GetInstance().scene.get()->GetPlayer();
-	if (player != nullptr)
-	{
-		// Comprobar la distancia entre el �tem y el jugador
-		float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
-		if (isWax && distance < 224.5f && !isPicked) {
-			LOG("%f", distance);
-
-			isPicked = true;
-			Engine::GetInstance().entityManager->wax++;
-			player->UpdateWaxToCandle();
-			LOG("�Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
-
-		}
-		if (isFeather && distance < 281.0f && !isPicked) {
-
-			isPicked = 1;
-			Engine::GetInstance().entityManager->feather++;
-			LOG("�Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->feather);
-
-		}
-	}
 	if (isWax && isPicked == 0) {
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
@@ -112,3 +91,20 @@ bool Item::CleanUp()
 	return true;
 }
 
+void Item::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
+{
+	if (bodyB->ctype == ColliderType::PLAYER && !isPicked)
+	{
+		Player* player = Engine::GetInstance().scene.get()->GetPlayer();
+
+		if (name == "wax") {
+			isPicked = true;
+			Engine::GetInstance().entityManager->wax++;
+			player->UpdateWaxToCandle();
+		}
+		else if (name == "feather") {
+			isPicked = true;
+			Engine::GetInstance().entityManager->feather++;
+		}
+	}
+}
