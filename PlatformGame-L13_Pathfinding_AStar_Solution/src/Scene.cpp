@@ -405,14 +405,6 @@ void Scene::show_UI() {
 			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 50, nullptr, false);
 		}
 
-
-		//SDL_Rect animRect = currentAnimation_wax->GetCurrentFrame();
-
-		////Life texture
-		//for (int i = 0; i < player->GetWax(); i++) {
-		//	Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 120), 10, &animRect, false);
-		//}
-
 		//Wax texture
 		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 150, nullptr, false);
 		char FeatherText[64];
