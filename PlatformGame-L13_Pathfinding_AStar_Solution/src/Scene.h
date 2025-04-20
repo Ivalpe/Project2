@@ -58,14 +58,13 @@ public:
 
 	Player* GetPlayer() const { return player; }
 
-	void CreateItems();
+	void CreateItems(int level);
 
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
 	void DisableGuiControlButtons();
 	
 	//UI items
-	void items_UI();
 	void show_UI();
 	//Menus
 	void MenuSettings();
@@ -134,6 +133,7 @@ private:
 	Enemy* enemy;
 	std::vector<Enemy*> enemyList;
 	std::vector<Item*> itemList;
+	std::vector<InteractiveObject*> interactiveObjectList;
 
 	SDL_Texture* FeatherTexture;
 	SDL_Texture* waxTexture;

@@ -72,6 +72,7 @@ bool Scene::Awake()
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		interactiveObject->position = Vector2D(2500, 1500);
+		interactiveObjectList.push_back(interactiveObject);
 
 	}
 
@@ -83,7 +84,7 @@ bool Scene::Awake()
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		//item->position = Vector2D(4840, 2761);
 		interactiveObject->position = Vector2D(1500, 2000);
-
+		interactiveObjectList.push_back(interactiveObject);
 	}
 
 	 //Create a enemy using the entity manager 
@@ -107,26 +108,23 @@ bool Scene::Awake()
 	return ret;
 }
 
-void Scene::CreateItems()
+void Scene::CreateItems(int level) 
+
 {
 	int WaxIndex = 0;
 	int fatherIndex = 0;
-	std::vector<Vector2D> waxPositions;
-	std::vector<Vector2D> factherPositions;
-
-	if (level == 0) {
-
-		waxPositions = {
+	std::vector<Vector2D> waxPositions{
 		  Vector2D(300, 672),
 		  Vector2D(400, 672),
 		  Vector2D(500, 672)
-		};
-
-		factherPositions = {
+	};
+	std::vector<Vector2D> factherPositions{
 		  Vector2D(900, 400),
 		  Vector2D(110, 400),
 		  Vector2D(130, 400)
-		};
+	};
+
+	if (level == 0) {
 
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
@@ -139,13 +137,32 @@ void Scene::CreateItems()
 				it->position = factherPositions[fatherIndex++];
 			}
 		}
+
+		for (auto& it : interactiveObjectList) 
+		{
+			if (it->name == "wall") {
+				it->position = Vector2D(2500, 1500);
+
+			}
+			else {
+				it->position = Vector2D(1500, 200);
+			}
+		}
 	}
 	else {
 
 		for (auto& it : itemList) {
-			if ((it->name == "wax" || it->name == "feather") && WaxIndex < waxPositions.size()) {
-				it->CleanUp();
+			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
+				it->position = Vector2D(-1000, -1000);
 			}
+			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
+				it->position = Vector2D(-1000, -1000);
+			}
+		}
+
+		for (auto& it : interactiveObjectList) {
+			it->position = Vector2D(-1000, -1000);
+
 		}
 	}
 
@@ -207,7 +224,7 @@ void Scene::Change_level(int level)
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
-		CreateItems();
+		CreateItems(level);
 		//CreateEnemies();
 	}
 
@@ -218,7 +235,7 @@ void Scene::Change_level(int level)
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
-		CreateItems();
+		CreateItems(level);
 
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
@@ -240,12 +257,21 @@ bool Scene::Update(float dt)
 	int Px = player->position.getX();
 	int Py = player->position.getY();
 
+	int camX = -(Px - 700);
+	int camY = -(Py - 600);
 
-	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py - 600 /*+ player->crouch*/);
+	// Limitar la cámara principio
+	if (camX > 0) camX = 0;
+	if (camY > 0) camY = 0;
 
-
-	if (reset_level) {
+	// Limitar la cámara final
+	if(camX< -11520)camX = -11520;
+	
+	Engine::GetInstance().render.get()->camera.x = (camX);
+	Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
+	
+	//Reset levels
+ {
 		Change_level(level);
 		if (level == 0) player->SetPosition(Vector2D{ 40,70 });
 
@@ -399,6 +425,7 @@ void Scene::show_UI() {
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 155, 40, 30);
 	}
 }
+
 // Called before quitting
 bool Scene::CleanUp()
 {
@@ -458,31 +485,21 @@ void Scene::Active_MenuPause() {
 		showSettingsMenu = false;
 		if (showPauseMenu) {
 			player->StopMovement();
-			for (Enemy* enemy : enemyList) {
-				if (enemy != NULL) {
-					enemy->visible = false;
-					enemy->StopMovement();
-				}
-			}
-			for (Item* item : itemList) {
-				if (item != NULL) {
-					item->apear = false;
-
-				}
-			}
+			/*	for (Enemy* enemy : enemyList) {
+					if (enemy!=NULL) {
+						enemy->visible = false;
+						enemy->StopMovement();
+					}
+				}*/
 		}
 		else if (!showPauseMenu) {
 			player->ResumeMovement();
-			for (Enemy* enemy : enemyList) {
+			/*for (Enemy* enemy : enemyList) {
 				if (enemy) {
 					enemy->visible = true;
 					enemy->ResumeMovement();
 				}
-			}
-			for (Item* item : itemList) {
-				item->apear = true;
-			}
-
+			}*/
 			DisableGuiControlButtons();
 		}
 	}
@@ -681,15 +698,13 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		showPauseMenu = false;
 
 		player->ResumeMovement();
-		for (Enemy* enemy : enemyList) {
+		/*for (Enemy* enemy : enemyList) {
 			if (enemy) {
 				enemy->visible = true;
 				enemy->ResumeMovement();
 			}
-		}
-		for (Item* item : itemList) {
-			item->apear = true;
-		}
+		}*/
+
 		DisableGuiControlButtons();
 		break;
 	case 2:
@@ -706,7 +721,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		Ambient_Sounds_ButtonHeld = true;
 		break;
 	case 6:	// Game Over: Continue
-		CreateItems();
+		CreateItems(level);
 		GameOverMenu = false;
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;

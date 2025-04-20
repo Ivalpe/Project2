@@ -30,7 +30,7 @@ public:
 	bool isPicked = false;
 	bool isStalactites = false;
 	bool isWall = false;
-	int apear = true;
+
 private:
 
 
