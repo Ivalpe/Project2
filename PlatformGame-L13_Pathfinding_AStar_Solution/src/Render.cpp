@@ -285,3 +285,28 @@ bool Render::DrawText(const char* text, int posx, int posy, int w, int h) const
 	SDL_FreeSurface(surface);
 	return true;
 }
+
+
+//Frustum culling
+bool Render::InCameraView(int x, int y, int w, int h)
+{
+	bool inView = false;
+	int cameraConvertedX = camera.x / -Engine::GetInstance().window.get()->scale;
+	int cameraConvertedY = camera.y / -Engine::GetInstance().window.get()->scale;
+
+	int limitX = cameraConvertedX + camera.w / Engine::GetInstance().window.get()->scale;
+	int limitY = cameraConvertedY + camera.h / Engine::GetInstance().window.get()->scale;
+
+	cameraConvertedX -= w;
+	cameraConvertedY -= h;
+
+	if (x > cameraConvertedX && x < limitX)
+	{
+		if (y > cameraConvertedY && y < limitY)
+		{
+			inView = true;
+		}
+	}
+
+	return inView;
+}

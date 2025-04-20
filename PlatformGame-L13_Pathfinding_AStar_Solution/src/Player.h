@@ -87,19 +87,17 @@ public:
 	float fallForce = 1.5f;
 
 	bool isClimbing=false;
+
 	bool takenDMG = false;
 	bool pickedItem = true;
 
+	bool isTurning = false;
+
+
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle;
-	Animation walk;
-	Animation hide;
-	Animation unhide;
-	Animation crawl;
-	Animation jump;
-	Animation fall;
-	Animation death;
+	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, death;
+	
 
 	bool change_level = false;
 	bool cleanup_pbody = false;
@@ -112,6 +110,7 @@ public:
 	State playerState;
 
 	Timer hideTimer;
+	Timer turnTimer;
 	Timer deathTimer;
 
 };

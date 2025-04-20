@@ -13,6 +13,7 @@
 #include "Item.h"
 #include "InteractiveObject.h"
 #include "Enemy.h"
+#include "Soldier.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
 
@@ -85,11 +86,21 @@ bool Scene::Awake()
 
 	}
 
-	// Create a enemy using the entity manager 
-	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
+	 //Create a enemy using the entity manager 
+	/*for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
 	{
 		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 		enemy->SetParameters(enemyNode);
+		enemyList.push_back(enemy);
+	}*/
+
+	for (pugi::xml_node instanceNode = configParameters.child("entities").child("enemies").child("instances").child(GetCurrentLevelName().c_str()).child("instance"); instanceNode; instanceNode = instanceNode.next_sibling("instance")) {
+		Enemy* enemy = (Soldier*)Engine::GetInstance().entityManager->CreateEntity((EntityType)instanceNode.attribute("entityType").as_int());
+		pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child(instanceNode.attribute("enemyType").as_string());
+		enemy->SetParameters(enemyNode);
+		enemy->SetPlayer(player);
+		enemy->SetInstanceParameters(instanceNode);
+		enemy->SetPath(instanceNode);
 		enemyList.push_back(enemy);
 	}
 
@@ -163,8 +174,7 @@ bool Scene::Start()
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
 
-	/*idle_wax.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("idle"));
-	currentAnimation_wax = &idle_wax;*/
+
 	empty.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("empty"));
 	fill2lvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl1"));
 	staticlvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("still_lvl1"));
@@ -189,8 +199,10 @@ bool Scene::Start()
 
 void Scene::Change_level(int level)
 {
+
 	if (level == 0)
 	{
+		
 		Engine::GetInstance().map.get()->CleanUp();
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
@@ -211,6 +223,8 @@ void Scene::Change_level(int level)
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
 	}
+
+	
 }
 
 // Called each loop iteration
@@ -228,36 +242,9 @@ bool Scene::Update(float dt)
 
 
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py - 600 + player->crouch);
+	Engine::GetInstance().render.get()->camera.y = -(Py - 600 /*+ player->crouch*/);
 
 
-	////Get mouse position and obtain the map coordinate
-	//Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
-	//Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x,
-	//															     mousePos.getY() - Engine::GetInstance().render.get()->camera.y);
-
-
-	////Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
-	//Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(),mouseTile.getY());
-	//SDL_Rect rect = { 0,0,32,32 };
-	//Engine::GetInstance().render.get()->DrawTexture(mouseTileTex,
-	//												highlightTile.getX(),
-	//												highlightTile.getY(),
-	//												&rect);
-
-	//// saves the tile pos for debugging purposes
-	//if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
-	//	tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
-	//	once = true;
-	//}
-
-	////If mouse button is pressed modify enemy position
-	//if (Engine::GetInstance().input.get()->GetMouseButtonDown(1) == KEY_DOWN) {
-	//	enemyList[0]->SetPosition(Vector2D(highlightTile.getX(), highlightTile.getY()));
-	//	enemyList[0]->ResetPath();
-	//}
-
-	//Reset level
 	if (reset_level) {
 		Change_level(level);
 		if (level == 0) player->SetPosition(Vector2D{ 40,70 });
@@ -738,6 +725,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	return true;
 }
 
+
 void Scene::FillWaxy(){
 
 	currentWaxAnim->playReverse = false;
@@ -841,4 +829,11 @@ void Scene::DrainWaxy() {
 	}
 	
 	
+
+
+
 }
+
+
+std::string Scene::GetCurrentLevelName() {
+	return ("lvl" + std::to_string(level));

@@ -23,6 +23,7 @@ enum WaxState {
 };
 
 
+
 class Scene : public Module
 {
 public:
@@ -72,8 +73,12 @@ public:
 	void Active_MenuPause();
 	void GameOver_State();
 
+
 	void FillWaxy();
 	void DrainWaxy();
+
+	std::string GetCurrentLevelName();
+
 
 
 public:
@@ -82,6 +87,7 @@ public:
 		return tilePosDebug;
 
 	}
+
 
 	int level = 0;
 	bool reset_level = false;

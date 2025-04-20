@@ -27,6 +27,7 @@ public:
 	// Public method to get the instance of the Singleton
 	static Engine& GetInstance();
 
+	
 	//	
 	void AddModule(std::shared_ptr<Module> module);
 
@@ -73,6 +74,10 @@ private:
 
 	// Load config file
 	bool LoadConfig();
+
+	
+
+	
 
 	std::list<std::shared_ptr<Module>> moduleList;
 
@@ -127,6 +132,7 @@ private:
 	float averageFps = 0.0f;
 	int secondsSinceStartup = 0;
 
+	bool debug = false;
 
 	std::string gameTitle = "Platformer Game";
 

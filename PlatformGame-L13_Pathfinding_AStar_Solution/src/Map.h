@@ -117,6 +117,12 @@ public:
 
     Vector2D WorldToMap(int x, int y);
 
+    Vector2D MapToWorldCentered(int x, int y);
+
+    Vector2D WorldToWorldCenteredOnTile(int x, int y);
+
+
+
     TileSet* GetTilesetFromTileId(int gid) const;
 
     bool LoadProperties(pugi::xml_node& node, Properties& properties);
