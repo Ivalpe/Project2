@@ -66,15 +66,16 @@ bool Item::Update(float dt)
 	{
 		// Comprobar la distancia entre el �tem y el jugador
 		float distance = sqrt(pow(position.getX() - player->position.getX(), 2) + pow(position.getY() - player->position.getY(), 2));
-		if (isWax && distance < 224.5f && isPicked == 0) {
+		if (isWax && distance < 224.5f && !isPicked) {
 			LOG("%f", distance);
 
-			isPicked = 1;
+			isPicked = true;
 			Engine::GetInstance().entityManager->wax++;
+			player->UpdateWaxToCandle();
 			LOG("�Item recogido! Wax actual: %d", Engine::GetInstance().entityManager->wax);
 
 		}
-		if (isFeather && distance < 281.0f && isPicked == 0) {
+		if (isFeather && distance < 281.0f && !isPicked) {
 
 			isPicked = 1;
 			Engine::GetInstance().entityManager->feather++;

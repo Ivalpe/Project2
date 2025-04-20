@@ -59,6 +59,7 @@ public:
 	Vector2D GetPosition();
 
 	int GetWax();
+	void UpdateWaxToCandle();
 
 	void StopMovement();
 	void ResumeMovement();
@@ -86,7 +87,12 @@ public:
 	float fallForce = 1.5f;
 
 	bool isClimbing=false;
+
+	bool takenDMG = false;
+	bool pickedItem = true;
+
 	bool isTurning = false;
+
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
@@ -106,4 +112,5 @@ public:
 	Timer hideTimer;
 	Timer turnTimer;
 	Timer deathTimer;
+
 };
