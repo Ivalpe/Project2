@@ -837,3 +837,4 @@ void Scene::DrainWaxy() {
 
 std::string Scene::GetCurrentLevelName() {
 	return ("lvl" + std::to_string(level));
+}

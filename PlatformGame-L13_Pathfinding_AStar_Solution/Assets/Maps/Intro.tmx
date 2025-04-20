@@ -84533,7 +84533,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="18" name="Collisions" width="420" height="67">
+ <layer id="18" name="Collisions" width="420" height="67" visible="0">
   <data>
    <tile gid="49"/>
    <tile gid="49"/>
@@ -112677,7 +112677,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="21" name="Navigation" width="420" height="67">
+ <layer id="21" name="Navigation" width="420" height="67" visible="0">
   <properties>
    <property name="Navigation" type="bool" value="true"/>
   </properties>
