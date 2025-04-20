@@ -271,7 +271,7 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
 	
 	//Reset levels
- {
+	if (reset_level) {
 		Change_level(level);
 		if (level == 0) player->SetPosition(Vector2D{ 40,70 });
 
@@ -852,3 +852,4 @@ void Scene::DrainWaxy() {
 
 std::string Scene::GetCurrentLevelName() {
 	return ("lvl" + std::to_string(level));
+}
