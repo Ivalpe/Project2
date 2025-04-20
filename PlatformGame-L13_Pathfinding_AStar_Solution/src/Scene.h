@@ -111,6 +111,7 @@ private:
 	Enemy* enemy;
 	std::vector<Enemy*> enemyList;
 	std::vector<Item*> itemList;
+	std::vector<InteractiveObject*> interactiveObjectList;
 
 	SDL_Texture* FeatherTexture;
 	SDL_Texture* waxTexture;

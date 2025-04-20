@@ -136,6 +136,17 @@ void Scene::CreateItems()
 				it->position = factherPositions[fatherIndex++];
 			}
 		}
+
+		for (auto& it : interactiveObjectList) 
+		{
+			if (it->name == "wall") {
+				it->position = Vector2D(2500, 1500);
+
+			}
+			else {
+				it->position = Vector2D(1500, 200);
+			}
+		}
 	}
 	else {
 
@@ -143,6 +154,11 @@ void Scene::CreateItems()
 			if ((it->name == "wax" || it->name == "feather") && WaxIndex < waxPositions.size()) {
 				it->CleanUp();
 			}
+		}
+
+		for (auto& it : interactiveObjectList) {
+			it->CleanUp();
+			
 		}
 	}
 	
@@ -223,12 +239,18 @@ bool Scene::Update(float dt)
 	int Px = player->position.getX();
 	int Py = player->position.getY();
 
+	int camX = -(Px - 700);
+	int camY = -(Py - 600);
 
-	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
-	Engine::GetInstance().render.get()->camera.y = -(Py - 600 /*+ player->crouch*/);
+	//// Limitar la cámara principio
+	if (camX > 0) camX = 0;
+	if (camY > 0) camY = 0;
+
+	Engine::GetInstance().render.get()->camera.x = (camX);
+	Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
 
 	
-	//Reset level
+	//Reset levels
 	if (reset_level) {
 		Change_level(level);
 		if(level==0) player->SetPosition(Vector2D{ 40,70 });
@@ -320,6 +342,7 @@ void Scene::show_UI() {
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 55, 40, 30);
 	}
 }
+
 // Called before quitting
 bool Scene::CleanUp()
 {
@@ -379,31 +402,21 @@ void Scene::Active_MenuPause() {
 		showSettingsMenu = false;
 		if (showPauseMenu) {
 			player->StopMovement();
-			for (Enemy* enemy : enemyList) {
-				if (enemy!=NULL) {
-					enemy->visible = false;
-					enemy->StopMovement();
-				}
-			}
-			for (Item* item : itemList) {
-				if (item != NULL) {
-					item->apear = false;
-
-				}
-			}
+			/*	for (Enemy* enemy : enemyList) {
+					if (enemy!=NULL) {
+						enemy->visible = false;
+						enemy->StopMovement();
+					}
+				}*/
 		}
 		else if(!showPauseMenu){
 			player->ResumeMovement();
-			for (Enemy* enemy : enemyList) {
+			/*for (Enemy* enemy : enemyList) {
 				if (enemy) {
 					enemy->visible = true;
 					enemy->ResumeMovement();
 				}
-			}
-			for (Item* item : itemList) {
-				item->apear = true;
-			}
-
+			}*/
 			DisableGuiControlButtons();
 		}
 	}
@@ -602,15 +615,13 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		showPauseMenu = false;
 
 		player->ResumeMovement();
-		for (Enemy* enemy : enemyList) {
+		/*for (Enemy* enemy : enemyList) {
 			if (enemy) {
 				enemy->visible = true;
 				enemy->ResumeMovement();
 			}
-		}
-		for (Item* item : itemList) {
-			item->apear = true;
-		}
+		}*/
+
 		DisableGuiControlButtons();
 		break;
 	case 2:
