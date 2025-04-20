@@ -18,6 +18,8 @@
 #include "GuiManager.h"
 
 
+
+
 Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
 {
 	name = "scene";
@@ -25,7 +27,8 @@ Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOv
 
 // Destructor
 Scene::~Scene()
-{}
+{
+}
 
 // Called before render is available
 bool Scene::Awake()
@@ -40,11 +43,11 @@ bool Scene::Awake()
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(200 + (300 * i), 672);
+			item->position = Vector2D(200 + (300 * i), 700);
 
 		}
 
@@ -52,12 +55,12 @@ bool Scene::Awake()
 
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("feather_item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
-	
+
 		for (int i = 0; i < 3; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(800 + (100 * i), 400);
+			item->position = Vector2D(800 + (100 * i), 700);
 
 		}
 
@@ -65,7 +68,7 @@ bool Scene::Awake()
 
 	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
 	{
-		
+
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		interactiveObject->position = Vector2D(2500, 1500);
@@ -104,7 +107,7 @@ bool Scene::Awake()
 	return ret;
 }
 
-void Scene::CreateItems() 
+void Scene::CreateItems()
 {
 	int WaxIndex = 0;
 	int fatherIndex = 0;
@@ -145,7 +148,7 @@ void Scene::CreateItems()
 			}
 		}
 	}
-	
+
 }
 
 
@@ -170,6 +173,20 @@ bool Scene::Start()
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
+
+
+	empty.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("empty"));
+	fill2lvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl1"));
+	staticlvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("still_lvl1"));
+	fill2lvl2.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl2"));
+	staticlvl2.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("still_lvl2"));
+	fill2lvl3.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl3"));
+	staticlvl3.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("still_lvl3"));
+	fill2full.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_full"));
+	full.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("full"));
+
+	candle = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Candle").attribute("path").as_string());
+
 	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
 
 	idle.LoadAnimations(configParameters.child("textures").child("moon").child("animations").child("idle"));
@@ -227,24 +244,82 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.x = -(Px - 700);
 	Engine::GetInstance().render.get()->camera.y = -(Py - 600 /*+ player->crouch*/);
 
-	
-	//Reset level
+
 	if (reset_level) {
 		Change_level(level);
-		if(level==0) player->SetPosition(Vector2D{ 40,70 });
+		if (level == 0) player->SetPosition(Vector2D{ 40,70 });
 
 		reset_level = false;
 	}
 
 	//Moon animation
-	if(level ==0){
-	Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
+	if (level == 0) {
+		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
 	}
 	//Pause menu
 	Active_MenuPause();
 
 	GameOver_State();
+
+	
+	if (!filledWaxy) {
+		if (waxState == FULL) resetWax.Start();
+		
+		FillWaxy();
+	}
+
+	if (!drainedWaxy) {
+		if (waxState == EMPTY) resetWax.Start();
+		DrainWaxy();
+	}
+
+	//Wax animation
+	switch (waxState) 
+	{
+	case EMPTY: 
+		currentWaxAnim = &empty;
+		break;
+	case FILL_TO_LOW:
+		if (currentWaxAnim != &fill2lvl1) {
+			fill2lvl1.Reset();
+			currentWaxAnim = &fill2lvl1;
+		}
+		break;
+	case QUARTER_FULL:
+		currentWaxAnim = &staticlvl1;
+		break;
+	case FILL_TO_HALF:
+		if (currentWaxAnim != &fill2lvl2) {
+			fill2lvl2.Reset();
+			currentWaxAnim = &fill2lvl2;
+		}
+		break;
+	case HALF_FULL:
+		currentWaxAnim = &staticlvl2;
+		break;
+	case FILL_TO_HIGH:
+		if (currentWaxAnim != &fill2lvl3) {
+			fill2lvl3.Reset();
+			currentWaxAnim = &fill2lvl3;
+		}
+		break;
+	case ALMOST_FULL:
+		currentWaxAnim = &staticlvl3;
+		break;
+	case FILL_TO_FULL:
+		if (currentWaxAnim != &fill2full) {
+			fill2full.Reset();
+			currentWaxAnim = &fill2full;
+		}
+		break;
+	case FULL: 
+		currentWaxAnim = &full; 
+		break;
+	}
+	
+	currentWaxAnim->Update();
+
 	return true;
 }
 
@@ -255,7 +330,7 @@ bool Scene::PostUpdate()
 
 	//if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 	//	ret = false;
-	
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_0) == KEY_DOWN) {
 		Change_level(0);
 		level = 0;
@@ -268,9 +343,9 @@ bool Scene::PostUpdate()
 		player->SetPosition(Vector2D{ 40, 70 });
 	}
 
-	
+
 	show_UI();
-	
+
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) Engine::GetInstance().map.get()->DrawFront();
 
 	if (showBlackTransition) {
@@ -308,16 +383,20 @@ void Scene::show_UI() {
 	}
 	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
 
-		//Life texture
-		for (int i = 0; i < player->GetWax(); i++) {
-			Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10 + (i * 40), 10, nullptr, false);
+		//Crea
+		
+		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &currentWaxAnim->GetCurrentFrame(), false);
+
+		//vela
+		for (int i = 0; i < candleNum; i++) {
+			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 50, nullptr, false);
 		}
 
 		//Wax texture
-		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 50, nullptr, false);
+		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 150, nullptr, false);
 		char FeatherText[64];
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
-		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 55, 40, 30);
+		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 155, 40, 30);
 	}
 }
 // Called before quitting
@@ -335,7 +414,7 @@ Vector2D Scene::GetPlayerPosition()
 
 void Scene::GameOver_State()
 {
-	if (Engine::GetInstance().entityManager.get()->wax<=0){
+	if (Engine::GetInstance().entityManager->candle <= 0) {
 
 		if (!GameOverMenu) {
 			GameOverMenu = true;
@@ -358,19 +437,19 @@ void Scene::GameOver_State()
 
 		SDL_Rect Continue = { 865, 760, textWidthContinue + 20, textHeightContinue + 10 };
 		SDL_Rect Exit = { 940, 860, textWidthExit + 20, textHeightExit + 10 };
-		SDL_Rect Sentence = { 260-85, 600, textWidthSentence + 20, textHeightSentence + 10 };
+		SDL_Rect Sentence = { 260 - 85, 600, textWidthSentence + 20, textHeightSentence + 10 };
 
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
-		
+
 		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
 	}
-		
 
-		
-	
-	
+
+
+
+
 }
 
 void Scene::Active_MenuPause() {
@@ -380,7 +459,7 @@ void Scene::Active_MenuPause() {
 		if (showPauseMenu) {
 			player->StopMovement();
 			for (Enemy* enemy : enemyList) {
-				if (enemy!=NULL) {
+				if (enemy != NULL) {
 					enemy->visible = false;
 					enemy->StopMovement();
 				}
@@ -392,7 +471,7 @@ void Scene::Active_MenuPause() {
 				}
 			}
 		}
-		else if(!showPauseMenu){
+		else if (!showPauseMenu) {
 			player->ResumeMovement();
 			for (Enemy* enemy : enemyList) {
 				if (enemy) {
@@ -413,7 +492,7 @@ void Scene::Active_MenuPause() {
 		MenuPause();
 		if (showSettingsMenu) {
 			MenuSettings();
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) 
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
 			{
 				showSettingsMenu = false;
 			}
@@ -445,9 +524,9 @@ void Scene::MenuPause()
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
 
-	SDL_Rect ConitnuesButton = { 862-15, 520-15, textWidthContinue + 20, textHeightContinue + 10 };
-	SDL_Rect Settings = { 882-15, 595-10, textWidthSettings + 20, textHeightSettings + 10 };
-	SDL_Rect Exit = { 919-15, 670-5, textWidthExit + 20, textHeightExit + 10 };
+	SDL_Rect ConitnuesButton = { 862 - 15, 520 - 15, textWidthContinue + 20, textHeightContinue + 10 };
+	SDL_Rect Settings = { 882 - 15, 595 - 10, textWidthSettings + 20, textHeightSettings + 10 };
+	SDL_Rect Exit = { 919 - 15, 670 - 5, textWidthExit + 20, textHeightExit + 10 };
 
 
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Continue", ConitnuesButton, this));
@@ -482,7 +561,7 @@ void Scene::MenuSettings()
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "English", &textWidthEnglish, &textHeightEnglish);
 
 
-	SDL_Rect SettingsTitle = { 860 - 15, 325 - 15, textWidthSettingsTitle +20, textHeightSettingsTitle +10 };
+	SDL_Rect SettingsTitle = { 860 - 15, 325 - 15, textWidthSettingsTitle + 20, textHeightSettingsTitle + 10 };
 	SDL_Rect MusicVolume = { 700 - 15, 485 - 15, static_cast<int>(textWidthMusicVolume * scaleFactor), static_cast<int>(textHeightMusicVolume * scaleFactor) };
 	SDL_Rect AmbientSounds = { 700 - 15, 555 - 15, static_cast<int>(textWidthAmbientSounds * scaleFactor), static_cast<int>(textHeightAmbientSounds * scaleFactor) };
 	SDL_Rect Language = { 700 - 15, 630 - 15, static_cast<int>(textWidthLanguage * scaleFactor), static_cast<int>(textHeightLanguage * scaleFactor) };
@@ -505,7 +584,7 @@ void Scene::MenuSettings()
 	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "  ", FxPosition, this));
 
 	// Prevent both ambient sounds and Music Volume from moving at the same time. Check the mouse position on the Y axis
-	if (mousePos.getX() >= musicPosX && mousePos.getX() <= musicPosX + 6 &&	mousePos.getY() >= 511 - 5 && mousePos.getY() <= 511 + 10)
+	if (mousePos.getX() >= musicPosX && mousePos.getX() <= musicPosX + 6 && mousePos.getY() >= 511 - 5 && mousePos.getY() <= 511 + 10)
 	{
 		mouseOverMusicControl = true; // Mouse is over the music volume control
 	}
@@ -561,10 +640,10 @@ void Scene::MenuSettings()
 		}
 	}
 
-	SDL_Rect newMusicPos = { musicPosX, 511-5, 6, 15 }; // New music volume position 
+	SDL_Rect newMusicPos = { musicPosX, 511 - 5, 6, 15 }; // New music volume position 
 	guiBt->bounds = newMusicPos;
 
-	SDL_Rect newFxPos = { ambient_soundsPosX, 571-5, 6, 15 }; // New music ambient sounds position
+	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5, 6, 15 }; // New music ambient sounds position
 	guiBt1->bounds = newFxPos;
 
 	// Adjust music volume
@@ -589,7 +668,7 @@ void Scene::MenuSettings()
 	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 }
 
-void Scene::DisableGuiControlButtons() 
+void Scene::DisableGuiControlButtons()
 {
 	guiBt->state = GuiControlState::DISABLED;
 	guiBt1->state = GuiControlState::DISABLED;
@@ -637,7 +716,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		Engine::GetInstance().entityManager->feather = 0;
 		break;
 	case 7:// Game Over: Exit
-		
+
 		exit(0);
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
@@ -646,6 +725,115 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	return true;
 }
 
+
+void Scene::FillWaxy(){
+
+	currentWaxAnim->playReverse = false;
+	switch (waxState) 
+	{
+	case EMPTY:
+		waxState = FILL_TO_LOW;
+	case FILL_TO_LOW:
+		
+		if (currentWaxAnim == &fill2lvl1 && fill2lvl1.HasFinished()) {
+			waxState = QUARTER_FULL;
+			filledWaxy = true;
+		}
+		break;
+	case QUARTER_FULL:
+		waxState = FILL_TO_HALF;
+	case FILL_TO_HALF:
+		if (fill2lvl2.HasFinished()) {
+			waxState = HALF_FULL;
+			filledWaxy = true;
+		}
+		break;
+	case HALF_FULL:
+		waxState = FILL_TO_HIGH;
+	case FILL_TO_HIGH:
+		
+		if (fill2lvl3.HasFinished()) {
+			waxState = ALMOST_FULL;
+			filledWaxy = true;
+		}
+		break;
+	case ALMOST_FULL:
+		waxState = FILL_TO_FULL;
+	case FILL_TO_FULL:
+		if (fill2full.HasFinished()) {
+			waxState = FULL;
+			filledWaxy = true;
+		}
+		break;
+	case FULL:
+
+		/*if (resetWax.ReadSec() >= 1.0f) {*/
+		waxState = EMPTY;
+		candleNum++;
+		filledWaxy = true;
+		
+		break;
+	}
+
+	
+	
+}
+
+void Scene::DrainWaxy() {
+
+	currentWaxAnim->playReverse = true;
+	
+	switch (waxState) {
+	case FULL:
+		waxState = FILL_TO_FULL;
+	case FILL_TO_FULL:
+		if (fill2full.HasFinished()) {
+			waxState = ALMOST_FULL;
+			drainedWaxy = true;
+		}
+		break;
+	case ALMOST_FULL:
+		waxState = FILL_TO_HIGH;
+	case FILL_TO_HIGH:
+		if (fill2lvl3.HasFinished()) {
+			waxState = HALF_FULL;
+			drainedWaxy = true;
+		}
+		break;
+	case FILL_TO_HALF:
+		waxState = FILL_TO_HALF;
+	case HALF_FULL:
+		
+		if (fill2lvl2.HasFinished()) {
+			waxState = QUARTER_FULL;
+			drainedWaxy = true;
+		}
+		break;
+	case QUARTER_FULL:
+		waxState = FILL_TO_LOW;
+	case FILL_TO_LOW:
+		if (fill2lvl1.HasFinished()) {
+			waxState = EMPTY;
+			
+			drainedWaxy = true;
+		}
+		break;
+
+	case EMPTY:
+		if (resetWax.ReadSec() >= 1.0f) {
+			candleNum--;
+			waxState = FULL;
+			drainedWaxy = true;
+		}
+		break;
+	}
+	
+	
+
+
+
+}
+
+
 std::string Scene::GetCurrentLevelName() {
 	return ("lvl" + std::to_string(level));
-}

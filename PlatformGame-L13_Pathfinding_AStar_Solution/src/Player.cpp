@@ -376,6 +376,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
 		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
+		/*pickedItem = true;*/
+		Engine::GetInstance().scene.get()->filledWaxy = false;
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
 		break;
 	case ColliderType::CLIMBABLE:
@@ -396,13 +398,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
-		Engine::GetInstance().entityManager.get()->wax--;
-		if (Engine::GetInstance().entityManager.get()->wax > 0) {
-			//Engine::GetInstance().scene.get()->PreUpdate();
-			Engine::GetInstance().scene.get()->reset_level = true;
+		//Engine::GetInstance().entityManager.get()->wax--;
+		//if (Engine::GetInstance().entityManager.get()->wax > 0) {
+		//	//Engine::GetInstance().scene.get()->PreUpdate();
+		//	Engine::GetInstance().scene.get()->reset_level = true;
 
 
-		}
+		//}
+		Engine::GetInstance().scene.get()->drainedWaxy = false;
 
 		break;
 
@@ -482,8 +485,18 @@ Vector2D Player::GetPosition() {
 }
 
 int Player::GetWax() {
-	return Engine::GetInstance().entityManager.get()->wax;
+
+	return Engine::GetInstance().entityManager->wax;
+
 }
+
+void Player::UpdateWaxToCandle() {
+	if (Engine::GetInstance().entityManager->wax >= 4) {
+		Engine::GetInstance().entityManager->candle += 1;
+		Engine::GetInstance().entityManager->wax = 0;
+	}
+}
+
 
 void Player::StopMovement() {
 	if (pbody != nullptr) {

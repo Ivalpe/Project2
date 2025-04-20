@@ -17,6 +17,7 @@ public:
 	float currentFrame = 0.0f;
 	int totalFrames = 0;
 	int pingpongDirection = 1;
+	bool playReverse = false;
 
 
 public:
@@ -34,14 +35,28 @@ public:
 	}
 
 	void Update() {
-		currentFrame += speed;
-		if (currentFrame >= totalFrames) {
-			currentFrame = (loop || pingpong) ? 0.0f : totalFrames - 1;
-			++loopCount;
 
-			if (pingpong)
-				pingpongDirection = -pingpongDirection;
+		if (playReverse) {
+			currentFrame -= speed;
+			if (currentFrame < 0.0f) {
+				currentFrame = (loop || pingpong) ? totalFrames - 1 : 0.0f;
+				++loopCount;
+
+
+			}
 		}
+		else {
+			currentFrame += speed;
+			if (currentFrame >= totalFrames) {
+				currentFrame = (loop || pingpong) ? 0.0f : totalFrames - 1;
+				++loopCount;
+
+			
+			}
+		}
+
+		if (pingpong) pingpongDirection = -pingpongDirection;
+		
 	}
 
 	const SDL_Rect& GetCurrentFrame() const {

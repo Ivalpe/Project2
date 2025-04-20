@@ -38,6 +38,8 @@ public:
 public:
 
 	std::list<Entity*> entities;
-	int wax = 1;
+	int maxWaxLevel = 4;
+	int wax = 0;
+	int candle=2;
 	int feather = 0;
 };
