@@ -59,7 +59,6 @@ public:
 	Vector2D GetPosition();
 
 	int GetWax();
-	void UpdateWaxToCandle();
 
 	void StopMovement();
 	void ResumeMovement();

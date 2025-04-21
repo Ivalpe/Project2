@@ -492,13 +492,6 @@ int Player::GetWax() {
 
 }
 
-void Player::UpdateWaxToCandle() {
-	/*if (Engine::GetInstance().entityManager->wax >= 4) {
-		Engine::GetInstance().entityManager->candle += 1;
-		Engine::GetInstance().entityManager->wax = 0;
-	}*/
-}
-
 
 void Player::StopMovement() {
 	if (pbody != nullptr) {

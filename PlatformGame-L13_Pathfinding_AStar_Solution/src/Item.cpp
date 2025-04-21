@@ -100,7 +100,6 @@ void Item::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		if (name == "wax") {
 			isPicked = true;
 			Engine::GetInstance().entityManager->wax++;
-			player->UpdateWaxToCandle();
 			Engine::GetInstance().scene.get()->shouldFillWaxy = true;
 
 		}
