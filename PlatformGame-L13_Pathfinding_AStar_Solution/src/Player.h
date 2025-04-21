@@ -112,4 +112,5 @@ public:
 	Timer turnTimer;
 	Timer deathTimer;
 
+	float climbableX;
 };

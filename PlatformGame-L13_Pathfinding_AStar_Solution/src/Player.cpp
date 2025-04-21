@@ -95,7 +95,8 @@ bool Player::Update(float dt)
 
 	if (playerState != DEAD) {
 
-		
+	
+
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
 
@@ -226,6 +227,8 @@ bool Player::Update(float dt)
 				else {
 					velocity.y = -0.3 * 16;
 					currentAnimation = &climb;
+					pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
+
 				}
 				
 
@@ -233,6 +236,8 @@ bool Player::Update(float dt)
 			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 				velocity.y = 0.3 * 16;
 				currentAnimation = &climb;
+				pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
+
 			}
 			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
 				currentAnimation = &turn2back;
@@ -387,8 +392,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		pbody->body->SetGravityScale(0);
 		
-		
-
+		climbableX = physB->body->GetPosition().x;
 		break;
 	case ColliderType::CHANGE_LEVEL:
 		change_level = true;
