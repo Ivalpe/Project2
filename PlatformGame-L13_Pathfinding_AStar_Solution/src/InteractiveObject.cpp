@@ -72,7 +72,7 @@ bool InteractiveObject::Start() {
 
 bool InteractiveObject::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
 
 	Player* player = Engine::GetInstance().scene.get()->GetPlayer();

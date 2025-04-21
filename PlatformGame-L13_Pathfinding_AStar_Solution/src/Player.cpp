@@ -39,8 +39,10 @@ bool Player::Start() {
 	}
 	else if (Engine::GetInstance().scene.get()->level == 1)
 	{
-		position.setX(40);
-		position.setY(70);
+		position.setX(300);
+		position.setY(600);
+
+
 	}
 
 	//Load animations
@@ -81,7 +83,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);

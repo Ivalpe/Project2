@@ -228,6 +228,7 @@ bool Scene::Start()
 	Engine::GetInstance().render.get()->camera.y = 0;
 
 
+	InitialScreen = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_initial").attribute("path").as_string());
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
 	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
@@ -336,8 +337,9 @@ bool Scene::Update(float dt)
 
 	GameOver_State();
 
-	
-	
+	MenuInitialScreen();
+
+	if(showSettingsMenu) 	MenuSettings();
 
 	return true;
 }
@@ -401,7 +403,7 @@ void Scene::show_UI() {
 
 		if (current_time > 180) UI = false; //3 seconds
 	}
-	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
+	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && !InitialScreenMenu&& UI) {
 
 		//Crea
 		
@@ -493,6 +495,44 @@ Vector2D Scene::GetPlayerPosition()
 	return player->GetPosition();
 }
 
+void Scene::MenuInitialScreen()
+{
+	if (InitialScreenMenu) {
+		if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
+
+		int cameraX = Engine::GetInstance().render.get()->camera.x;
+		int cameraY = Engine::GetInstance().render.get()->camera.y;
+
+
+		Engine::GetInstance().render.get()->DrawTexture(InitialScreen, -cameraX, -cameraY);
+
+
+		int textWidthNewGame, textHeightNewGame;
+		int textWidthContinue, textHeightContinue;
+		int textWidthSettings, textHeightSettings;
+		int textWidthExit, textHeightExit;
+
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "New Game", &textWidthNewGame, &textHeightNewGame);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
+
+		float scaleFactor = 0.8f;
+
+		SDL_Rect NewGameButton = {300, 475 - 15, static_cast<int>(textWidthNewGame* scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
+		SDL_Rect ConitnuesButton = { 320, 520 - 15, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
+		SDL_Rect Settings = { 330, 595 - 10, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
+		SDL_Rect Exit = {350, 670 - 5, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
+
+
+		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "New Game", NewGameButton, this));
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 9, "Continue", ConitnuesButton, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "Settings", Settings, this));
+		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "Exit", Exit, this));
+	}
+	
+}
+
 void Scene::GameOver_State()
 {
 	if (Engine::GetInstance().entityManager->candle <= 0) {
@@ -534,6 +574,7 @@ void Scene::GameOver_State()
 }
 
 void Scene::Active_MenuPause() {
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 		showPauseMenu = !showPauseMenu;
 		showSettingsMenu = false;
@@ -566,6 +607,7 @@ void Scene::Active_MenuPause() {
 			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
 			{
 				showSettingsMenu = false;
+
 			}
 		}
 	}
@@ -790,7 +832,35 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
 		break;
+
+	case 8:// Initial Screen: New Game
+		showPauseMenu = false;
+		player->ResumeMovement();
+
+		InitialScreenMenu = false;
+		guiBt0->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
+
+		break;
+	case 9:// Initial Screen: Conitnue
+
+		break;
+	case 10:// Initial Screen: Settings
+		
+		//InitialScreenMenu = false;
+		guiBt0->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
+		showSettingsMenu = true;
+
+		break;
+	case 11:// Initial Screen: Exit
+		InitialScreenMenu = false;
+		exit(0);
+		guiBt0->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
+		break;
 	}
+
 	return true;
 }
 
