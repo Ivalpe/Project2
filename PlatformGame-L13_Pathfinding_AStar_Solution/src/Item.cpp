@@ -101,10 +101,14 @@ void Item::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			isPicked = true;
 			Engine::GetInstance().entityManager->wax++;
 			player->UpdateWaxToCandle();
+			Engine::GetInstance().scene.get()->shouldFillWaxy = true;
+
 		}
 		else if (name == "feather") {
 			isPicked = true;
 			Engine::GetInstance().entityManager->feather++;
+			Engine::GetInstance().scene.get()->shouldFillWaxy = false;
+
 		}
 	}
 }

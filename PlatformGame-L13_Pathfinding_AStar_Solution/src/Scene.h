@@ -115,7 +115,7 @@ public:
 
 
 	//WAXY
-	bool filledWaxy, drainedWaxy;
+	bool filledWaxy, drainedWaxy, shouldFillWaxy = false;
 	Timer resetWax;
 
 	//Sounds

@@ -426,8 +426,9 @@ void Scene::animationWaxy()
 {
 	if (!filledWaxy) {
 		if (waxState == FULL) resetWax.Start();
-
-		FillWaxy();
+		if (shouldFillWaxy) {
+			FillWaxy();
+		}
 	}
 
 	if (!drainedWaxy) {
