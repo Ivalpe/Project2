@@ -400,14 +400,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
-		//Engine::GetInstance().entityManager.get()->wax--;
-		//if (Engine::GetInstance().entityManager.get()->wax > 0) {
-		//	//Engine::GetInstance().scene.get()->PreUpdate();
-		//	Engine::GetInstance().scene.get()->reset_level = true;
+		Engine::GetInstance().entityManager.get()->candleNum--;
+		if (Engine::GetInstance().entityManager.get()->candleNum > 0) {
+			//Engine::GetInstance().scene.get()->PreUpdate();
+			Engine::GetInstance().scene.get()->reset_level = true;
 
 
-		//}
-		Engine::GetInstance().scene.get()->drainedWaxy = false;
+		}
+		//Engine::GetInstance().scene.get()->drainedWaxy = false;
 
 		break;
 
@@ -493,10 +493,10 @@ int Player::GetWax() {
 }
 
 void Player::UpdateWaxToCandle() {
-	if (Engine::GetInstance().entityManager->wax >= 4) {
+	/*if (Engine::GetInstance().entityManager->wax >= 4) {
 		Engine::GetInstance().entityManager->candle += 1;
 		Engine::GetInstance().entityManager->wax = 0;
-	}
+	}*/
 }
 
 

@@ -410,7 +410,7 @@ void Scene::show_UI() {
 		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &currentWaxAnim->GetCurrentFrame(), false);
 
 		//vela
-		for (int i = 0; i < candleNum; i++) {
+		for (int i = 0; i < Engine::GetInstance().entityManager.get()->candleNum; i++) {
 			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 50, nullptr, false);
 		}
 
@@ -535,7 +535,7 @@ void Scene::MenuInitialScreen()
 
 void Scene::GameOver_State()
 {
-	if (Engine::GetInstance().entityManager->candle <= 0) {
+	if (Engine::GetInstance().entityManager->candleNum <= 0) {
 
 		if (!GameOverMenu) {
 			GameOverMenu = true;
@@ -790,7 +790,7 @@ void Scene::DisableGuiControlButtons()
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	switch (control->id) {
-	case 1:
+	case 1: //Menu pause: Resume
 		showPauseMenu = false;
 
 		player->ResumeMovement();
@@ -803,10 +803,10 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 
 		DisableGuiControlButtons();
 		break;
-	case 2:
+	case 2://Menu pause: Settings
 		showSettingsMenu = true;
 		break;
-	case 3:
+	case 3: //Menu pause: Exit
 		exit(0);
 		DisableGuiControlButtons();
 		break;
@@ -823,7 +823,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		guiBt1->state = GuiControlState::DISABLED;
 		Engine::GetInstance().scene.get()->reset_level = true;
 
-		Engine::GetInstance().entityManager->wax = 3;
+		Engine::GetInstance().entityManager->candleNum = 3;
 		Engine::GetInstance().entityManager->feather = 0;
 		break;
 	case 7:// Game Over: Exit
@@ -908,7 +908,7 @@ void Scene::FillWaxy(){
 
 		/*if (resetWax.ReadSec() >= 1.0f) {*/
 		waxState = EMPTY;
-		candleNum++;
+		Engine::GetInstance().entityManager.get()->candleNum++;
 		filledWaxy = true;
 		
 		break;
@@ -960,7 +960,7 @@ void Scene::DrainWaxy() {
 
 	case EMPTY:
 		if (resetWax.ReadSec() >= 1.0f) {
-			candleNum--;
+			Engine::GetInstance().entityManager.get()->candleNum--;
 			waxState = FULL;
 			drainedWaxy = true;
 		}

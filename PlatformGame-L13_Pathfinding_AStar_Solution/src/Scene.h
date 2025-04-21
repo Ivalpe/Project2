@@ -116,7 +116,6 @@ public:
 
 	//WAXY
 	bool filledWaxy, drainedWaxy;
-	int candleNum = 0;
 	Timer resetWax;
 
 	//Sounds
