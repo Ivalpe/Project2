@@ -340,7 +340,7 @@ bool Player::Update(float dt)
 		
 		if (deathTimer.ReadSec() >= 2.0f) {
 			Engine::GetInstance().scene.get()->reset_level = true;
-			/*playerState = IDLE;*/
+			playerState = IDLE;
 			
 		}
 		break;
