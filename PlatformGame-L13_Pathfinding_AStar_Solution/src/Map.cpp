@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Log.h"
 #include "Physics.h"
+#include "Scene.h"
 
 #include <math.h>
 
@@ -47,18 +48,23 @@ bool Map::Update(float dt)
 
                     for (int j = 0; j < mapData.height; j++) {
 
-                        //Get the gid from tile
-                        int gid = mapLayer->Get(i, j);
-                        //Check if the gid is different from 0 - some tiles are empty
-                        if (gid != 0) {
-                            TileSet* tileSet = GetTilesetFromTileId(gid);
-                            if (tileSet != nullptr) {
-                                //Get the Rect from the tileSetTexture;
-                                SDL_Rect tileRect = tileSet->GetRect(gid);
-                                //Get the screen coordinates from the tile coordinates
-                                Vector2D mapCoord = MapToWorld(i, j);
-                                //Draw the texture
-                                Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+                        Vector2D mapInWorld = MapToWorld(i, j);
+                        if (Engine::GetInstance().render.get()->InCameraView(mapInWorld.getX(), mapInWorld.getY(), mapData.tileWidth, mapData.tileHeight))
+                        {
+                            //Get the gid from tile
+                            int gid = mapLayer->Get(i, j);
+                            //Check if the gid is different from 0 - some tiles are empty
+                            if (gid != 0) {
+                                //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
+                                TileSet* tileSet = GetTilesetFromTileId(gid);
+                                if (tileSet != nullptr) {
+                                    //Get the Rect from the tileSetTexture;
+                                    SDL_Rect tileRect = tileSet->GetRect(gid);
+                                    //Get the screen coordinates from the tile coordinates
+                                    Vector2D mapCoord = MapToWorld(i, j);
+                                    //Draw the texture
+                                    Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+                                }
                             }
                         }
                     }
@@ -77,21 +83,23 @@ void Map::DrawFront() {
             for (int i = 0; i < mapData.width; i++) {
                 for (int j = 0; j < mapData.height; j++) {
 
-                    // L07 TODO 9: Complete the draw function
-
-                    //Get the gid from tile
-                    int gid = mapLayer->Get(i, j);
-                    //Check if the gid is different from 0 - some tiles are empty
-                    if (gid != 0) {
-                        //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
-                        TileSet* tileSet = GetTilesetFromTileId(gid);
-                        if (tileSet != nullptr) {
-                            //Get the Rect from the tileSetTexture;
-                            SDL_Rect tileRect = tileSet->GetRect(gid);
-                            //Get the screen coordinates from the tile coordinates
-                            Vector2D mapCoord = MapToWorld(i, j);
-                            //Draw the texture
-                            Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+                    Vector2D mapInWorld = MapToWorld(i, j);
+                    if (Engine::GetInstance().render.get()->InCameraView(mapInWorld.getX(), mapInWorld.getY(), mapData.tileWidth, mapData.tileHeight))
+                    {
+                        //Get the gid from tile
+                        int gid = mapLayer->Get(i, j);
+                        //Check if the gid is different from 0 - some tiles are empty
+                        if (gid != 0) {
+                            //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
+                            TileSet* tileSet = GetTilesetFromTileId(gid);
+                            if (tileSet != nullptr) {
+                                //Get the Rect from the tileSetTexture;
+                                SDL_Rect tileRect = tileSet->GetRect(gid);
+                                //Get the screen coordinates from the tile coordinates
+                                Vector2D mapCoord = MapToWorld(i, j);
+                                //Draw the texture
+                                Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+                            }
                         }
                     }
                 }
@@ -226,7 +234,7 @@ bool Map::Load(std::string path, std::string fileName)
                 for (int i = 0; i < mapData.width; i++) {
                     for (int j = 0; j < mapData.height; j++) {
                         int gid = mapLayer->Get(i, j);
-                        if (gid == 49) {
+                        if ((gid == 49 && Engine::GetInstance().scene.get()->level == 0)|| gid == 87076 && Engine::GetInstance().scene.get()->level == 1) {
                             Vector2D mapCoord = MapToWorld(i, j);
                             PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX()+ mapData.tileWidth/2, mapCoord.getY()+ mapData.tileHeight/2, mapData.tileWidth, mapData.tileHeight, STATIC);
                             c1->ctype = ColliderType::PLATFORM;
