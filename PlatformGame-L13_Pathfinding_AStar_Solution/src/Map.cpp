@@ -234,7 +234,7 @@ bool Map::Load(std::string path, std::string fileName)
                 for (int i = 0; i < mapData.width; i++) {
                     for (int j = 0; j < mapData.height; j++) {
                         int gid = mapLayer->Get(i, j);
-                        if ((gid == 49 && Engine::GetInstance().scene.get()->level == 0)|| gid == 87076 && Engine::GetInstance().scene.get()->level == 1) {
+                        if ((gid == 49 && Engine::GetInstance().scene.get()->level == 0)|| gid == 1 && Engine::GetInstance().scene.get()->level == 1) {
                             Vector2D mapCoord = MapToWorld(i, j);
                             PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX()+ mapData.tileWidth/2, mapCoord.getY()+ mapData.tileHeight/2, mapData.tileWidth, mapData.tileHeight, STATIC);
                             c1->ctype = ColliderType::PLATFORM;
