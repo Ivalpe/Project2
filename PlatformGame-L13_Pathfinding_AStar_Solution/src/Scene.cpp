@@ -109,6 +109,8 @@ bool Scene::Awake()
 
 void Scene::CreateItems()
 {
+	/*int currentLvl = level;*/
+	LOG("Current Level: %d", level);
 	int WaxIndex = 0;
 	int fatherIndex = 0;
 	std::vector<Vector2D> waxPositions;
@@ -214,10 +216,12 @@ void Scene::Change_level(int level)
 	if (level == 1)
 	{
 		Engine::GetInstance().map.get()->CleanUp();
+		LOG("Current Level: %d", level);
 		//REMOVE // WHEN SECOND STAGE ENEMYS ADDED
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
+		LOG("Current Level: %d", level);
 		CreateItems();
 
 		showBlackTransition = true;
@@ -338,9 +342,9 @@ bool Scene::PostUpdate()
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
-		Change_level(1);
 		level = 1;
-		player->SetPosition(Vector2D{ 40, 70 });
+		Change_level(level);
+		player->SetPosition(Vector2D{ 64, 64 });
 	}
 
 

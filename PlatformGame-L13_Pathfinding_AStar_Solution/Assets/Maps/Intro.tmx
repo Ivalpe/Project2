@@ -28239,7 +28239,7 @@
    <tile gid="88402"/>
   </data>
  </layer>
- <layer id="19" name="Map2" width="420" height="67">
+ <layer id="19" name="Map2" width="420" height="67" visible="0">
   <properties>
    <property name="Draw" type="bool" value="true"/>
   </properties>
@@ -84533,7 +84533,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="18" name="Collisions" width="420" height="67" visible="0">
+ <layer id="18" name="Collisions" width="420" height="67">
   <data>
    <tile gid="49"/>
    <tile gid="49"/>
@@ -112677,7 +112677,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="21" name="Navigation" width="420" height="67" visible="0">
+ <layer id="21" name="Navigation" width="420" height="67">
   <properties>
    <property name="Navigation" type="bool" value="true"/>
   </properties>
