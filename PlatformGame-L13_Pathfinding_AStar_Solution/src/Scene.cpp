@@ -16,6 +16,8 @@
 #include "Soldier.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
+#include "Physics.h"
+
 
 
 
@@ -47,7 +49,9 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(200 + (300 * i), 700);
+			item->name = "wax";
+			//item->position = Vector2D(200 + (300 * i), 700);
+			itemList.push_back(item);
 
 		}
 
@@ -60,7 +64,10 @@ bool Scene::Awake()
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
-			item->position = Vector2D(800 + (100 * i), 700);
+			item->name = "feather";
+
+			//item->position = Vector2D(800 + (100 * i), 700);
+			itemList.push_back(item);
 
 		}
 
@@ -71,9 +78,9 @@ bool Scene::Awake()
 
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
-		interactiveObject->position = Vector2D(2500, 1500);
+		//interactiveObject->position = Vector2D(2500, 1500);
 		interactiveObjectList.push_back(interactiveObject);
-
+		interactiveObject->name = "stalactites";
 	}
 
 	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("blocked_wall"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
@@ -83,8 +90,10 @@ bool Scene::Awake()
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		//item->position = Vector2D(4840, 2761);
-		interactiveObject->position = Vector2D(1500, 2000);
+		//interactiveObject->position = Vector2D(1500, 2000);
 		interactiveObjectList.push_back(interactiveObject);
+		interactiveObject->name = "wall";
+
 	}
 
 	 //Create a enemy using the entity manager 
@@ -104,6 +113,8 @@ bool Scene::Awake()
 		enemy->SetPath(instanceNode);
 		enemyList.push_back(enemy);
 	}
+
+	CreateItems(level);
 
 	return ret;
 }
@@ -130,11 +141,23 @@ void Scene::CreateItems(int level)
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
 			}
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
 		}
 
 		for (auto& it : itemList) {
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
 				it->position = factherPositions[fatherIndex++];
+			}
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
 			}
 		}
 
@@ -147,22 +170,43 @@ void Scene::CreateItems(int level)
 			else {
 				it->position = Vector2D(1500, 200);
 			}
+
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
 		}
 	}
-	else {
+	else if(level==1){
 
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
-				it->position = Vector2D(-1000, -1000);
+				it->position = Vector2D(-10000, -10000);
+
 			}
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-				it->position = Vector2D(-1000, -1000);
+				it->position = Vector2D(-10000, -10000);
+			}
+
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
 			}
 		}
 
 		for (auto& it : interactiveObjectList) {
-			it->position = Vector2D(-1000, -1000);
+			it->position = Vector2D(-10000, -10000);
 
+			if (it->pbody != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
 		}
 	}
 
@@ -184,6 +228,7 @@ bool Scene::Start()
 	Engine::GetInstance().render.get()->camera.y = 0;
 
 
+	InitialScreen = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_initial").attribute("path").as_string());
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
 	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
@@ -283,71 +328,22 @@ bool Scene::Update(float dt)
 		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 	}
+
+	// Wax animation
+	animationWaxy();
+
 	//Pause menu
 	Active_MenuPause();
 
 	GameOver_State();
 
-	
-	if (!filledWaxy) {
-		if (waxState == FULL) resetWax.Start();
-		
-		FillWaxy();
-	}
+	MenuInitialScreen();
 
-	if (!drainedWaxy) {
-		if (waxState == EMPTY) resetWax.Start();
-		DrainWaxy();
-	}
-
-	//Wax animation
-	switch (waxState) 
-	{
-	case EMPTY: 
-		currentWaxAnim = &empty;
-		break;
-	case FILL_TO_LOW:
-		if (currentWaxAnim != &fill2lvl1) {
-			fill2lvl1.Reset();
-			currentWaxAnim = &fill2lvl1;
-		}
-		break;
-	case QUARTER_FULL:
-		currentWaxAnim = &staticlvl1;
-		break;
-	case FILL_TO_HALF:
-		if (currentWaxAnim != &fill2lvl2) {
-			fill2lvl2.Reset();
-			currentWaxAnim = &fill2lvl2;
-		}
-		break;
-	case HALF_FULL:
-		currentWaxAnim = &staticlvl2;
-		break;
-	case FILL_TO_HIGH:
-		if (currentWaxAnim != &fill2lvl3) {
-			fill2lvl3.Reset();
-			currentWaxAnim = &fill2lvl3;
-		}
-		break;
-	case ALMOST_FULL:
-		currentWaxAnim = &staticlvl3;
-		break;
-	case FILL_TO_FULL:
-		if (currentWaxAnim != &fill2full) {
-			fill2full.Reset();
-			currentWaxAnim = &fill2full;
-		}
-		break;
-	case FULL: 
-		currentWaxAnim = &full; 
-		break;
-	}
-	
-	currentWaxAnim->Update();
+	if(showSettingsMenu) 	MenuSettings();
 
 	return true;
 }
+
 
 // Called each loop iteration
 bool Scene::PostUpdate()
@@ -407,14 +403,14 @@ void Scene::show_UI() {
 
 		if (current_time > 180) UI = false; //3 seconds
 	}
-	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && UI) {
+	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && !InitialScreenMenu&& UI) {
 
 		//Crea
 		
 		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &currentWaxAnim->GetCurrentFrame(), false);
 
 		//vela
-		for (int i = 0; i < candleNum; i++) {
+		for (int i = 0; i < Engine::GetInstance().entityManager.get()->candleNum; i++) {
 			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 50, nullptr, false);
 		}
 
@@ -424,6 +420,67 @@ void Scene::show_UI() {
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 155, 40, 30);
 	}
+}
+
+void Scene::animationWaxy()
+{
+	if (!filledWaxy) {
+		if (waxState == FULL) resetWax.Start();
+		if (shouldFillWaxy) {
+			FillWaxy();
+		}
+	}
+
+	if (!drainedWaxy) {
+		if (waxState == EMPTY) resetWax.Start();
+		DrainWaxy();
+	}
+
+	//Wax animation
+	switch (waxState)
+	{
+	case EMPTY:
+		currentWaxAnim = &empty;
+		break;
+	case FILL_TO_LOW:
+		if (currentWaxAnim != &fill2lvl1) {
+			fill2lvl1.Reset();
+			currentWaxAnim = &fill2lvl1;
+		}
+		break;
+	case QUARTER_FULL:
+		currentWaxAnim = &staticlvl1;
+		break;
+	case FILL_TO_HALF:
+		if (currentWaxAnim != &fill2lvl2) {
+			fill2lvl2.Reset();
+			currentWaxAnim = &fill2lvl2;
+		}
+		break;
+	case HALF_FULL:
+		currentWaxAnim = &staticlvl2;
+		break;
+	case FILL_TO_HIGH:
+		if (currentWaxAnim != &fill2lvl3) {
+			fill2lvl3.Reset();
+			currentWaxAnim = &fill2lvl3;
+		}
+		break;
+	case ALMOST_FULL:
+		currentWaxAnim = &staticlvl3;
+		break;
+	case FILL_TO_FULL:
+		if (currentWaxAnim != &fill2full) {
+			fill2full.Reset();
+			currentWaxAnim = &fill2full;
+		}
+		break;
+	case FULL:
+		currentWaxAnim = &full;
+		break;
+	}
+
+	currentWaxAnim->Update();
 }
 
 // Called before quitting
@@ -439,9 +496,47 @@ Vector2D Scene::GetPlayerPosition()
 	return player->GetPosition();
 }
 
+void Scene::MenuInitialScreen()
+{
+	if (InitialScreenMenu) {
+		if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
+
+		int cameraX = Engine::GetInstance().render.get()->camera.x;
+		int cameraY = Engine::GetInstance().render.get()->camera.y;
+
+
+		Engine::GetInstance().render.get()->DrawTexture(InitialScreen, -cameraX, -cameraY);
+
+
+		int textWidthNewGame, textHeightNewGame;
+		int textWidthContinue, textHeightContinue;
+		int textWidthSettings, textHeightSettings;
+		int textWidthExit, textHeightExit;
+
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "New Game", &textWidthNewGame, &textHeightNewGame);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
+
+		float scaleFactor = 0.8f;
+
+		SDL_Rect NewGameButton = {300, 475 - 15, static_cast<int>(textWidthNewGame* scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
+		SDL_Rect ConitnuesButton = { 320, 520 - 15, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
+		SDL_Rect Settings = { 330, 595 - 10, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
+		SDL_Rect Exit = {350, 670 - 5, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
+
+
+		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "New Game", NewGameButton, this));
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 9, "Continue", ConitnuesButton, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "Settings", Settings, this));
+		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "Exit", Exit, this));
+	}
+	
+}
+
 void Scene::GameOver_State()
 {
-	if (Engine::GetInstance().entityManager->candle <= 0) {
+	if (Engine::GetInstance().entityManager->candleNum <= 0) {
 
 		if (!GameOverMenu) {
 			GameOverMenu = true;
@@ -480,6 +575,7 @@ void Scene::GameOver_State()
 }
 
 void Scene::Active_MenuPause() {
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 		showPauseMenu = !showPauseMenu;
 		showSettingsMenu = false;
@@ -512,6 +608,7 @@ void Scene::Active_MenuPause() {
 			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
 			{
 				showSettingsMenu = false;
+
 			}
 		}
 	}
@@ -694,7 +791,7 @@ void Scene::DisableGuiControlButtons()
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	switch (control->id) {
-	case 1:
+	case 1: //Menu pause: Resume
 		showPauseMenu = false;
 
 		player->ResumeMovement();
@@ -707,10 +804,10 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 
 		DisableGuiControlButtons();
 		break;
-	case 2:
+	case 2://Menu pause: Settings
 		showSettingsMenu = true;
 		break;
-	case 3:
+	case 3: //Menu pause: Exit
 		exit(0);
 		DisableGuiControlButtons();
 		break;
@@ -727,7 +824,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		guiBt1->state = GuiControlState::DISABLED;
 		Engine::GetInstance().scene.get()->reset_level = true;
 
-		Engine::GetInstance().entityManager->wax = 3;
+		Engine::GetInstance().entityManager->candleNum = 3;
 		Engine::GetInstance().entityManager->feather = 0;
 		break;
 	case 7:// Game Over: Exit
@@ -736,7 +833,35 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
 		break;
+
+	case 8:// Initial Screen: New Game
+		showPauseMenu = false;
+		player->ResumeMovement();
+
+		InitialScreenMenu = false;
+		guiBt0->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
+
+		break;
+	case 9:// Initial Screen: Conitnue
+
+		break;
+	case 10:// Initial Screen: Settings
+		
+		//InitialScreenMenu = false;
+		guiBt0->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
+		showSettingsMenu = true;
+
+		break;
+	case 11:// Initial Screen: Exit
+		InitialScreenMenu = false;
+		exit(0);
+		guiBt0->state = GuiControlState::DISABLED;
+		DisableGuiControlButtons();
+		break;
 	}
+
 	return true;
 }
 
@@ -784,7 +909,7 @@ void Scene::FillWaxy(){
 
 		/*if (resetWax.ReadSec() >= 1.0f) {*/
 		waxState = EMPTY;
-		candleNum++;
+		Engine::GetInstance().entityManager.get()->candleNum++;
 		filledWaxy = true;
 		
 		break;
@@ -836,7 +961,7 @@ void Scene::DrainWaxy() {
 
 	case EMPTY:
 		if (resetWax.ReadSec() >= 1.0f) {
-			candleNum--;
+			Engine::GetInstance().entityManager.get()->candleNum--;
 			waxState = FULL;
 			drainedWaxy = true;
 		}

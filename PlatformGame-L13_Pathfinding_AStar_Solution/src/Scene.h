@@ -66,12 +66,14 @@ public:
 	
 	//UI items
 	void show_UI();
+	void animationWaxy();
+
 	//Menus
 	void MenuSettings();
 	void MenuPause();
 	void Active_MenuPause();
 	void GameOver_State();
-
+	void MenuInitialScreen();
 
 	void FillWaxy();
 	void DrainWaxy();
@@ -94,11 +96,13 @@ public:
 	bool showPauseMenu = false;
 	bool showSettingsMenu = false;
 	bool GameOverMenu = false;
+	bool InitialScreenMenu = true;
 
 
 	SDL_Texture* Menu_Pause = NULL;
 	SDL_Texture* Menu_Settings = NULL;
 	SDL_Texture* GameOver = NULL;
+	SDL_Texture* InitialScreen = NULL;
 	SDL_Texture* Feather = NULL;
 	SDL_Texture* Feather_UI = NULL;
 	SDL_Texture* Wax = NULL;
@@ -107,11 +111,11 @@ public:
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;
 	GuiControlButton* guiBt2 = nullptr;
+	GuiControlButton* guiBt0 = nullptr;
 
 
 	//WAXY
-	bool filledWaxy, drainedWaxy;
-	int candleNum = 0;
+	bool filledWaxy, drainedWaxy, shouldFillWaxy = false;
 	Timer resetWax;
 
 	//Sounds
