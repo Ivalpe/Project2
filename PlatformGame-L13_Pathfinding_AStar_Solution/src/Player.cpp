@@ -39,8 +39,10 @@ bool Player::Start() {
 	}
 	else if (Engine::GetInstance().scene.get()->level == 1)
 	{
-		position.setX(40);
-		position.setY(70);
+		position.setX(300);
+		position.setY(600);
+
+
 	}
 
 	//Load animations
@@ -81,7 +83,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true) return true;
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
@@ -93,7 +95,8 @@ bool Player::Update(float dt)
 
 	if (playerState != DEAD) {
 
-		
+	
+
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
 
@@ -224,6 +227,8 @@ bool Player::Update(float dt)
 				else {
 					velocity.y = -0.3 * 16;
 					currentAnimation = &climb;
+					pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
+
 				}
 				
 
@@ -231,6 +236,8 @@ bool Player::Update(float dt)
 			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 				velocity.y = 0.3 * 16;
 				currentAnimation = &climb;
+				pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
+
 			}
 			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
 				currentAnimation = &turn2back;
@@ -333,7 +340,7 @@ bool Player::Update(float dt)
 		
 		if (deathTimer.ReadSec() >= 2.0f) {
 			Engine::GetInstance().scene.get()->reset_level = true;
-			/*playerState = IDLE;*/
+			playerState = IDLE;
 			
 		}
 		break;
@@ -385,8 +392,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 		pbody->body->SetGravityScale(0);
 		
-		
-
+		climbableX = physB->body->GetPosition().x;
 		break;
 	case ColliderType::CHANGE_LEVEL:
 		change_level = true;
@@ -398,14 +404,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
-		//Engine::GetInstance().entityManager.get()->wax--;
-		//if (Engine::GetInstance().entityManager.get()->wax > 0) {
-		//	//Engine::GetInstance().scene.get()->PreUpdate();
-		//	Engine::GetInstance().scene.get()->reset_level = true;
+		Engine::GetInstance().entityManager.get()->candleNum--;
+		if (Engine::GetInstance().entityManager.get()->candleNum > 0) {
+			//Engine::GetInstance().scene.get()->PreUpdate();
+			Engine::GetInstance().scene.get()->reset_level = true;
 
 
-		//}
-		Engine::GetInstance().scene.get()->drainedWaxy = false;
+		}
+		//Engine::GetInstance().scene.get()->drainedWaxy = false;
 
 		break;
 
@@ -490,19 +496,12 @@ int Player::GetWax() {
 
 }
 
-void Player::UpdateWaxToCandle() {
-	if (Engine::GetInstance().entityManager->wax >= 4) {
-		Engine::GetInstance().entityManager->candle += 1;
-		Engine::GetInstance().entityManager->wax = 0;
-	}
-}
-
 
 void Player::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 3, texW / 3, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texW / 3, bodyType::STATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
 
@@ -513,7 +512,7 @@ void Player::ResumeMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 3, texW / 3, bodyType::DYNAMIC);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texW / 3, bodyType::DYNAMIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
 

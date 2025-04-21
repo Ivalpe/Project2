@@ -25,19 +25,24 @@ public:
 		this->parameters = parameters;
 	}
 
+	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+
 public:
 
 	bool isPicked = false;
 	bool isWax = false;
 	bool isFeather = false;
-	int apear = true;
+
+	PhysBody* pbody;
+	int texW, texH;
+
+
 private:
 
 	SDL_Texture* texture;
 	SDL_Texture* Feather_texture;
 
 	const char* texturePath;
-	int texW, texH;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation* currentAnimation_feather = nullptr;
@@ -46,7 +51,6 @@ private:
 	Animation idle_feather;
 	
   
-	PhysBody* pbody;
 
 
 

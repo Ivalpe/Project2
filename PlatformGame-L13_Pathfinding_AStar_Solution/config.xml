@@ -22,6 +22,7 @@
 	  <map path="Assets/Maps/" name="Intro.tmx"/>
 	  <map1 path="Assets/Maps/" name="cave.tmx"/>
 	  <textures>
+		  <Menu_initial path="Assets/Textures/UI/initial_screen.png"/>
 		  <Menu_Pause path="Assets/Textures/UI/Pause_menu.png"/>
 		  <Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
 		  <GameOver path="Assets/Textures/UI/GameOver.png"/>

@@ -30,14 +30,16 @@ public:
 	bool isPicked = false;
 	bool isStalactites = false;
 	bool isWall = false;
-	int apear = true;
+
+	PhysBody* pbody;
+	int texW, texH;
+
 private:
 
 
 	SDL_Texture* Stalactites_texture;
 	SDL_Texture* Wall_texture;
 	const char* texturePath;
-	int texW, texH;
 	pugi::xml_node parameters;
 	Animation* currentAnimation_stalactities = nullptr;
 	Animation* currentAnimation_wall = nullptr;
@@ -47,7 +49,6 @@ private:
 	Animation idle_wall;
 	Animation idle_raise;
 
-	PhysBody* pbody;
 
 	bool damageStalactite = false;
 	bool floorStalactite = false;
