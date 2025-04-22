@@ -166,8 +166,7 @@ void Scene::CreateItems(int level)
 		for (auto& it : interactiveObjectList) 
 		{
 			if (it->name == "wall") {
-				it->position = Vector2D(2500, 1500);
-
+				it->position = Vector2D(-10000, -10000);
 			}
 			else {
 				it->position = Vector2D(1500, 200);
@@ -201,7 +200,14 @@ void Scene::CreateItems(int level)
 		}
 
 		for (auto& it : interactiveObjectList) {
-			it->position = Vector2D(-10000, -10000);
+			if (it->name == "wall") {
+				it->position = Vector2D(32, 0);
+
+			}
+			else {
+				it->position = Vector2D(-10000, -10000);
+
+			}
 
 			if (it->pbody != nullptr) {
 				it->pbody->body->SetTransform(
@@ -317,9 +323,9 @@ bool Scene::Update(float dt)
 	// Limitar la cámara final
 	if(camX< -11520)camX = -11520;
 	
-	Engine::GetInstance().render.get()->camera.x = (camX);
-	Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
-	
+	//Engine::GetInstance().render.get()->camera.x = (camX);
+	//Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
+	//
 	//Reset levels
 	if (reset_level) {
 		Change_level(level);
@@ -328,6 +334,12 @@ bool Scene::Update(float dt)
 		reset_level = false;
 	}
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
+	{
+		
+		LOG("Posición del jugador: X = %f, Y = %f", player->GetPosition().getX(), player->GetPosition().getY());
+		
+	}
 	//Moon animation
 	if (level == 0) {
 		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());

@@ -232,7 +232,7 @@ bool Player::Update(float dt)
 				}
 				
 
-			}
+		}
 			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 				velocity.y = 0.3 * 16;
 				currentAnimation = &climb;
