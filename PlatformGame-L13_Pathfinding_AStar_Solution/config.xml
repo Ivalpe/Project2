@@ -266,13 +266,13 @@
 		  </feather_item>
 	  </items>
 	  <interactiveObject>
-		  <stalactites_item name="stalactites" x="2000" y="1000" w="64" h="64" isStalactites="true" isPicked="false" texture2="Assets/Textures/Stalactites.png" gravity="false">
+		  <stalactites_item name="stalactites" x="2000" y="1000" w="128" h="152" isStalactites="true" isPicked="false" texture2="Assets/Textures/cave stalactite.png" gravity="false">
 			  <animations>
 				  <idle_stalactites loop="true" speed ="0.5">
-					  <frame x="0" y="0" w="64" h="64"/>
+					  <frame x="0" y="0" w="64" h="152"/>
 				  </idle_stalactites>
 				  <idle_stalactites_falls loop="true" speed ="0.5">
-					  <frame x="64" y="0" w="64" h="32"/>
+					  <frame x="64" y="0" w="64" h="152"/>
 				  </idle_stalactites_falls>
 			  </animations>
 		  </stalactites_item>
