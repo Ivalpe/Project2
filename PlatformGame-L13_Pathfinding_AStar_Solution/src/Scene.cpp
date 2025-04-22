@@ -147,7 +147,7 @@ void Scene::CreateItems(int level)
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
 			}
-			if (it->pbody != nullptr) {
+			if (it->pbody != nullptr && it->pbody->body != nullptr) {
 				it->pbody->body->SetTransform(
 					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
 						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
@@ -595,11 +595,6 @@ void Scene::GameOver_State()
 		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
 	}
-
-
-
-
-
 }
 
 void Scene::Active_MenuPause() {

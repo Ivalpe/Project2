@@ -466,7 +466,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 			cleanup_pbody = false;
 		}
 	case ColliderType::DAMAGE:
-		Engine::GetInstance().scene.get()->reset_level = true;
+		/*Engine::GetInstance().scene.get()->reset_level = true;*/
 
 		break;
 	case ColliderType::UNKNOWN:
