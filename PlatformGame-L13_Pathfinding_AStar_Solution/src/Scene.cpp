@@ -42,6 +42,32 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 
 
+	initializeItems();
+
+	 //Create a enemy using the entity manager 
+	/*for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
+	{
+		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+		enemy->SetParameters(enemyNode);
+		enemyList.push_back(enemy);
+	}*/
+
+	for (pugi::xml_node instanceNode = configParameters.child("entities").child("enemies").child("instances").child(GetCurrentLevelName().c_str()).child("instance"); instanceNode; instanceNode = instanceNode.next_sibling("instance")) {
+		Enemy* enemy = (Soldier*)Engine::GetInstance().entityManager->CreateEntity((EntityType)instanceNode.attribute("entityType").as_int());
+		pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child(instanceNode.attribute("enemyType").as_string());
+		enemy->SetParameters(enemyNode);
+		enemy->SetPlayer(player);
+		enemy->SetInstanceParameters(instanceNode);
+		enemy->SetPath(instanceNode);
+		enemyList.push_back(enemy);
+	}
+
+	CreateItems(level);
+
+	return ret;
+}
+
+void Scene::initializeItems() {
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
@@ -95,28 +121,6 @@ bool Scene::Awake()
 		interactiveObject->name = "wall";
 
 	}
-
-	 //Create a enemy using the entity manager 
-	/*for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
-	{
-		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
-		enemy->SetParameters(enemyNode);
-		enemyList.push_back(enemy);
-	}*/
-
-	for (pugi::xml_node instanceNode = configParameters.child("entities").child("enemies").child("instances").child(GetCurrentLevelName().c_str()).child("instance"); instanceNode; instanceNode = instanceNode.next_sibling("instance")) {
-		Enemy* enemy = (Soldier*)Engine::GetInstance().entityManager->CreateEntity((EntityType)instanceNode.attribute("entityType").as_int());
-		pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child(instanceNode.attribute("enemyType").as_string());
-		enemy->SetParameters(enemyNode);
-		enemy->SetPlayer(player);
-		enemy->SetInstanceParameters(instanceNode);
-		enemy->SetPath(instanceNode);
-		enemyList.push_back(enemy);
-	}
-
-	CreateItems(level);
-
-	return ret;
 }
 
 void Scene::CreateItems(int level) 
@@ -323,8 +327,8 @@ bool Scene::Update(float dt)
 	// Limitar la cámara final
 	if(camX< -11520)camX = -11520;
 	
-	//Engine::GetInstance().render.get()->camera.x = (camX);
-	//Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
+	Engine::GetInstance().render.get()->camera.x = (camX);
+	Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
 	//
 	//Reset levels
 	if (reset_level) {
@@ -859,13 +863,60 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 
 			player->ResumeMovement();
 
-		}
+			for (Item * item : itemList) {
+				if (item != nullptr) {
+					item->CleanUp();
+				}
+			}
+
+			itemList.clear();
+
+
+	/*		for (InteractiveObject* interactiveObject : interactiveObjectList) {
+				if (interactiveObject != nullptr) {
+					interactiveObject->CleanUp();
+				}
+			}
+
+			interactiveObjectList.clear();*/
+
+
+			initializeItems();
+
+
+			for (Item* item :itemList) {
+				for (Item* item : itemList) {
+					if (item != nullptr) {
+						if (item->pbody == nullptr) {
+							item->pbody = Engine::GetInstance().physics.get()->CreateCircle(0, 0, 16, bodyType::DYNAMIC);
+						}
+						item->Start();
+					}
+				}
+			}
 		
 
-		//player->Start(); // Reiniciar cualquier estado del jugador
+		/*	for (InteractiveObject* interactiveObject : interactiveObjectList) {
+				for (InteractiveObject* interactiveObject : interactiveObjectList) {
+					if (interactiveObject != nullptr) {
+						if (interactiveObject->pbody == nullptr) {
+							interactiveObject->pbody = Engine::GetInstance().physics.get()->CreateCircle(0, 0, 16, bodyType::DYNAMIC);
+						}
+						if (interactiveObject->pbody->body != nullptr) {
+							interactiveObject->Start();
 
+						}
+					}
+				
+			}*/
+
+
+			CreateItems(level);
+		}
+		
 		// Reiniciar recursos del jugador
 		Engine::GetInstance().entityManager->candleNum = 3;
+		Engine::GetInstance().entityManager->wax = 0;
 		Engine::GetInstance().entityManager->feather = 0;
 		
 

@@ -50,7 +50,7 @@ private:
 	Animation idle;
 	Animation idle_feather;
 	
-  
+	bool isStart = false;
 
 
 

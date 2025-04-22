@@ -58,6 +58,7 @@ public:
 
 	Player* GetPlayer() const { return player; }
 
+	void initializeItems();
 	void CreateItems(int level);
 
 

@@ -50,6 +50,12 @@ bool InteractiveObject::Start() {
 	idle_raise.LoadAnimations(parameters.child("animations").child("idle_raise"));
 
 
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
+	}
+
+
 	if (name == "wall")
 	{
 		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() - texH / 2, texW, texH, bodyType::STATIC);
