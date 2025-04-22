@@ -57,7 +57,7 @@ bool InteractiveObject::Start() {
 
 	}
 	else {
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH / 2, texW/2, texH, bodyType::STATIC);
 
 	}
 
@@ -111,7 +111,7 @@ bool InteractiveObject::Update(float dt)
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;
 
-			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH, 64, 32, bodyType::DYNAMIC);
+			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH, 64, 76, bodyType::DYNAMIC);
 
 			pbody->listener = this;
 			changecolision = false;
@@ -126,7 +126,7 @@ bool InteractiveObject::Update(float dt)
 		}
 
 
-		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX(), (int)position.getY() + 16, &currentAnimation_stalactities->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX() + texW/4, (int)position.getY(), &currentAnimation_stalactities->GetCurrentFrame());
 
 		currentAnimation_stalactities->Update();
 
