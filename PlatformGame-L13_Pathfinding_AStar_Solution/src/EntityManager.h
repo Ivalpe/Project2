@@ -39,6 +39,6 @@ public:
 
 	std::list<Entity*> entities;
 	int wax = 0;
-	int candleNum = 2;
+	int candleNum = 3;
 	int feather = 0;
 };

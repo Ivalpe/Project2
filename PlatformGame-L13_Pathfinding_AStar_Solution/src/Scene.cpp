@@ -549,6 +549,13 @@ void Scene::GameOver_State()
 
 		if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
 
+		if (player->pbody != nullptr) {
+			Engine::GetInstance().physics.get()->DeletePhysBody(player->pbody);
+			player->pbody = nullptr;
+
+			player->pbody = Engine::GetInstance().physics.get()->CreateCircle(player->position.getX(), player->position.getY(), 32, bodyType::DYNAMIC);
+			player->pbody->ctype = ColliderType::PLAYER;
+		}
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
 		int cameraY = Engine::GetInstance().render.get()->camera.y;
 
@@ -800,6 +807,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		showPauseMenu = false;
 
 		player->ResumeMovement();
+		Engine::GetInstance().entityManager->candleNum = 3;
+		Engine::GetInstance().entityManager->feather = 0;
 		/*for (Enemy* enemy : enemyList) {
 			if (enemy) {
 				enemy->visible = true;
@@ -823,14 +832,35 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		Ambient_Sounds_ButtonHeld = true;
 		break;
 	case 6:	// Game Over: Continue
-		CreateItems(level);
 		GameOverMenu = false;
-		guiBt->state = GuiControlState::DISABLED;
-		guiBt1->state = GuiControlState::DISABLED;
-		Engine::GetInstance().scene.get()->reset_level = true;
 
+		// Restablecer la posición del jugador según el nivel
+		if (player != nullptr) {
+			if (Engine::GetInstance().scene.get()->level == 0) {
+				player->position.setX(784);
+				player->position.setY(600);
+			}
+			else if (Engine::GetInstance().scene.get()->level == 1) {
+				player->position.setX(300);
+				player->position.setY(600);
+			}
+
+			player->ResumeMovement();
+
+		}
+		
+
+		//player->Start(); // Reiniciar cualquier estado del jugador
+
+		// Reiniciar recursos del jugador
 		Engine::GetInstance().entityManager->candleNum = 3;
 		Engine::GetInstance().entityManager->feather = 0;
+		
+
+		guiBt->state = GuiControlState::DISABLED;
+		guiBt1->state = GuiControlState::DISABLED;
+
+	
 		break;
 	case 7:// Game Over: Exit
 
