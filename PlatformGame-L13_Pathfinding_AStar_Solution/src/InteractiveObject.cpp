@@ -47,22 +47,23 @@ bool InteractiveObject::Start() {
 	currentAnimation_wall = &idle_wall;
 
 	idle_stalactites_falls.LoadAnimations(parameters.child("animations").child("idle_stalactites_falls"));
-	idle_raise.LoadAnimations(parameters.child("animations").child("idle_raise"));
+	fade_wall.LoadAnimations(parameters.child("animations").child("fade_wall"));
 
+	
 
 	if (name == "wall")
 	{
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() - texH / 2, texW, texH, bodyType::STATIC);
-		
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY() - texH / 2, currentAnimation_wall->GetCurrentFrame().w, texH, bodyType::STATIC);
+		pbody->ctype = ColliderType::WALL;
 
 	}
 	else {
 		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH / 2, texW/2, texH, bodyType::STATIC);
-
+		pbody->ctype = ColliderType::PLATFORM;
 	}
 
 	pbody->listener = this;
-	pbody->ctype = ColliderType::PLATFORM;
+	
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
@@ -89,11 +90,11 @@ bool InteractiveObject::Update(float dt)
 			pbody->body->SetGravityScale(1);
 			b2Vec2 force(0.0f, -10.0f);
 			pbody->body->ApplyForceToCenter(force, true);
-			isPicked = 1;
+			isPicked = true;
 			changecolision = true;
 		}
 
-		if (isWall && distance < 370.0f && isPicked == 0)
+		if (isWall && distance < 370.0f && !isPicked)
 		{
 			LOG("%d", distance);
 			blockText = true;
@@ -126,7 +127,7 @@ bool InteractiveObject::Update(float dt)
 		}
 
 
-		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX() + texW/4, (int)position.getY(), &currentAnimation_stalactities->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX() + texW/4, (int)position.getY() + 16, &currentAnimation_stalactities->GetCurrentFrame());
 
 		currentAnimation_stalactities->Update();
 
@@ -134,27 +135,35 @@ bool InteractiveObject::Update(float dt)
 
 	if (isWall) {
 
-		if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2)
+		if (!Wallraise && /*Engine::GetInstance().entityManager->feather >= 2*/  player->touched_wall )
 		{
+			
+			currentAnimation_wall = &fade_wall;
 
-			currentAnimation_wall = &idle_raise;
+			if (currentAnimation_wall->HasFinished()) {
+				Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+				pbody = nullptr;
+				Wallraise = true;
 
-			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-			pbody = nullptr;
-			Wallraise = true;
 
+
+
+				player->touched_wall = false;
+			}
+				
 
 		}
 
-		Engine::GetInstance().render.get()->DrawTexture(Wall_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_wall->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(Wall_texture, (int)position.getX() + currentAnimation_wall->GetCurrentFrame().w *2, (int)position.getY(), &currentAnimation_wall->GetCurrentFrame());
 		currentAnimation_wall->Update();
 
 		if (blockText == true)
 		{
 			int textWidthSentence, textHeightSentence;
 
-			if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2)
+			if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2 /*&& !fade_wall.HasFinished()*/)
 			{
+
 				TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, tiene plumas", &textWidthSentence, &textHeightSentence);
 
 			}
@@ -174,12 +183,20 @@ bool InteractiveObject::Update(float dt)
 			if (Engine::GetInstance().entityManager->feather >= 2)
 			{
 				LOG("Tiene plumas");
-				Engine::GetInstance().render.get()->DrawText("Ikaros, tiene plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
-				isPicked = 1;
+				if (!fade_wall.HasFinished()) {
+					Engine::GetInstance().render.get()->DrawText("Ikaros, tiene plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+
+					
+				}
+				else {
+					isPicked = true;
+				}
+					
 
 			}
 			else {
+				
 				Engine::GetInstance().render.get()->DrawText("Ikaros, busca plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
 			}

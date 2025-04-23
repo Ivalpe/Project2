@@ -9,6 +9,7 @@
 #include "Physics.h"
 #include "EntityManager.h"
 
+
 #define GRAVITY 2.0f
 
 Player::Player() : Entity(EntityType::PLAYER)
@@ -411,9 +412,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 
 		}
-		//Engine::GetInstance().scene.get()->drainedWaxy = false;
-
 		break;
+		//Engine::GetInstance().scene.get()->drainedWaxy = false;
+	case ColliderType::WALL:
+		if(Engine::GetInstance().entityManager->feather >= 2) touched_wall = true;
+		break;
+		
 
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
@@ -437,9 +441,6 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		
 		pbody->body->SetGravityScale(GRAVITY);
 		playerState = IDLE;
-		
-
-
 
 		/*if (currentAnimation != &turn2front) {
 			turn2front.Reset();
@@ -452,6 +453,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 
 		LOG("End Collision CLIMABLE");
 		break;
+	
 	case ColliderType::CHANGE_LEVEL:
 		change_level = false;
 		Engine::GetInstance().scene.get()->reset_level = true;
