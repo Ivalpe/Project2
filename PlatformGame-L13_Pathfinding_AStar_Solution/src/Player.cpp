@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "EntityManager.h"
+#include "Platform.h"
 
 #define GRAVITY 2.0f
 
@@ -59,11 +60,6 @@ bool Player::Start() {
 	playerState = IDLE;
 	hide.Reset();
 
-	// L08 TODO 5: Add physics to the player - initialize physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
-
-	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
-	pbody->listener = this;
 
 	// L08 TODO 7: Assign collider type
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
@@ -236,9 +232,18 @@ bool Player::Update(float dt)
 			pbody->body->SetGravityScale(GRAVITY);
 			/*playerState = IDLE;*/
 		}
+
+
+		// When on a m_platform, add platform velocity to player movement
+		if (isOnPlatform) {
+			velocity.x += platform->pbody->body->GetLinearVelocity().x;
+		}
+
 		// Apply the velocity to the player
 		pbody->body->SetLinearVelocity(velocity);
 	}
+
+
 
 	switch (playerState) {
 	case IDLE:
@@ -376,16 +381,31 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		cleanup_pbody = true;
 		break;
 	case ColliderType::DAMAGE:
-		LOG("Colisión con daño detectada");
+		//LOG("Colisión con daño detectada");
 
-		Engine::GetInstance().entityManager.get()->candleNum--;
-		if (Engine::GetInstance().entityManager.get()->candleNum > 0) {
-			//Engine::GetInstance().scene.get()->PreUpdate();
-			Engine::GetInstance().scene.get()->reset_level = true;
+		//Engine::GetInstance().entityManager.get()->candleNum--;
+		//if (Engine::GetInstance().entityManager.get()->candleNum > 0) {
+		//	//Engine::GetInstance().scene.get()->PreUpdate();
+		//	Engine::GetInstance().scene.get()->reset_level = true;
 
 
-		}
+		//}
 		//Engine::GetInstance().scene.get()->drainedWaxy = false;
+
+		break;
+	case ColliderType::M_PLATFORM:
+		LOG("Collision M_PLATFORM");
+		isJumping = false;
+		canDoubleJump = false;
+		lastJump = 0;
+		fallForce = 1.5;
+		isClimbing = false;
+		isOnPlatform = true;
+
+		// Assign the platform listener if valid.
+		if (physB->listener != nullptr && dynamic_cast<Platform*>(physB->listener)) {
+			platform = static_cast<Platform*>(physB->listener);
+		}
 
 		break;
 
@@ -438,6 +458,13 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		/*Engine::GetInstance().scene.get()->reset_level = true;*/
 
 		break;
+
+	case ColliderType::M_PLATFORM:
+		LOG("End Collision M_PLATFORM");
+		isOnPlatform = false;
+		platform = nullptr;
+		break;
+
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");
 		break;

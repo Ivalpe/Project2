@@ -118,7 +118,7 @@ bool InteractiveObject::Update(float dt)
 	}
 
 	if (isWall) {
-		if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2)
+		if (!Wallraise && Engine::GetInstance().entityManager->feather >= 7)
 		{
 			currentAnimation_wall = &idle_raise;
 

@@ -35,8 +35,7 @@ public:
 
 	std::vector<std::pair<int, int>> PlatformLimits
 	{
-		{3864, 4870+100},
-		//{900, 200}
+		{3864+300, 4870+30},
 	};
 
 private:

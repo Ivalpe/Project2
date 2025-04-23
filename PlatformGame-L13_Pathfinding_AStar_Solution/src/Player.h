@@ -5,6 +5,7 @@
 #include "Box2D/Box2D.h"
 #include "Animation.h"
 #include "Timer.h"
+#include "Platform.h"
 
 enum Direction {
 
@@ -113,4 +114,7 @@ public:
 	Timer deathTimer;
 
 	float climbableX;
+
+	bool isOnPlatform=false;
+	Platform* platform = nullptr;
 };

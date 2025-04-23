@@ -56,7 +56,7 @@ bool Scene::Awake()
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("feather_item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
@@ -135,8 +135,11 @@ void Scene::CreateItems(int level)
 	std::vector<Vector2D> factherPositions{
 		  Vector2D(2064, 5578),
 		  Vector2D(795, 4906),
-		  Vector2D(5129, 2920),
-		  Vector2D(9789, 1962)
+		  Vector2D(4702,4010),
+		  Vector2D(9789, 1962),
+		  Vector2D(3210+200, 6442),
+		  Vector2D(4335+200, 2058), //alto
+		  Vector2D(10875, 6154)
 	};
 
 	std::vector<Vector2D> stalactitePositions{
@@ -165,7 +168,7 @@ void Scene::CreateItems(int level)
 			}
 		}
 
-		for (auto& it : itemList) {
+	/*	for (auto& it : itemList) {
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
 				it->position = factherPositions[fatherIndex++];
 			}
@@ -175,7 +178,7 @@ void Scene::CreateItems(int level)
 						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
 					0);
 			}
-		}
+		}*/
 
 		for (auto& it : interactiveObjectList) 
 		{
