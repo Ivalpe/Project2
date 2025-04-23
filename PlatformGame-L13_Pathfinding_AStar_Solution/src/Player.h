@@ -46,7 +46,7 @@ public:
 
 	bool CleanUp();
 
-	// L08 TODO 6: Define OnCollision function for the player. 
+	 
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
@@ -74,13 +74,14 @@ public:
 	//Audio fx
 	int pickCoinFxId;
 
-	// L08 TODO 5: Add physics to the player - declare a Physics body
+	
 	PhysBody* pbody;
 	float jumpForce = 200.0f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	bool isHiding = false; // Flag to check if the player is currently hiding
 	bool isCrawling = false;
 	bool canDoubleJump = false;
+	bool touched_wall = false;
 	int lastJump = 0;
 	int glid_time = 0;
 	int glid_reduce=0;

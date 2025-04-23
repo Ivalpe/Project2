@@ -51,7 +51,7 @@ private:
 	Animation idle_Stalactites;
 	Animation idle_stalactites_falls;
 	Animation idle_wall;
-	Animation idle_raise;
+	Animation fade_wall;
 
 
 	bool damageStalactite = false;
@@ -60,5 +60,6 @@ private:
 
 	bool Wallraise = false;
 	bool blockText;
+
 
 };

@@ -24,7 +24,7 @@ enum bodyType {
 };
 
 enum class ColliderType {
-	PLAYER, 
+	PLAYER,
 	ITEM,
 	PLATFORM,
 	M_PLATFORM,
@@ -32,6 +32,7 @@ enum class ColliderType {
 	CLIMBABLE,
 	CHANGE_LEVEL,
 	DAMAGE,
+	WALL,
 	CHASESENSOR,
 	UNKNOWN
 	// ..

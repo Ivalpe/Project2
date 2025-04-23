@@ -1,4 +1,4 @@
-﻿#include "InteractiveObject.h"
+#include "InteractiveObject.h"
 #include "Engine.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -35,6 +35,7 @@ bool InteractiveObject::Start() {
 	Stalactites_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture2").as_string());
 	Wall_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture3").as_string());
 
+
 	//Load animations
 
 	idle_Stalactites.LoadAnimations(parameters.child("animations").child("idle_stalactites"));
@@ -46,21 +47,26 @@ bool InteractiveObject::Start() {
 	currentAnimation_wall = &idle_wall;
 
 	idle_stalactites_falls.LoadAnimations(parameters.child("animations").child("idle_stalactites_falls"));
-	idle_raise.LoadAnimations(parameters.child("animations").child("idle_raise"));
+	fade_wall.LoadAnimations(parameters.child("animations").child("fade_wall"));
 
+	
 
 	if (name == "wall")
 	{
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() - texH / 2, texW, texH, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY() - texH / 2, currentAnimation_wall->GetCurrentFrame().w, texH, bodyType::STATIC);
+		pbody->ctype = ColliderType::WALL;
+
 	}
 	else {
 		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH / 2, texW/2, texH, bodyType::STATIC);
+		pbody->ctype = ColliderType::PLATFORM;
 	}
 
 	pbody->listener = this;
-	pbody->ctype = ColliderType::PLATFORM;
+	
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+
 
 	return true;
 }
@@ -68,6 +74,7 @@ bool InteractiveObject::Start() {
 bool InteractiveObject::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
+
 
 	Player* player = Engine::GetInstance().scene.get()->GetPlayer();
 	if (player != nullptr)
@@ -83,17 +90,19 @@ bool InteractiveObject::Update(float dt)
 			pbody->body->SetGravityScale(1);
 			b2Vec2 force(0.0f, -10.0f);
 			pbody->body->ApplyForceToCenter(force, true);
-			isPicked = 1;
+			isPicked = true;
 			changecolision = true;
 		}
 
-		if (isWall && distance < 370.0f && isPicked == 0)
+		if (isWall && distance < 370.0f && !isPicked)
 		{
 			LOG("%d", distance);
 			blockText = true;
+
 		}
 		else {
 			blockText = false;
+
 		}
 	}
 	if (isStalactites) {
@@ -103,42 +112,64 @@ bool InteractiveObject::Update(float dt)
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;
 
-			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH, 63, 85, bodyType::DYNAMIC);
+			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH, 64, 76, bodyType::DYNAMIC);
 
 			pbody->listener = this;
 			changecolision = false;
 
 			if (!damageStalactite) {
+
 				pbody->body->SetType(b2_staticBody);
+
+
 			}
+			
 		}
-		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX() + texW/4, (int)position.getY(), &currentAnimation_stalactities->GetCurrentFrame());
+
+
+		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX() + texW/4, (int)position.getY() + 16, &currentAnimation_stalactities->GetCurrentFrame());
 
 		currentAnimation_stalactities->Update();
+
 	}
 
 	if (isWall) {
-		if (!Wallraise && Engine::GetInstance().entityManager->feather >= 7)
-		{
-			currentAnimation_wall = &idle_raise;
 
-			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-			pbody = nullptr;
-			Wallraise = true;
+		if (!Wallraise && /*Engine::GetInstance().entityManager->feather >= 2*/  player->touched_wall )
+		{
+			
+			currentAnimation_wall = &fade_wall;
+
+			if (currentAnimation_wall->HasFinished()) {
+				Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+				pbody = nullptr;
+				Wallraise = true;
+
+
+
+
+				player->touched_wall = false;
+			}
+				
+
 		}
 
-		Engine::GetInstance().render.get()->DrawTexture(Wall_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_wall->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(Wall_texture, (int)position.getX() + currentAnimation_wall->GetCurrentFrame().w *2, (int)position.getY(), &currentAnimation_wall->GetCurrentFrame());
 		currentAnimation_wall->Update();
 
 		if (blockText == true)
 		{
 			int textWidthSentence, textHeightSentence;
 
-			if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2){
+			if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2 /*&& !fade_wall.HasFinished()*/)
+			{
+
 				TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, tiene plumas", &textWidthSentence, &textHeightSentence);
+
 			}
 			else {
 				TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, busca plumas", &textWidthSentence, &textHeightSentence);
+
 			}
 
 			float scale = 0.5;
@@ -148,17 +179,29 @@ bool InteractiveObject::Update(float dt)
 			SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 0, 0, 0, 150);
 			SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &Rect);
 
+
 			if (Engine::GetInstance().entityManager->feather >= 2)
 			{
 				LOG("Tiene plumas");
-				Engine::GetInstance().render.get()->DrawText("Ikaros, tiene plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
-				isPicked = 1;
+				if (!fade_wall.HasFinished()) {
+					Engine::GetInstance().render.get()->DrawText("Ikaros, tiene plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+
+					
+				}
+				else {
+					isPicked = true;
+				}
+					
+
 			}
 			else {
+				
 				Engine::GetInstance().render.get()->DrawText("Ikaros, busca plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+
 			}
 		}
+
 	}
 
 	if (pbody != NULL) {
@@ -193,6 +236,7 @@ void InteractiveObject::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			currentAnimation_stalactities = &idle_stalactites_falls;
 			if (position.getY() > 1830)	damageStalactite = false;
 		}
+
 	}
 	if ((bodyA == pbody && bodyA->ctype == ColliderType::DAMAGE && bodyB->ctype == ColliderType::PLAYER) ||
 		(bodyB == pbody && bodyB->ctype == ColliderType::DAMAGE && bodyA->ctype == ColliderType::PLAYER))

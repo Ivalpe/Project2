@@ -278,7 +278,7 @@ void Pathfinding::PropagateAStar(ASTAR_HEURISTICS heuristic, Vector2D destinatio
         if (frontierTile == destinationTile) {
 
             foundDestination = true;
-            // L12: TODO 2: When the destination is reach, call the function ComputePath
+            
             ComputePath(frontierTile.getX(), frontierTile.getY());
         }
     }

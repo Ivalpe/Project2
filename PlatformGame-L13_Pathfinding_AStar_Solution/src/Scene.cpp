@@ -190,7 +190,7 @@ void Scene::CreateItems(int level)
 		for (auto& it : interactiveObjectList) 
 		{
 			if (it->name == "wall") {
-				it->position = Vector2D(2500, 1500);
+				it->position = Vector2D(2500, 2000);
 
 			}
 			else {
@@ -333,6 +333,7 @@ void Scene::Change_level(int level)
 // Called each loop iteration
 bool Scene::PreUpdate()
 {
+
 	return true;
 }
 
@@ -354,7 +355,7 @@ bool Scene::Update(float dt)
 	if(camX< -11520)camX = -11520;
 	
 	Engine::GetInstance().render.get()->camera.x = (camX);
-	Engine::GetInstance().render.get()->camera.y = (camY /*+ player->crouch*/);
+	Engine::GetInstance().render.get()->camera.y = (camY -100 /*+ player->crouch*/);
 	
 
 	//Reset levels
@@ -410,7 +411,7 @@ bool Scene::PostUpdate()
 
 	show_UI();
 
-	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) Engine::GetInstance().map.get()->DrawFront();
+	
 
 	if (showBlackTransition) {
 		Uint32 now = SDL_GetTicks();
@@ -428,6 +429,16 @@ bool Scene::PostUpdate()
 			showBlackTransition = false; // Termina la transici�n
 		}
 	}
+
+
+	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) {
+		Engine::GetInstance().map.get()->DrawFront();
+	}
+	
+
+	
+	
+
 	return ret;
 }
 

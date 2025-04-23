@@ -12,7 +12,7 @@
 
 Physics::Physics() : Module()
 {
-	debug = true;
+	debug = false;
 	// Initialise all the internal class variables, at least to NULL pointer
 	world = NULL;
 	
