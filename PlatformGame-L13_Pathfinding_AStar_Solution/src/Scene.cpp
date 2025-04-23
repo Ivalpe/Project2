@@ -166,7 +166,7 @@ void Scene::CreateItems(int level)
 		for (auto& it : interactiveObjectList) 
 		{
 			if (it->name == "wall") {
-				it->position = Vector2D(2500, 1500);
+				it->position = Vector2D(2500, 2000);
 
 			}
 			else {
@@ -297,6 +297,7 @@ void Scene::Change_level(int level)
 // Called each loop iteration
 bool Scene::PreUpdate()
 {
+
 	return true;
 }
 
@@ -373,7 +374,7 @@ bool Scene::PostUpdate()
 
 	show_UI();
 
-	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) Engine::GetInstance().map.get()->DrawFront();
+	
 
 	if (showBlackTransition) {
 		Uint32 now = SDL_GetTicks();
@@ -391,6 +392,16 @@ bool Scene::PostUpdate()
 			showBlackTransition = false; // Termina la transici�n
 		}
 	}
+
+
+	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) {
+		Engine::GetInstance().map.get()->DrawFront();
+	}
+	
+
+	
+	
+
 	return ret;
 }
 

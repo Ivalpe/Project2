@@ -80,6 +80,7 @@ public:
 	bool isHiding = false; // Flag to check if the player is currently hiding
 	bool isCrawling = false;
 	bool canDoubleJump = false;
+	bool touched_wall = false;
 	int lastJump = 0;
 	int glid_time = 0;
 	int glid_reduce=0;
