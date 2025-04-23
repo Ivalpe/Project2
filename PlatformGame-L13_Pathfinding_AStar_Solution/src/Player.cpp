@@ -26,9 +26,7 @@ bool Player::Awake() {
 }
 
 bool Player::Start() {
-
-
-	//L03: TODO 2: Initialize Player parameters
+	
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
@@ -41,8 +39,6 @@ bool Player::Start() {
 	{
 		position.setX(300);
 		position.setY(600);
-
-
 	}
 
 	//Load animations
@@ -70,6 +66,10 @@ bool Player::Start() {
 	pbody->listener = this;
 
 	// L08 TODO 7: Assign collider type
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
+
+	pbody->listener = this;
+
 	pbody->ctype = ColliderType::PLAYER;
 
 	// Set the gravity of the body
@@ -93,9 +93,9 @@ bool Player::Update(float dt)
 		playerState = DEAD;
 	}
 
-	if (playerState != DEAD) {
+	//MOVIMIENTO
 
-	
+	if (playerState != DEAD) {
 
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
@@ -121,7 +121,6 @@ bool Player::Update(float dt)
 			}
 		}
 
-
 		//Jump
 		if (isJumping && lastJump <= 25) lastJump++;
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN /*|| Engine::GetInstance().input.get()->pads[0].b*/) {
@@ -141,9 +140,7 @@ bool Player::Update(float dt)
 
 		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
 
-
 		// hide
-
 		if (playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
 
 			isJumping = false;
@@ -158,13 +155,11 @@ bool Player::Update(float dt)
 					/*|| Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
 					velocity.x /= 4;
 					playerState = CRAWL;
-
 				}
 				else {
 					playerState = HIDE;
 				}
 			}
-
 		}
 
 		if (playerState == FALL && velocity.y == 0) {
@@ -188,7 +183,6 @@ bool Player::Update(float dt)
 		//printf("%f\n", velocity.y);
 
 		if (velocity.y > 1.0f && playerState != CLIMB && !isClimbing) {
-
 			playerState = FALL;
 		}
 
@@ -206,8 +200,6 @@ bool Player::Update(float dt)
 		}
 
 		if (playerState == CLIMB) {
-			
-
 			velocity.y = 0;
 			pbody->body->SetGravityScale(0);
 			
@@ -230,34 +222,23 @@ bool Player::Update(float dt)
 					pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
 
 				}
-				
-
-		}
+			}
 			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 				velocity.y = 0.3 * 16;
 				currentAnimation = &climb;
 				pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
-
 			}
 			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
 				currentAnimation = &turn2back;
-				
 			}
-			
-			
-
 		}
 		else {
 			pbody->body->SetGravityScale(GRAVITY);
 			/*playerState = IDLE;*/
-			
-
 		}
 		// Apply the velocity to the player
 		pbody->body->SetLinearVelocity(velocity);
-
 	}
-
 
 	switch (playerState) {
 	case IDLE:
@@ -292,8 +273,6 @@ bool Player::Update(float dt)
 		}
 		break;
 	case CLIMB:
-
-		
 		/*if (isClimbing) {
 			if (currentAnimation != &turn2front) {
 				turn2front.Reset();
@@ -302,12 +281,7 @@ bool Player::Update(float dt)
 			else if (turn2front.HasFinished()) {
 				playerState = IDLE;
 			}
-
 		}*/
-		
-		
-		
-
 		break;
 	case HIDE:
 		if (currentAnimation != &hide) {
@@ -437,9 +411,6 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		
 		pbody->body->SetGravityScale(GRAVITY);
 		playerState = IDLE;
-		
-
-
 
 		/*if (currentAnimation != &turn2front) {
 			turn2front.Reset();
@@ -449,7 +420,6 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 			if (turn2front.HasFinished()) playerState = IDLE;
 		}*/
 		
-
 		LOG("End Collision CLIMABLE");
 		break;
 	case ColliderType::CHANGE_LEVEL:
@@ -457,7 +427,6 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		Engine::GetInstance().scene.get()->reset_level = true;
 
 		if (cleanup_pbody) {
-
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;  // Eliminar el cuerpo físico del jugador
 
@@ -493,7 +462,6 @@ Vector2D Player::GetPosition() {
 int Player::GetWax() {
 
 	return Engine::GetInstance().entityManager->wax;
-
 }
 
 
@@ -504,7 +472,6 @@ void Player::StopMovement() {
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texW / 3, bodyType::STATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
-
 	}
 }
 
@@ -515,6 +482,5 @@ void Player::ResumeMovement() {
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texW / 3, bodyType::DYNAMIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
-
 	}
 }

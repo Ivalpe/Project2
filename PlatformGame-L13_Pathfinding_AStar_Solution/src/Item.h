@@ -27,6 +27,7 @@ public:
 
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 
+	void SetPosition(Vector2D pos);
 public:
 
 	bool isPicked = false;
@@ -50,7 +51,7 @@ private:
 	Animation idle;
 	Animation idle_feather;
 	
-	bool isStart = false;
+  
 
 
 

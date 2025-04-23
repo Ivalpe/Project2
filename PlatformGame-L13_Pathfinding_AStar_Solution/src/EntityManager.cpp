@@ -34,7 +34,6 @@ bool EntityManager::Awake()
 	}
 
 	return ret;
-
 }
 
 bool EntityManager::Start() {

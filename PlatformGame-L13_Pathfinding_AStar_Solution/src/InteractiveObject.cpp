@@ -35,7 +35,6 @@ bool InteractiveObject::Start() {
 	Stalactites_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture2").as_string());
 	Wall_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture3").as_string());
 
-
 	//Load animations
 
 	idle_Stalactites.LoadAnimations(parameters.child("animations").child("idle_stalactites"));
@@ -50,21 +49,12 @@ bool InteractiveObject::Start() {
 	idle_raise.LoadAnimations(parameters.child("animations").child("idle_raise"));
 
 
-	if (pbody != nullptr) {
-		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		pbody = nullptr;
-	}
-
-
 	if (name == "wall")
 	{
 		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() - texH / 2, texW, texH, bodyType::STATIC);
-		
-
 	}
 	else {
 		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH / 2, texW/2, texH, bodyType::STATIC);
-
 	}
 
 	pbody->listener = this;
@@ -72,14 +62,12 @@ bool InteractiveObject::Start() {
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
-
 	return true;
 }
 
 bool InteractiveObject::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
-
 
 	Player* player = Engine::GetInstance().scene.get()->GetPlayer();
 	if (player != nullptr)
@@ -103,11 +91,9 @@ bool InteractiveObject::Update(float dt)
 		{
 			LOG("%d", distance);
 			blockText = true;
-
 		}
 		else {
 			blockText = false;
-
 		}
 	}
 	if (isStalactites) {
@@ -117,39 +103,28 @@ bool InteractiveObject::Update(float dt)
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;
 
-			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH, 64, 76, bodyType::DYNAMIC);
+			pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW/2, (int)position.getY() + texH, 63, 85, bodyType::DYNAMIC);
 
 			pbody->listener = this;
 			changecolision = false;
 
 			if (!damageStalactite) {
-
 				pbody->body->SetType(b2_staticBody);
-
-
 			}
-			
 		}
-
-
 		Engine::GetInstance().render.get()->DrawTexture(Stalactites_texture, (int)position.getX() + texW/4, (int)position.getY(), &currentAnimation_stalactities->GetCurrentFrame());
 
 		currentAnimation_stalactities->Update();
-
 	}
 
 	if (isWall) {
-
 		if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2)
 		{
-
 			currentAnimation_wall = &idle_raise;
 
 			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 			pbody = nullptr;
 			Wallraise = true;
-
-
 		}
 
 		Engine::GetInstance().render.get()->DrawTexture(Wall_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_wall->GetCurrentFrame());
@@ -159,14 +134,11 @@ bool InteractiveObject::Update(float dt)
 		{
 			int textWidthSentence, textHeightSentence;
 
-			if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2)
-			{
+			if (!Wallraise && Engine::GetInstance().entityManager->feather >= 2){
 				TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, tiene plumas", &textWidthSentence, &textHeightSentence);
-
 			}
 			else {
 				TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, busca plumas", &textWidthSentence, &textHeightSentence);
-
 			}
 
 			float scale = 0.5;
@@ -176,21 +148,17 @@ bool InteractiveObject::Update(float dt)
 			SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 0, 0, 0, 150);
 			SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &Rect);
 
-
 			if (Engine::GetInstance().entityManager->feather >= 2)
 			{
 				LOG("Tiene plumas");
 				Engine::GetInstance().render.get()->DrawText("Ikaros, tiene plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
 
 				isPicked = 1;
-
 			}
 			else {
 				Engine::GetInstance().render.get()->DrawText("Ikaros, busca plumas", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
-
 			}
 		}
-
 	}
 
 	if (pbody != NULL) {
@@ -225,11 +193,21 @@ void InteractiveObject::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			currentAnimation_stalactities = &idle_stalactites_falls;
 			if (position.getY() > 1830)	damageStalactite = false;
 		}
-
 	}
 	if ((bodyA == pbody && bodyA->ctype == ColliderType::DAMAGE && bodyB->ctype == ColliderType::PLAYER) ||
 		(bodyB == pbody && bodyB->ctype == ColliderType::DAMAGE && bodyA->ctype == ColliderType::PLAYER))
 	{
 		damageStalactite = true;
+	}
+}
+
+void InteractiveObject::SetPosition(Vector2D pos) {
+
+	pos.setX(pos.getX() + texW / 2);
+	pos.setY(pos.getY() + texH / 2);
+	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
+	if (pbody->body != nullptr) {
+		pbody->body->SetTransform(bodyPos, 0);
+
 	}
 }

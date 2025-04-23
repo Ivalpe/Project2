@@ -46,31 +46,21 @@ bool Item::Start() {
 	currentAnimation_feather = &idle_feather;
 
 
-	if (pbody != nullptr) {
-		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		pbody = nullptr;
-	}
-
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 	pbody->listener = this;
 
 	pbody->ctype = ColliderType::ITEM;
 	
-	if (!pbody) {
-		LOG("Failed to create physics body for item: %s", name.c_str());
-		return false;
-	}
-
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 	
-	isStart = true;
+	
 	return true;
 }
 
 bool Item::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true || isStart==false) return true;
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
 	if (isWax && isPicked == 0) {
 		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
@@ -81,13 +71,9 @@ bool Item::Update(float dt)
 		currentAnimation_feather->Update();
 	}
 
-	if (pbody != nullptr && pbody->body != nullptr) {
-		b2Transform pbodyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-	}
-	
-	
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	return true;
 }
@@ -114,13 +100,20 @@ void Item::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			isPicked = true;
 			Engine::GetInstance().entityManager->wax++;
 			Engine::GetInstance().scene.get()->shouldFillWaxy = true;
-
 		}
 		else if (name == "feather") {
 			isPicked = true;
 			Engine::GetInstance().entityManager->feather++;
 			Engine::GetInstance().scene.get()->shouldFillWaxy = false;
-
 		}
+	}
+}
+
+void Item::SetPosition(Vector2D pos) {
+	pos.setX(pos.getX() + texW / 2);
+	pos.setY(pos.getY() + texH / 2);
+	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
+	if (pbody->body != nullptr) {
+		pbody->body->SetTransform(bodyPos, 0);
 	}
 }

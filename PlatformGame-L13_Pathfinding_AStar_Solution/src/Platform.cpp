@@ -31,8 +31,6 @@ bool Platform::Start() {
 		return false;  // Si no se carga la textura, no continuar
 	}
 
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 
@@ -44,29 +42,36 @@ bool Platform::Start() {
 	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::KINEMATIC);
 	pbody->listener = this;
 
-
 	// Set the gravity of the body
 	pbody->body->SetGravityScale(0);
 
 	//Assign collider type
 	pbody->ctype = ColliderType::M_PLATFORM;
 
-
-
-
 	return true;
 }
 
 bool Platform::Update(float dt)
 {
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true || Engine::GetInstance().scene.get()->level == 0) return true;
+
+	//if(Engine::GetInstance().scene.get()->)
 	//Platform moving
-	b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x,0);
+
+	for (int i = 0; i < PlatformLimits.size(); i++)
+	{
+		int startPositionX = PlatformLimits[i].first;
+		int endPositionX = PlatformLimits[i].second;
+
+		b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
+
+		if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
+		else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
+		pbody->body->SetLinearVelocity(velocity);
+
+	}
+
 	
-	if (position.getX() <= startPositionX && position.getX()!= endPositionX) velocity.x = movement; //Movement to the right
-	else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
-	pbody->body->SetLinearVelocity(velocity);
-
-
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
@@ -74,7 +79,6 @@ bool Platform::Update(float dt)
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
-
 
 	return true;
 }
@@ -88,7 +92,9 @@ void Platform::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	pbody->body->SetTransform(bodyPos, 0);
+	if (pbody->body != nullptr) {
+		pbody->body->SetTransform(bodyPos, 0);
+	}
 }
 
 Vector2D Platform::GetPosition() {

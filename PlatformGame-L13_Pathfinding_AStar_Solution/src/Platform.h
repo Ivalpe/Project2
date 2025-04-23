@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "SDL2/SDL.h"
 #include "Animation.h"
+#include <vector>
 
 struct SDL_Texture;
 
@@ -32,9 +33,15 @@ public:
 public:
 	PhysBody* pbody;
 
+	std::vector<std::pair<int, int>> PlatformLimits
+	{
+		{3864, 4870+100},
+		//{900, 200}
+	};
+
 private:
-	int startPositionX = 800;
-	int endPositionX = 1000;
+	//int startPositionX = 800;
+	//int endPositionX = 1000;
 	int movement = 5;
 
 	SDL_Texture* texture;

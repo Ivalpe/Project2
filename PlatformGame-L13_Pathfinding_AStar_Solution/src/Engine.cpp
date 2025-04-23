@@ -139,8 +139,6 @@ bool Engine::Update() {
         maxFrameDuration = limitFPS ? 34 : 16; // 33 ms para ~30 FPS, 16 ms para ~60 FPS
     }
 
-    
-
     if (ret == true)
         ret = PreUpdate();
 
