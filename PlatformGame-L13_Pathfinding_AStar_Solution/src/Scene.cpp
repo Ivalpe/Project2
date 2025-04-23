@@ -162,22 +162,35 @@ void Scene::CreateItems(int level)
 
 	if (level == 0) {
 
-		/*for (auto& it : itemList) {
+		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
-				it->position = waxPositions[WaxIndex++];
+				if (WaxIndex == 0) {
+					it->position = Vector2D(5500, 1322);
+					WaxIndex++;
+				}
+				else {
+					it->position = Vector2D(-10000, -1000);
+					fatherIndex++;
+
+				}
 			}
-			if (it->pbody != nullptr && it->pbody->body != nullptr) {
-				it->pbody->body->SetTransform(
-					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
-						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
-					0);
-			}
-		}*/
+
+				if (it->pbody != nullptr && it->pbody->body != nullptr) {
+					it->pbody->body->SetTransform(
+						b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+							PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+						0);
+				}
+			
+			
+		}
 
 		for (auto& it : itemList) {
+			
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-
-				it->position = Vector2D(-1000, -1000);
+			
+					it->position = Vector2D(-1000, -1000);
+				
 			}
 			if (it->pbody != nullptr) {
 				it->pbody->body->SetTransform(
@@ -357,6 +370,9 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.x = (camX);
 	Engine::GetInstance().render.get()->camera.y = (camY -100 /*+ player->crouch*/);
 	
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
+		LOG("%d x, %d y", Px, Py);
+	}
 
 	//Reset levels
 	if (reset_level) {
@@ -468,7 +484,7 @@ void Scene::show_UI() {
 		}
 
 		//Wax texture
-		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 50, 150, nullptr, false);
+		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
 		char FeatherText[64];
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);
