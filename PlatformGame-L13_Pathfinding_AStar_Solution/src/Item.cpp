@@ -46,7 +46,7 @@ bool Item::Start() {
 	currentAnimation_feather = &idle_feather;
 
 
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2-5, texH / 2, bodyType::DYNAMIC);
 	pbody->listener = this;
 
 	pbody->ctype = ColliderType::ITEM;
@@ -74,7 +74,6 @@ bool Item::Update(float dt)
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-	
 
 	return true;
 }
@@ -101,13 +100,20 @@ void Item::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			isPicked = true;
 			Engine::GetInstance().entityManager->wax++;
 			Engine::GetInstance().scene.get()->shouldFillWaxy = true;
-
 		}
 		else if (name == "feather") {
 			isPicked = true;
 			Engine::GetInstance().entityManager->feather++;
 			Engine::GetInstance().scene.get()->shouldFillWaxy = false;
-
 		}
+	}
+}
+
+void Item::SetPosition(Vector2D pos) {
+	pos.setX(pos.getX() + texW / 2);
+	pos.setY(pos.getY() + texH / 2);
+	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
+	if (pbody->body != nullptr) {
+		pbody->body->SetTransform(bodyPos, 0);
 	}
 }

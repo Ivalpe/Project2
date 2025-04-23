@@ -8,6 +8,7 @@
 #include <vector>
 #include "GuiControlButton.h"
 #include "Animation.h"
+#include "Platform.h"
 
 struct SDL_Texture;
 enum WaxState {
@@ -83,6 +84,9 @@ public:
 
 
 public:
+	
+
+
 	// Get tilePosDebug value
 	std::string GetTilePosDebug() {
 		return tilePosDebug;
@@ -135,9 +139,13 @@ private:
 	bool once = false;
 	Player* player;
 	Enemy* enemy;
+	Platform* platform;
+
+
 	std::vector<Enemy*> enemyList;
 	std::vector<Item*> itemList;
 	std::vector<InteractiveObject*> interactiveObjectList;
+	std::vector<Platform*> platformList;
 
 	SDL_Texture* FeatherTexture;
 	SDL_Texture* waxTexture;

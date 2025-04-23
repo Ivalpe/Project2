@@ -50,13 +50,10 @@ public:
 			if (currentFrame >= totalFrames) {
 				currentFrame = (loop || pingpong) ? 0.0f : totalFrames - 1;
 				++loopCount;
-
-			
 			}
 		}
 
 		if (pingpong) pingpongDirection = -pingpongDirection;
-		
 	}
 
 	const SDL_Rect& GetCurrentFrame() const {
@@ -79,6 +76,5 @@ public:
 						animation.attribute("w").as_int(),
 						animation.attribute("h").as_int() });
 		}
-
 	}
 };

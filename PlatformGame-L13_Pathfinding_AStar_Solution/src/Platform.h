@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "SDL2/SDL.h"
 #include "Animation.h"
+#include <vector>
 
 struct SDL_Texture;
 
@@ -29,12 +30,24 @@ public:
 
 	Vector2D GetPosition();
 
+	void StopMovement();
+	void ResumeMovement();
+
+
 public:
 	PhysBody* pbody;
 
+	std::vector<std::pair<int, int>> PlatformLimits
+	{
+		{3864 + 300, 4870 + 30},
+		{182 +140+70, 3018 + 60},
+
+		{8228+50+20, 11295+60},
+	};
+
 private:
-	int startPositionX = 800;
-	int endPositionX = 1000;
+	//int startPositionX = 800;
+	//int endPositionX = 1000;
 	int movement = 5;
 
 	SDL_Texture* texture;

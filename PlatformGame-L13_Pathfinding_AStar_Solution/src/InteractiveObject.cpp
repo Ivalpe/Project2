@@ -1,4 +1,4 @@
-﻿#include "InteractiveObject.h"
+#include "InteractiveObject.h"
 #include "Engine.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -244,3 +244,15 @@ void InteractiveObject::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		damageStalactite = true;
 	}
 }
+
+void InteractiveObject::SetPosition(Vector2D pos) {
+
+	pos.setX(pos.getX() + texW / 2);
+	pos.setY(pos.getY() + texH / 2);
+	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
+	if (pbody->body != nullptr) {
+		pbody->body->SetTransform(bodyPos, 0);
+
+	}
+}
+

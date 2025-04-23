@@ -8,7 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "Map.h"
-
+#include "Entity.h"
 Platform::Platform() : Entity(EntityType::PLATFORM)
 {
 
@@ -31,8 +31,6 @@ bool Platform::Start() {
 		return false;  // Si no se carga la textura, no continuar
 	}
 
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 
@@ -44,28 +42,47 @@ bool Platform::Start() {
 	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::KINEMATIC);
 	pbody->listener = this;
 
-
 	// Set the gravity of the body
 	pbody->body->SetGravityScale(0);
 
 	//Assign collider type
 	pbody->ctype = ColliderType::M_PLATFORM;
 
-
-
-
 	return true;
 }
 
+
 bool Platform::Update(float dt)
 {
-	//Platform moving
-	b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x,0);
-	
-	if (position.getX() <= startPositionX && position.getX()!= endPositionX) velocity.x = movement; //Movement to the right
-	else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
-	pbody->body->SetLinearVelocity(velocity);
+	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true || Engine::GetInstance().scene.get()->level == 0) return true;
 
+
+	for (int i = 0; i < PlatformLimits.size(); i++)
+	{
+		int startPositionX;
+		int endPositionX;
+		if (name == "platform0") {
+			startPositionX = PlatformLimits[0].first;
+			endPositionX = PlatformLimits[0].second;
+		}
+		if (name == "platform1") {
+			startPositionX = PlatformLimits[1].first;
+			endPositionX = PlatformLimits[1].second;
+		}
+		if (name == "platform2") {
+			startPositionX = PlatformLimits[2].first;
+			endPositionX = PlatformLimits[2].second;
+		}
+		if (name == "platform0" || name == "platform1" || name == "platform2") {
+			b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
+
+			if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
+			else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
+			pbody->body->SetLinearVelocity(velocity);
+		}
+
+
+	}
 
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
@@ -75,9 +92,9 @@ bool Platform::Update(float dt)
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
-
 	return true;
 }
+
 
 bool Platform::CleanUp()
 {
@@ -88,11 +105,35 @@ void Platform::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	pbody->body->SetTransform(bodyPos, 0);
+	if (pbody->body != nullptr) {
+		pbody->body->SetTransform(bodyPos, 0);
+	}
 }
 
 Vector2D Platform::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+
+void Platform::StopMovement() {
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH / 2, texW, texH, bodyType::STATIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::M_PLATFORM;
+	}
+}
+
+void Platform::ResumeMovement() {
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY()+ texH /2, texW, texH, bodyType::KINEMATIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::M_PLATFORM;
+		b2Vec2 velocity = b2Vec2(movement, 0);
+		pbody->body->SetLinearVelocity(velocity);
+	}
 }

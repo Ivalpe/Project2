@@ -17,8 +17,7 @@
 #include "GuiControl.h"
 #include "GuiManager.h"
 #include "Physics.h"
-
-
+#include "Platform.h"
 
 
 
@@ -45,32 +44,25 @@ bool Scene::Awake()
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
 			item->name = "wax";
-			//item->position = Vector2D(200 + (300 * i), 700);
 			itemList.push_back(item);
-
 		}
-
 	}
 
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("feather_item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
 
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
 			item->name = "feather";
-
-			//item->position = Vector2D(800 + (100 * i), 700);
 			itemList.push_back(item);
-
 		}
-
 	}
 
 	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
@@ -78,7 +70,6 @@ bool Scene::Awake()
 
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
-		//interactiveObject->position = Vector2D(2500, 1500);
 		interactiveObjectList.push_back(interactiveObject);
 		interactiveObject->name = "stalactites";
 	}
@@ -89,10 +80,20 @@ bool Scene::Awake()
 
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
-		//item->position = Vector2D(4840, 2761);
-		//interactiveObject->position = Vector2D(1500, 2000);
 		interactiveObjectList.push_back(interactiveObject);
 		interactiveObject->name = "wall";
+	}
+
+	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms"))
+
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			Platform* PlatformObject = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
+			PlatformObject->SetParameters(PlatformObjectNode);
+			platformList.push_back(PlatformObject);
+			PlatformObject->name = "platform" + std::to_string(i);
+		}
 
 	}
 
@@ -126,20 +127,42 @@ void Scene::CreateItems(int level)
 	LOG("Current Level: %d", level);
 	int WaxIndex = 0;
 	int fatherIndex = 0;
+	int stalactiteIndex = 0;
+	int platformIndex = 0;
 	std::vector<Vector2D> waxPositions{
-		  Vector2D(300, 672),
-		  Vector2D(400, 672),
-		  Vector2D(500, 672)
+		  Vector2D(6966, 1930),
+		  Vector2D(5542, 6350),
+		  Vector2D(795, 4900+300),
+		  Vector2D(2604, 5068),
+		  Vector2D(4828, 4750)
 	};
 	std::vector<Vector2D> factherPositions{
-		  Vector2D(900, 400),
-		  Vector2D(110, 400),
-		  Vector2D(130, 400)
+		  Vector2D(2064, 5578),
+		  Vector2D(795, 4874),
+		  Vector2D(4702,4010),
+		  Vector2D(9789, 1962),
+		  Vector2D(3210+200, 6442),
+		  Vector2D(4335+200, 2058), //alto
+		  Vector2D(10875, 6154)
 	};
+
+	std::vector<Vector2D> stalactitePositions{
+		Vector2D(2087, 5400+300),
+		//Vector2D(5619, 5680),
+	
+	};
+
+	std::vector<Vector2D> platformPositions{
+		Vector2D(4870 + 300, 2698 + 350),
+		Vector2D(300, 6634 + 150),
+		Vector2D(8528, 6634 + 85),
+
+	};
+
 
 	if (level == 0) {
 
-		for (auto& it : itemList) {
+		/*for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
 			}
@@ -149,11 +172,12 @@ void Scene::CreateItems(int level)
 						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
 					0);
 			}
-		}
+		}*/
 
 		for (auto& it : itemList) {
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-				it->position = factherPositions[fatherIndex++];
+
+				it->position = Vector2D(-1000, -1000);
 			}
 			if (it->pbody != nullptr) {
 				it->pbody->body->SetTransform(
@@ -170,7 +194,7 @@ void Scene::CreateItems(int level)
 
 			}
 			else {
-				it->position = Vector2D(1500, 200);
+				it->position = Vector2D(1500, 400);
 			}
 
 			if (it->pbody != nullptr) {
@@ -185,31 +209,45 @@ void Scene::CreateItems(int level)
 
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
-				it->position = Vector2D(-10000, -10000);
+				it->SetPosition(waxPositions[WaxIndex++]);
+
 
 			}
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-				it->position = Vector2D(-10000, -10000);
+				it->SetPosition(factherPositions[fatherIndex++]);
 			}
 
-			if (it->pbody != nullptr) {
-				it->pbody->body->SetTransform(
-					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
-						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
-					0);
-			}
+			
 		}
 
 		for (auto& it : interactiveObjectList) {
-			it->position = Vector2D(-10000, -10000);
+			if (it->name == "wall") {
+				it->SetPosition(Vector2D{ 6645, 3988 });
 
-			if (it->pbody != nullptr) {
-				it->pbody->body->SetTransform(
-					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
-						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
-					0);
 			}
+
+		
 		}
+
+
+		for (auto& it : interactiveObjectList) {
+			if (it->name == "stalactites" && stalactiteIndex<stalactitePositions.size()) {
+				it->SetPosition(stalactitePositions[stalactiteIndex++]);
+
+			}
+
+
+		}
+
+		for (auto& it : platformList) {
+			if (platformIndex < platformPositions.size()) {
+				it->SetPosition(platformPositions[platformIndex++]);
+
+			}
+
+
+		}
+
 	}
 
 }
@@ -290,8 +328,6 @@ void Scene::Change_level(int level)
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
 	}
-
-	
 }
 
 // Called each loop iteration
@@ -321,6 +357,7 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.x = (camX);
 	Engine::GetInstance().render.get()->camera.y = (camY -100 /*+ player->crouch*/);
 	
+
 	//Reset levels
 	if (reset_level) {
 		Change_level(level);
@@ -431,10 +468,10 @@ void Scene::show_UI() {
 		}
 
 		//Wax texture
-		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 10, 150, nullptr, false);
+		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 50, 150, nullptr, false);
 		char FeatherText[64];
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
-		Engine::GetInstance().render.get()->DrawText(FeatherText, 50, 155, 40, 30);
+		Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);
 	}
 }
 
@@ -536,10 +573,10 @@ void Scene::MenuInitialScreen()
 
 		float scaleFactor = 0.8f;
 
-		SDL_Rect NewGameButton = {300, 475 - 15, static_cast<int>(textWidthNewGame* scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
-		SDL_Rect ConitnuesButton = { 320, 520 - 15, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
-		SDL_Rect Settings = { 330, 595 - 10, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
-		SDL_Rect Exit = {350, 670 - 5, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
+		SDL_Rect NewGameButton = {300-60-7, 445 + 50, static_cast<int>(textWidthNewGame* scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
+		SDL_Rect ConitnuesButton = { 320-50-7, 520 + 50, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
+		SDL_Rect Settings = { 330-45-7, 595 + 50, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
+		SDL_Rect Exit = {350-25-7, 670 + 50, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
 
 
 		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "New Game", NewGameButton, this));
@@ -547,7 +584,6 @@ void Scene::MenuInitialScreen()
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "Settings", Settings, this));
 		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "Exit", Exit, this));
 	}
-	
 }
 
 void Scene::GameOver_State()
@@ -588,7 +624,6 @@ void Scene::GameOver_State()
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
 
 		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
-
 	}
 }
 
@@ -605,6 +640,11 @@ void Scene::Active_MenuPause() {
 						enemy->StopMovement();
 					}
 				}*/
+			for (Platform* platform : platformList) {
+				if (platform !=NULL) {
+					platform->StopMovement();
+				}
+			}
 		}
 		else if (!showPauseMenu) {
 			player->ResumeMovement();
@@ -614,6 +654,11 @@ void Scene::Active_MenuPause() {
 					enemy->ResumeMovement();
 				}
 			}*/
+			for (Platform* platform : platformList) {
+				if (platform != NULL) {
+					platform->ResumeMovement();
+				}
+			}
 			DisableGuiControlButtons();
 		}
 	}
@@ -852,20 +897,16 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			}
 
 			player->ResumeMovement();
-
 		}
-		
 
 		//player->Start(); // Reiniciar cualquier estado del jugador
 
 		// Reiniciar recursos del jugador
 		Engine::GetInstance().entityManager->candleNum = 3;
 		Engine::GetInstance().entityManager->feather = 0;
-		
 
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
-
 	
 		break;
 	case 7:// Game Over: Exit
@@ -955,9 +996,6 @@ void Scene::FillWaxy(){
 		
 		break;
 	}
-
-	
-	
 }
 
 void Scene::DrainWaxy() {
@@ -1008,11 +1046,6 @@ void Scene::DrainWaxy() {
 		}
 		break;
 	}
-	
-	
-
-
-
 }
 
 

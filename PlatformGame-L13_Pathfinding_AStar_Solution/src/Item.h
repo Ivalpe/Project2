@@ -27,6 +27,7 @@ public:
 
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 
+	void SetPosition(Vector2D pos);
 public:
 
 	bool isPicked = false;

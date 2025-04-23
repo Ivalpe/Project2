@@ -25,6 +25,11 @@ public:
 		this->parameters = parameters;
 	}
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+
+	void SetPosition(Vector2D pos);
+	
+
+
 public:
 
 	bool isPicked = false;
@@ -35,7 +40,6 @@ public:
 	int texW, texH;
 
 private:
-
 
 	SDL_Texture* Stalactites_texture;
 	SDL_Texture* Wall_texture;

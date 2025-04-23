@@ -250,17 +250,17 @@
         </animations>
       </player>
       <items>
-        <item name="wax" x="200" y="672" w="32" h="32" isWax="true" isPicked="false" texture="Assets/Textures/wax.png" gravity="true">
+        <item name="wax" x="200" y="672" w="64" h="40" isWax="true" isPicked="false" texture="Assets/Textures/wax.png" gravity="true">
           <animations>
             <idle loop="true" speed ="0.5">
-              <frame x="0" y="0" w="32" h="32"/>
+              <frame x="0" y="0" w="64" h="44"/>
             </idle>
           </animations>
         </item>
-		  <feather_item name="feather" x="200" y="672" w="32" h="32" isFeather="true" isPicked="false" texture1="Assets/Textures/Feather_item.png" gravity="true">
+		  <feather_item name="feather" x="200" y="672" w="21" h="64" isFeather="true" isPicked="false" texture1="Assets/Textures/Feather_item.png" gravity="true">
 			  <animations>
 				  <idle_feather loop="true" speed ="0.5">
-					  <frame x="0" y="0" w="32" h="32"/>
+					  <frame x="0" y="0" w="21" h="64"/>
 				  </idle_feather>
 			  </animations>
 		  </feather_item>
