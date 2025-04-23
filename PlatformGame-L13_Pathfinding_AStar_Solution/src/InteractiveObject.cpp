@@ -234,7 +234,7 @@ void InteractiveObject::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		if (name == "stalactites") {
 			pbody->ctype = ColliderType::PLATFORM;
 			currentAnimation_stalactities = &idle_stalactites_falls;
-			if (position.getY() > 1830)	damageStalactite = false;
+			if (position.getY() < 5340)	damageStalactite = false;
 		}
 
 	}

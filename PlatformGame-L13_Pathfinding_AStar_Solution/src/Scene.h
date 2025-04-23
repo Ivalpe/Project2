@@ -140,7 +140,7 @@ private:
 	Player* player;
 	Enemy* enemy;
 	Platform* platform;
-
+	InteractiveObject* interactiveObject;
 
 	std::vector<Enemy*> enemyList;
 	std::vector<Item*> itemList;

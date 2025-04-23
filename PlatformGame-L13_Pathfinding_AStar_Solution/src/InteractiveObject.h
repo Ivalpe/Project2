@@ -61,5 +61,7 @@ private:
 	bool Wallraise = false;
 	bool blockText;
 
+	float timer = 0.0f;
+	bool waitingToBecomeStatic = false;
 
 };

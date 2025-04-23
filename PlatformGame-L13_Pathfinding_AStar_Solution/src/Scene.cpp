@@ -147,7 +147,7 @@ void Scene::CreateItems(int level)
 	};
 
 	std::vector<Vector2D> stalactitePositions{
-		Vector2D(2087, 5400+300),
+		Vector2D(5324, 5340),
 		//Vector2D(5619, 5680),
 	
 	};
@@ -207,7 +207,7 @@ void Scene::CreateItems(int level)
 
 			}
 			else {
-				it->position = Vector2D(1500, 400);
+				it->position = Vector2D(-1000, -1000);
 			}
 
 			if (it->pbody != nullptr) {
@@ -235,7 +235,7 @@ void Scene::CreateItems(int level)
 
 		for (auto& it : interactiveObjectList) {
 			if (it->name == "wall") {
-				it->SetPosition(Vector2D{ 6645, 3988 });
+				it->SetPosition(Vector2D{ 6377+50, 3880-50 });
 
 			}
 
@@ -371,7 +371,12 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.y = (camY -100 /*+ player->crouch*/);
 	
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
-		LOG("%d x, %d y", Px, Py);
+		//LOG("%d x, %d y", Px, Py);
+		if (interactiveObject->name == "stalactites") 
+		{
+			LOG("%d", interactiveObject->position.getY());
+		}
+		
 	}
 
 	//Reset levels

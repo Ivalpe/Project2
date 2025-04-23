@@ -39,7 +39,7 @@ bool Platform::Start() {
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::KINEMATIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH / 2, texW / 2, texH, bodyType::KINEMATIC);
 	pbody->listener = this;
 
 	// Set the gravity of the body
@@ -120,7 +120,7 @@ void Platform::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH / 2, texW, texH, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH / 2, texW / 2, texH, bodyType::STATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::M_PLATFORM;
 	}
@@ -130,7 +130,7 @@ void Platform::ResumeMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY()+ texH /2, texW, texH, bodyType::KINEMATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH / 2, texW / 2, texH, bodyType::KINEMATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::M_PLATFORM;
 		b2Vec2 velocity = b2Vec2(movement, 0);
