@@ -28,7 +28,7 @@ bool Player::Awake() {
 bool Player::Start() {
 
 
-	//L03: TODO 2: Initialize Player parameters
+	
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
@@ -63,13 +63,13 @@ bool Player::Start() {
 	playerState = IDLE;
 	hide.Reset();
 
-	// L08 TODO 5: Add physics to the player - initialize physics body
+	
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
 
-	// L08 TODO 6: Assign player class (using "this") to the listener of the pbody. This makes the Physics module to call the OnCollision method
+	
 	pbody->listener = this;
 
-	// L08 TODO 7: Assign collider type
+	
 	pbody->ctype = ColliderType::PLAYER;
 
 	// Set the gravity of the body
@@ -368,7 +368,7 @@ bool Player::CleanUp()
 	return true;
 }
 
-// L08 TODO 6: Define OnCollision function for the player. 
+
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{

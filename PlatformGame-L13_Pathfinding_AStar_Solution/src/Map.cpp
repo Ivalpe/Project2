@@ -55,7 +55,7 @@ bool Map::Update(float dt)
                             int gid = mapLayer->Get(i, j);
                             //Check if the gid is different from 0 - some tiles are empty
                             if (gid != 0) {
-                                //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
+                                
                                 TileSet* tileSet = GetTilesetFromTileId(gid);
                                 if (tileSet != nullptr) {
                                     //Get the Rect from the tileSetTexture;
@@ -90,7 +90,7 @@ void Map::DrawFront() {
                         int gid = mapLayer->Get(i, j);
                         //Check if the gid is different from 0 - some tiles are empty
                         if (gid != 0) {
-                            //L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
+                            
                             TileSet* tileSet = GetTilesetFromTileId(gid);
                             if (tileSet != nullptr) {
                                 //Get the Rect from the tileSetTexture;
@@ -246,7 +246,7 @@ bool Map::Load(std::string path, std::string fileName)
             }
         }
 
-        // L08 TODO 3: Create colliders
+        
         float x = 0.0f;
         float y = 0.0f;
         float width = 0.0f;
@@ -371,7 +371,7 @@ Vector2D Map::WorldToWorldCenteredOnTile(int x, int y)
 
 
 
-// L10: TODO 5: Add method WorldToMap to obtain  map coordinates from screen coordinates 
+
 Vector2D Map::WorldToMap(int x, int y) {
 
     Vector2D ret(0, 0);
