@@ -355,7 +355,7 @@ bool Scene::Update(float dt)
 	if(camX< -11520)camX = -11520;
 	
 	Engine::GetInstance().render.get()->camera.x = (camX);
-	Engine::GetInstance().render.get()->camera.y = (camY -100 /*+ player->crouch*/);
+	Engine::GetInstance().render.get()->camera.y = (camY  /*+ player->crouch*/);
 	
 
 	//Reset levels
