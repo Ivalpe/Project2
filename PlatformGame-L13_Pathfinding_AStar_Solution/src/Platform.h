@@ -30,12 +30,19 @@ public:
 
 	Vector2D GetPosition();
 
+	void StopMovement();
+	void ResumeMovement();
+
+
 public:
 	PhysBody* pbody;
 
 	std::vector<std::pair<int, int>> PlatformLimits
 	{
-		{3864+300, 4870+30},
+		{3864 + 300, 4870 + 30},
+		{182 +140+70, 3018 + 60},
+
+		{8228+50+20, 11295+60},
 	};
 
 private:

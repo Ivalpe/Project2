@@ -211,3 +211,4 @@ void InteractiveObject::SetPosition(Vector2D pos) {
 
 	}
 }
+

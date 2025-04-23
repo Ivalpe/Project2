@@ -44,7 +44,7 @@ bool Scene::Awake()
 	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
 	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
 	{
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 			item->SetParameters(itemNode);
@@ -87,11 +87,13 @@ bool Scene::Awake()
 	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms"))
 
 	{
-
-		Platform* PlatformObject = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
-		PlatformObject->SetParameters(PlatformObjectNode);
-		platformList.push_back(PlatformObject);
-		PlatformObject->name = "platform";
+		for (int i = 0; i < 3; i++)
+		{
+			Platform* PlatformObject = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
+			PlatformObject->SetParameters(PlatformObjectNode);
+			platformList.push_back(PlatformObject);
+			PlatformObject->name = "platform" + std::to_string(i);
+		}
 
 	}
 
@@ -128,13 +130,15 @@ void Scene::CreateItems(int level)
 	int stalactiteIndex = 0;
 	int platformIndex = 0;
 	std::vector<Vector2D> waxPositions{
-		  Vector2D(300, 672),
-		  Vector2D(400, 672),
-		  Vector2D(500, 672)
+		  Vector2D(6966, 1930),
+		  Vector2D(5542, 6350),
+		  Vector2D(795, 4900+300),
+		  Vector2D(2604, 5068),
+		  Vector2D(4828, 4750)
 	};
 	std::vector<Vector2D> factherPositions{
 		  Vector2D(2064, 5578),
-		  Vector2D(795, 4906),
+		  Vector2D(795, 4874),
 		  Vector2D(4702,4010),
 		  Vector2D(9789, 1962),
 		  Vector2D(3210+200, 6442),
@@ -143,20 +147,22 @@ void Scene::CreateItems(int level)
 	};
 
 	std::vector<Vector2D> stalactitePositions{
-		Vector2D(2087, 5400),
-	  //Vector2D(5619, 5680),
+		Vector2D(2087, 5400+300),
+		//Vector2D(5619, 5680),
 	
 	};
 
 	std::vector<Vector2D> platformPositions{
-		Vector2D(4870+300, 2698+350),
+		Vector2D(4870 + 300, 2698 + 350),
+		Vector2D(300, 6634 + 150),
+		Vector2D(8528, 6634 + 85),
 
 	};
 
 
 	if (level == 0) {
 
-		for (auto& it : itemList) {
+		/*for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
 				it->position = waxPositions[WaxIndex++];
 			}
@@ -166,7 +172,7 @@ void Scene::CreateItems(int level)
 						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
 					0);
 			}
-		}
+		}*/
 
 	/*	for (auto& it : itemList) {
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
@@ -202,7 +208,7 @@ void Scene::CreateItems(int level)
 
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
-				it->SetPosition(Vector2D{ -10000, -10000 });
+				it->SetPosition(waxPositions[WaxIndex++]);
 
 
 			}
@@ -625,6 +631,11 @@ void Scene::Active_MenuPause() {
 						enemy->StopMovement();
 					}
 				}*/
+			for (Platform* platform : platformList) {
+				if (platform !=NULL) {
+					platform->StopMovement();
+				}
+			}
 		}
 		else if (!showPauseMenu) {
 			player->ResumeMovement();
@@ -634,6 +645,11 @@ void Scene::Active_MenuPause() {
 					enemy->ResumeMovement();
 				}
 			}*/
+			for (Platform* platform : platformList) {
+				if (platform != NULL) {
+					platform->ResumeMovement();
+				}
+			}
 			DisableGuiControlButtons();
 		}
 	}

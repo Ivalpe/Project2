@@ -8,7 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "Map.h"
-
+#include "Entity.h"
 Platform::Platform() : Entity(EntityType::PLATFORM)
 {
 
@@ -51,27 +51,39 @@ bool Platform::Start() {
 	return true;
 }
 
+
 bool Platform::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true || Engine::GetInstance().scene.get()->level == 0) return true;
 
-	//if(Engine::GetInstance().scene.get()->)
-	//Platform moving
 
 	for (int i = 0; i < PlatformLimits.size(); i++)
 	{
-		int startPositionX = PlatformLimits[i].first;
-		int endPositionX = PlatformLimits[i].second;
+		int startPositionX;
+		int endPositionX;
+		if (name == "platform0") {
+			startPositionX = PlatformLimits[0].first;
+			endPositionX = PlatformLimits[0].second;
+		}
+		if (name == "platform1") {
+			startPositionX = PlatformLimits[1].first;
+			endPositionX = PlatformLimits[1].second;
+		}
+		if (name == "platform2") {
+			startPositionX = PlatformLimits[2].first;
+			endPositionX = PlatformLimits[2].second;
+		}
+		if (name == "platform0" || name == "platform1" || name == "platform2") {
+			b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
 
-		b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
+			if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
+			else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
+			pbody->body->SetLinearVelocity(velocity);
+		}
 
-		if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
-		else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
-		pbody->body->SetLinearVelocity(velocity);
 
 	}
 
-	
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
@@ -82,6 +94,7 @@ bool Platform::Update(float dt)
 
 	return true;
 }
+
 
 bool Platform::CleanUp()
 {
@@ -101,4 +114,26 @@ Vector2D Platform::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+
+void Platform::StopMovement() {
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 2, (int)position.getY() + texH / 2, texW, texH, bodyType::STATIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::M_PLATFORM;
+	}
+}
+
+void Platform::ResumeMovement() {
+	if (pbody != nullptr) {
+		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		pbody = nullptr;
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY()+ texH /2, texW, texH, bodyType::KINEMATIC);
+		pbody->listener = this;
+		pbody->ctype = ColliderType::M_PLATFORM;
+		b2Vec2 velocity = b2Vec2(movement, 0);
+		pbody->body->SetLinearVelocity(velocity);
+	}
 }
