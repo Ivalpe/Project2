@@ -381,15 +381,15 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		cleanup_pbody = true;
 		break;
 	case ColliderType::DAMAGE:
-		//LOG("Colisión con daño detectada");
+		LOG("Colisión con daño detectada");
 
-		//Engine::GetInstance().entityManager.get()->candleNum--;
-		//if (Engine::GetInstance().entityManager.get()->candleNum > 0) {
-		//	//Engine::GetInstance().scene.get()->PreUpdate();
-		//	Engine::GetInstance().scene.get()->reset_level = true;
+		Engine::GetInstance().entityManager.get()->candleNum--;
+		if (Engine::GetInstance().entityManager.get()->candleNum > 0) {
+			//Engine::GetInstance().scene.get()->PreUpdate();
+			Engine::GetInstance().scene.get()->reset_level = true;
 
 
-		//}
+		}
 		//Engine::GetInstance().scene.get()->drainedWaxy = false;
 
 		break;
