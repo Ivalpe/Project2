@@ -119,7 +119,7 @@ public:
 
 
 	//WAXY
-	bool filledWaxy, drainedWaxy, shouldFillWaxy = false;
+	bool filledWaxy = true, drainedWaxy = true, shouldFillWaxy = false;
 	Timer resetWax;
 
 	//Sounds
