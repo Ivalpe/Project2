@@ -389,7 +389,7 @@ bool Scene::Update(float dt)
 
 	//Moon animation
 	if (level == 0) {
-		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX()- camX, (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 	}
 
