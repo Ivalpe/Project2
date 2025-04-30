@@ -358,6 +358,7 @@ bool Scene::Update(float dt)
 	int Py = player->position.getY();
 
 	int camX = -(Px - 700);
+
 	int camY = -(Py - 600);
 
 	// Limitar la cámara principio
@@ -368,7 +369,7 @@ bool Scene::Update(float dt)
 	if(camX< -11520)camX = -11520;
 	
 	Engine::GetInstance().render.get()->camera.x = (camX);
-	Engine::GetInstance().render.get()->camera.y = (camY  /*+ player->crouch*/);
+	Engine::GetInstance().render.get()->camera.y = (camY  - player->crouch);
 	
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
 		//LOG("%d x, %d y", Px, Py);

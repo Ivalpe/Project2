@@ -154,19 +154,33 @@ bool Player::Update(float dt)
 
 			// crawl
 			if (playerState == HIDE && hide.HasFinished()) {
-
+				crouch = 0;
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT
 					/*|| Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
 					velocity.x /= 4;
 					playerState = CRAWL;
 
 				}
+			
+				if (CntCrouch >= 60) {
+					if (crouch < 200)crouch += 20;
+				}
 				else {
 					playerState = HIDE;
+					CntCrouch++;
 				}
+
+				
 			}
+			
 
 		}
+		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
+			crouch = -crouch;
+			CntCrouch = 0;
+			//hide.Reset();
+		}
+
 
 		if (playerState == FALL && velocity.y == 0) {
 			if (velocity.x != 0) playerState = WALK;
@@ -319,6 +333,9 @@ bool Player::Update(float dt)
 		if (currentAnimation != &hide) {
 			hide.Reset();
 			currentAnimation = &hide;
+
+			crouch = 0;
+			CntCrouch = 0;
 		}
 		break;
 	case CRAWL:
