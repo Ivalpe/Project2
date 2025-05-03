@@ -98,20 +98,10 @@ bool Scene::Awake()
 	}
 
 	 //Create a enemy using the entity manager 
-	/*for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
+	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
 	{
 		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 		enemy->SetParameters(enemyNode);
-		enemyList.push_back(enemy);
-	}*/
-
-	for (pugi::xml_node instanceNode = configParameters.child("entities").child("enemies").child("instances").child(GetCurrentLevelName().c_str()).child("instance"); instanceNode; instanceNode = instanceNode.next_sibling("instance")) {
-		Enemy* enemy = (Soldier*)Engine::GetInstance().entityManager->CreateEntity((EntityType)instanceNode.attribute("entityType").as_int());
-		pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child(instanceNode.attribute("enemyType").as_string());
-		enemy->SetParameters(enemyNode);
-		enemy->SetPlayer(player);
-		enemy->SetInstanceParameters(instanceNode);
-		enemy->SetPath(instanceNode);
 		enemyList.push_back(enemy);
 	}
 
@@ -655,12 +645,12 @@ void Scene::Active_MenuPause() {
 		showSettingsMenu = false;
 		if (showPauseMenu) {
 			player->StopMovement();
-			/*	for (Enemy* enemy : enemyList) {
+				for (Enemy* enemy : enemyList) {
 					if (enemy!=NULL) {
 						enemy->visible = false;
 						enemy->StopMovement();
 					}
-				}*/
+				}
 			for (Platform* platform : platformList) {
 				if (platform !=NULL) {
 					platform->StopMovement();
@@ -669,12 +659,12 @@ void Scene::Active_MenuPause() {
 		}
 		else if (!showPauseMenu) {
 			player->ResumeMovement();
-			/*for (Enemy* enemy : enemyList) {
+			for (Enemy* enemy : enemyList) {
 				if (enemy) {
 					enemy->visible = true;
 					enemy->ResumeMovement();
 				}
-			}*/
+			}
 			for (Platform* platform : platformList) {
 				if (platform != NULL) {
 					platform->ResumeMovement();

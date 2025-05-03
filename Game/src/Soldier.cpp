@@ -89,7 +89,7 @@ bool Soldier::Update(float dt) {
             destPointIndex = (destPointIndex + 1) % route.size();
             destPoint = route[destPointIndex];
 			ResetPath();
-            pathfinding->PropagateAStar(SQUARED, destPoint); // Generar camino hacia el siguiente punto
+            pathfinding->PropagateAStar(SQUARED); // Generar camino hacia el siguiente punto
         }
         MoveToPoint();
 
@@ -104,7 +104,7 @@ bool Soldier::Update(float dt) {
 
 		while (pathfinding->pathTiles.empty()) {
 			
-			pathfinding->PropagateAStar(SQUARED, destPoint);
+			pathfinding->PropagateAStar(SQUARED);
 			MoveToPoint();
 		}
 		
