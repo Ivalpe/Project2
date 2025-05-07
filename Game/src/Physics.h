@@ -34,6 +34,7 @@ enum class ColliderType {
 	DAMAGE,
 	WALL,
 	CHASESENSOR,
+	ATTACKSENSOR,
 	UNKNOWN
 	// ..
 };
