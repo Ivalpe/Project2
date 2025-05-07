@@ -104,14 +104,33 @@ bool Scene::Awake()
 		enemy->SetParameters(enemyNode);
 		enemyList.push_back(enemy);
 	}
-
+	CreateEnemies(level);
 	CreateItems(level);
 
 	return ret;
 }
 
-void Scene::CreateItems(int level) 
+void Scene::CreateEnemies(int level)
+{
 
+	if (level == 0) 
+	{
+		for (auto& it : enemyList) {
+			it->position = Vector2D(1500, 1322 + 350);
+
+		}
+	}
+
+	else if (level == 0)
+	{
+		for (auto& it : enemyList) {
+			it->position = Vector2D(-1000, -1000);
+
+			
+		}
+	}
+}
+void Scene::CreateItems(int level) 
 {
 	/*int currentLvl = level;*/
 	LOG("Current Level: %d", level);
@@ -192,13 +211,7 @@ void Scene::CreateItems(int level)
 
 		for (auto& it : interactiveObjectList) 
 		{
-			if (it->name == "wall") {
-				it->position = Vector2D(2500, 2000);
-
-			}
-			else {
-				it->position = Vector2D(-1000, -1000);
-			}
+			it->position = Vector2D(-1000, -1000);
 
 			if (it->pbody != nullptr) {
 				it->pbody->body->SetTransform(
@@ -313,7 +326,7 @@ void Scene::Change_level(int level)
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems(level);
-		//CreateEnemies();
+		CreateEnemies(level);
 	}
 
 	if (level == 1)
@@ -326,6 +339,7 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 
 		CreateItems(level);
+		CreateEnemies(level);
 
 
 		showBlackTransition = true;

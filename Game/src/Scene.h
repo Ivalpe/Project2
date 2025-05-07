@@ -60,6 +60,7 @@ public:
 	Player* GetPlayer() const { return player; }
 
 	void CreateItems(int level);
+	void CreateEnemies(int level);
 
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
