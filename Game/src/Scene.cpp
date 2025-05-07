@@ -97,36 +97,68 @@ bool Scene::Awake()
 
 	}
 
-	 //Create a enemy using the entity manager 
-	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
-	{
-		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
-		enemy->SetParameters(enemyNode);
-		enemyList.push_back(enemy);
-	}
+	AwakeEnemies();
 	CreateEnemies(level);
 	CreateItems(level);
 
 	return ret;
 }
 
+void Scene::AwakeEnemies()
+{
+	//Create a enemy using the entity manager 
+	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
+	{
+		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+		enemy->SetParameters(enemyNode);
+		enemyList.push_back(enemy);
+	}
+}
 void Scene::CreateEnemies(int level)
 {
 
 	if (level == 0) 
 	{
 		for (auto& it : enemyList) {
-			it->position = Vector2D(1500, 1322 + 350);
-
+			
+			//it->SetPosition(Vector2D(1500, 1322 + 350));
+			it->position=Vector2D(1500, 1322 + 350);
+			
+			
+			if (it->pbody != nullptr && it->pbody->body != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
+			
 		}
+
+
 	}
 
-	else if (level == 0)
+	else if (level == 1)
 	{
 		for (auto& it : enemyList) {
-			it->position = Vector2D(-1000, -1000);
 
-			
+	
+
+			/*if (it->pbody == nullptr) {
+				enemy->Start();
+
+			}*/
+			it->SetPosition(Vector2D(-1000,-1000));
+
+			//it->position = Vector2D(-1000, -1000);
+
+
+
+			if (it->pbody != nullptr && it->pbody->body != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
 		}
 	}
 }
@@ -324,8 +356,13 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map.get()->CleanUp();
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
+		enemyList.clear();
+
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
-		CreateItems(level);
+		//CreateItems(level);
+
+		AwakeEnemies();
+		for (auto& it : enemyList) { it->Start(); }
 		CreateEnemies(level);
 	}
 
@@ -336,9 +373,15 @@ void Scene::Change_level(int level)
 		//REMOVE // WHEN SECOND STAGE ENEMYS ADDED
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
+
+		
+		enemyList.clear();
+
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 
-		CreateItems(level);
+		AwakeEnemies();
+		for (auto& it : enemyList) { it->Start(); }
+		//CreateItems(level);
 		CreateEnemies(level);
 
 

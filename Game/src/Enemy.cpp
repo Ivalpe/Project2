@@ -30,8 +30,8 @@ bool Enemy::Start() {
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
-	//position.setX(parameters.attribute("x").as_int());
-	//position.setY(parameters.attribute("y").as_int());
+	///*position.setX(parameters.attribute("x").as_int());
+	//position.setY(parameters.attribute("y").as_int());*/
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 
@@ -135,8 +135,13 @@ void Enemy::SetPlayer(Player* _player)
 }
 
 void Enemy::SetPosition(Vector2D pos) {
+
+
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
 	pbody->body->SetTransform(bodyPos, 0);
+	
+
+
 }
 
 Vector2D Enemy::GetPosition() {

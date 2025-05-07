@@ -61,6 +61,7 @@ public:
 
 	void CreateItems(int level);
 	void CreateEnemies(int level);
+	void AwakeEnemies();
 
 
 	bool OnGuiMouseClickEvent(GuiControl* control);
