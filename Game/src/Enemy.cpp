@@ -34,6 +34,7 @@ bool Enemy::Start() {
 	//position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
+	speed = parameters.child("properties").attribute("speed").as_int();
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
