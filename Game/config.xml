@@ -1,326 +1,318 @@
 <!-- Config file for the engine -->
 
 <config>
-  <engine>
-    <title>My platformer game</title>
-    <maxFrameDuration value="16"/>
-  </engine>
+	<engine>
+		<title>My platformer game</title>
+		<maxFrameDuration value="16"/>
+	</engine>
 
-  <render>
-    <vsync value="false"/>
-  </render>
+	<render>
+		<vsync value="false"/>
+	</render>
 
-  <window>
-    <resolution width="1920" height="1080" scale="1"/>
-    <fullscreen value="false"/>
-    <borderless value="false"/>
-    <resizable value="false"/>
-    <fullscreen_window value="false"/>
-  </window>
+	<window>
+		<resolution width="1920" height="1080" scale="1"/>
+		<fullscreen value="true"/>
+		<borderless value="true"/>
+		<resizable value="false"/>
+		<fullscreen_window value="true"/>
+	</window>
 
-  <scene>
-	  <map path="Assets/Maps/" name="Beach.tmx"/>
-	  <map1 path="Assets/Maps/" name="cave.tmx"/>
-	  <textures>
-		  <Menu_initial path="Assets/Textures/UI/initial_screen.png"/>
-		  <Menu_Pause path="Assets/Textures/UI/Pause_menu.png"/>
-		  <Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
-		  <GameOver path="Assets/Textures/UI/GameOver.png"/>
-		  <Feather path="Assets/Textures/UI/Feather.png"/>
-		  <Candle w ="64" h="64" path="Assets/Textures/UI/candle ui.png"/>
-		  <WaxUI  w="2688" h="896" path="Assets/Textures/UI/Waxy_Sheet.png">
-			  <animations>
-				  <empty loop="true" speed ="0.3">
-					  <frame x="0" y="0" w="128" h="128"/>
-				  </empty>
-				  <fill_to_lvl1 loop="false" speed ="0.3f">
-					  <frame x="0" y="0" w="128" h="128"/>
-					  <frame x="128" y="0" w="128" h="128"/>
-					  <frame x="256" y="0" w="128" h="128"/>
-					  <frame x="384" y="0" w="128" h="128"/>
-					  <frame x="512" y="0" w="128" h="128"/>
-					  <frame x="640" y="0" w="128" h="128"/>
-					  <frame x="768" y="0" w="128" h="128"/>
-					  <frame x="896" y="0" w="128" h="128"/>
-					  <frame x="1024" y="0" w="128" h="128"/>
-					  <frame x="1152" y="0" w="128" h="128"/>
-					  <frame x="1280" y="0" w="128" h="128"/>
-					  <frame x="1408" y="0" w="128" h="128"/>
-					  <frame x="1536" y="0" w="128" h="128"/>
-				  </fill_to_lvl1>
-				  <still_lvl1 loop="true" speed ="0.3f">
-					  <frame x="0" y="128" w="128" h="128"/>
-					  <frame x="128" y="128" w="128" h="128"/>
-					  <frame x="256" y="128" w="128" h="128"/>
-					  <frame x="384" y="128" w="128" h="128"/>
-					  <frame x="512" y="128" w="128" h="128"/>
-					  <frame x="640" y="128" w="128" h="128"/>
-					  <frame x="768" y="128" w="128" h="128"/>
-				  </still_lvl1>
-				  <fill_to_lvl2 loop="false" speed ="1.0f">
-					  <frame x="0" y="384" w="128" h="128"/>
-					  <frame x="128" y="256" w="128" h="128"/>
-					  <frame x="256" y="256" w="128" h="128"/>
-					  <frame x="384" y="256" w="128" h="128"/>
-					  <frame x="512" y="256" w="128" h="128"/>
-					  <frame x="640" y="256" w="128" h="128"/>
-					  <frame x="768" y="256" w="128" h="128"/>
-					  <frame x="896" y="256" w="128" h="128"/>
-					  <frame x="1024" y="256" w="128" h="128"/>
-					  <frame x="1152" y="256" w="128" h="128"/>
-					  <frame x="1280" y="256" w="128" h="128"/>
-					  <frame x="1408" y="256" w="128" h="128"/>
-					  <frame x="1536" y="256" w="128" h="128"/>
-            <frame x="1664" y="256" w="128" h="128"/>
-            <frame x="1792" y="256" w="128" h="128"/>
-            <frame x="1920" y="256" w="128" h="128"/>
-            <frame x="2048" y="256" w="128" h="128"/>
-            <frame x="2176" y="256" w="128" h="128"/>
-            <frame x="2304" y="256" w="128" h="128"/>
-            <frame x="2432" y="256" w="128" h="128"/>
-            <frame x="2560" y="256" w="128" h="128"/>
-				  </fill_to_lvl2>
-				  <still_lvl2 loop="true" speed ="0.3f">
-					  <frame x="0" y="384" w="128" h="128"/>
-					  <frame x="128" y="384" w="128" h="128"/>
-					  <frame x="256" y="384" w="128" h="128"/>
-					  <frame x="384" y="384" w="128" h="128"/>
-					  <frame x="512" y="384" w="128" h="128"/>
-					  <frame x="640" y="384" w="128" h="128"/>
-					  <frame x="768" y="384" w="128" h="128"/>
-				  </still_lvl2>
-          <fill_to_lvl3 loop ="false" speed ="0.5f">
-            <frame x="0" y="512" w="128" h="128"/>
-            <frame x="128" y="512" w="128" h="128"/>
-            <frame x="256" y="512" w="128" h="128"/>
-            <frame x="384" y="512" w="128" h="128"/>
-            <frame x="512" y="512" w="128" h="128"/>
-            <frame x="640" y="512" w="128" h="128"/>
-            <frame x="768" y="512" w="128" h="128"/>
-            <frame x="896" y="512" w="128" h="128"/>
-            <frame x="1024" y="512" w="128" h="128"/>
-            <frame x="1152" y="512" w="128" h="128"/>
-            <frame x="1280" y="512" w="128" h="128"/>
-            <frame x="1408" y="512" w="128" h="128"/>
-            <frame x="1536" y="512" w="128" h="128"/>
-          </fill_to_lvl3>
-          <still_lvl3 loop="true" speed ="0.3f">
-            <frame x="0" y="640" w="128" h="128"/>
-            <frame x="128" y="640" w="128" h="128"/>
-            <frame x="256" y="640" w="128" h="128"/>
-            <frame x="384" y="640" w="128" h="128"/>
-            <frame x="512" y="640" w="128" h="128"/>
-            <frame x="640" y="640" w="128" h="128"/>
-            <frame x="768" y="640" w="128" h="128"/>
-          </still_lvl3>
-          <fill_to_full loop ="false" speed ="0.5f">
-            <frame x="0" y="768" w="128" h="128"/>
-            <frame x="128" y="768" w="128" h="128"/>
-            <frame x="256" y="768" w="128" h="128"/>
-            <frame x="384" y="768" w="128" h="128"/>
-            <frame x="512" y="768" w="128" h="128"/>
-            <frame x="640" y="768" w="128" h="128"/>
-            <frame x="768" y="768" w="128" h="128"/>
-            <frame x="896" y="768" w="128" h="128"/>
-            <frame x="1024" y="768" w="128" h="128"/>
-            <frame x="1152" y="768" w="128" h="128"/>
-            <frame x="1280" y="768" w="128" h="128"/>
-            <frame x="1408" y="768" w="128" h="128"/>
-            <frame x="1536" y="768" w="128" h="128"/>
-            <frame x="1664" y="768" w="128" h="128"/>
-          </fill_to_full>
-          <full loop ="true" speed =" 0.5f">
-            <frame x="1792" y="768" w="128" h="128"/>
-          </full>
-			  </animations>
-		  </WaxUI>
-		  <FeatherUI path="Assets/Textures/Feather_item.png"/>
-		  <moon x="220" y="1180" texture="Assets/Textures/Moon Sprites.png">
-			  <animations>
-				  <idle loop="true" speed ="0.2">
-					  <frame x="0" y="0" w="288" h="288"/>
-					  <frame x="288" y="0" w="288" h="288"/>
-					  <frame x="576" y="0" w="288" h="288"/>
-					  <frame x="0" y="288" w="288" h="288"/>
-					  <frame x="288" y="288" w="288" h="288"/>
-					  <frame x="576" y="288" w="288" h="288"/>
-					  <frame x="0" y="576" w="288" h="288"/>
-					  <frame x="288" y="576" w="288" h="288"/>
-					  <frame x="576" y="576" w="288" h="288"/>
-				  </idle>
-			  </animations>
-		  </moon>
-	  </textures>
-    <entities>
-      <player x="784" y="600" w="256" h = "256" texture="Assets/Textures/player/ikaro_sheet.png" gravity="true">
-        <animations>
-          <idle loop = "true" speed ="0.2f">
-            <frame x ="0" y="0" w="256" h="256"/>
-            <frame x ="256" y="0" w="256" h="256"/>
-            <frame x ="512" y="0" w="256" h="256"/>
-            <frame x ="768" y="0" w="256" h="256"/>
-            <frame x ="1024" y="0" w="256" h="256"/>
-          </idle>
-          <walk loop = "true" speed ="0.5f">
-            <frame x ="0" y="256" w="256" h="256"/>
-            <frame x ="256" y="256" w="256" h="256"/>
-            <frame x ="512" y="256" w="256" h="256"/>
-            <frame x ="768" y="256" w="256" h="256"/>
-            <frame x ="1024" y="256" w="256" h="256"/>
-            <frame x ="1280" y="256" w="256" h="256"/>
-            <frame x ="1536" y="256" w="256" h="256"/>
-            <frame x ="1792" y="256" w="256" h="256"/>
-          </walk>
-          <hide loop = "false" speed ="0.5f">
-            <frame x ="0" y="512" w="256" h="256"/>
-            <frame x ="256" y="512" w="256" h="256"/>
-            <frame x ="512" y="512" w="256" h="256"/>
-            <frame x ="768" y="512" w="256" h="256"/>
-            <frame x ="1024" y="512" w="256" h="256"/>
-            <frame x ="1280" y="512" w="256" h="256"/>
-          </hide>
-          <crawl loop ="true" speed ="0.1f"> <!-- piece of hide anims -->
-            <frame x ="0" y="768" w="256" h="256"/>
-            <frame x ="256" y="768" w="256" h="256"/>
-          </crawl>
-          <unhide loop ="false"  speed ="0.5f">
-            <frame x ="0" y="768" w="256" h="256"/>
-            <frame x ="256" y="768" w="256" h="256"/>
-            <frame x ="512" y="768" w="256" h="256"/>
-            <frame x ="768" y="768" w="256" h="256"/>
-            <frame x ="1024" y="768" w="256" h="256"/>
-            <frame x ="1280" y="768" w="256" h="256"/>
-          </unhide>
-          <jump loop ="false" speed ="1.0f">
-            <frame x ="0" y="1024" w="256" h="256"/>
-            <frame x ="256" y="1024" w="256" h="256"/>
-            <frame x ="512" y="1024" w="256" h="256"/>
-            <frame x ="768" y="1024" w="256" h="256"/>
-          </jump>
-          <fall loop ="false" speed ="0.3f">
-            <frame x ="0"    y="1280" w="256" h="256"/>
-            <frame x ="256" y="1280" w="256" h="256"/>
-            <frame x ="512" y="1280" w="256" h="256"/>
-            <frame x ="768" y="1280" w="256" h="256"/>
-            <frame x ="1024" y="1280" w="256" h="256"/>
-            <!--<frame x ="1280" y="1280" w="256" h="256"/>-->
-          </fall>
-          <land loop="false" speed =" 0.2f">
-            <frame x ="1536" y="1280" w="256" h="256"/>
-            <frame x ="1792" y="1280" w="256" h="256"/>
-            <frame x ="2048" y="1280" w="256" h="256"/>
-          </land>
-          <death loop ="false" speed ="0.5f">
-            <frame x ="0"   y="1536" w="256" h="256"/>
-            <frame x ="256" y="1536" w="256" h="256"/>
-            <frame x ="512" y="1536" w="256" h="256"/>
-            <frame x ="768" y="1536" w="256" h="256"/>
-            <frame x ="1024" y="1536" w="256" h="256"/>
-            <frame x ="1280" y="1536" w="256" h="256"/>
-            <frame x ="1536" y="1536" w="256" h="256"/>
-            <frame x ="1792" y="1536" w="256" h="256"/>
-            <frame x ="2048" y="1536" w="256" h="256"/>
-            <frame x ="2304" y="1536" w="256" h="256"/>
-          </death>
-          <turn2back loop ="false" speed ="0.5f">
-            <frame x ="0"   y="1792" w="256" h="256"/>
-            <frame x ="256" y="1792" w="256" h="256"/>
-            <frame x ="512" y="1792" w="256" h="256"/>
-            <frame x ="768" y="1792" w="256" h="256"/>
-            <frame x ="1024" y="1792" w="256" h="256"/>
-          </turn2back>
-          <climb loop ="true" speed ="0.5f">
-            <frame x ="0"   y="2048" w="256" h="256"/>
-            <frame x ="256" y="2048" w="256" h="256"/>
-            <frame x ="512" y="2048" w="256" h="256"/>
-            <frame x ="768" y="2048" w="256" h="256"/>
-            <frame x ="1024" y="2048" w="256" h="256"/>
-            <frame x ="1280" y="2048" w="256" h="256"/>
-            <frame x ="1536" y="2048" w="256" h="256"/>
-            <frame x ="1792" y="2048" w="256" h="256"/>
-            <frame x ="2048" y="2048" w="256" h="256"/>
-          </climb>
-          <turn2front>
-            <frame x ="1024" y="1792" w="256" h="256"/>
-            <frame x ="768" y="1792" w="256" h="256"/>
-            <frame x ="512" y="1792" w="256" h="256"/>
-            <frame x ="256" y="1792" w="256" h="256"/>
-            <frame x ="0"   y="1792" w="256" h="256"/>
-          </turn2front>
-        </animations>
-      </player>
-      <items>
-        <item name="wax" x="200" y="672" w="65" h="55" isWax="true" isPicked="false" texture="Assets/Textures/Tileset_Cave.png" gravity="true">
-          <animations>
-            <idle loop="true" speed ="0.5">
-              <frame x="221" y="427" w="65" h="55"/>
-            </idle>
-          </animations>
-        </item>
-		  <feather_item name="feather" x="200" y="672" w="64" h="64" isFeather="true" isPicked="false" texture1="Assets/Textures/Tileset_Cave.png" gravity="true">
-			  <animations>
-				  <idle_feather loop="true" speed ="0.5">
-					  <frame x="0" y="224" w="64" h="64"/>
-				  </idle_feather>
-			  </animations>
-		  </feather_item>
-	  </items>
-	  <interactiveObject>
-		  <stalactites_item name="stalactites" x="2000" y="1000" w="128" h="152" isStalactites="true" isPicked="false" texture2="Assets/Textures/cave stalactite.png" gravity="false">
-			  <animations>
-				  <idle_stalactites loop="true" speed ="0.5">
-					  <frame x="0" y="0" w="64" h="152"/>
-				  </idle_stalactites>
-				  <idle_stalactites_falls loop="true" speed ="0.5">
-					  <frame x="64" y="0" w="64" h="152"/>
-				  </idle_stalactites_falls>
-			  </animations>
-		  </stalactites_item>
-		  <blocked_wall name="wall" x="4224" y="3000" w="480" h="544" isWall="true" isPicked="false" texture3="Assets/Textures/column door.png" gravity="false">
-			  <animations>
-				  <idle_wall loop="true" speed ="0.5">
-					  <frame x="0" y="0" w="96" h="544"/>
-				  </idle_wall>
-				  <fade_wall loop="false" speed ="0.1">
-					  <frame x="0" y="0" w="96" h="544"/>
-					  <frame x="96" y="0" w="96" h="544"/>
-					  <frame x="192" y="0" w="96" h="544"/>
-					  <frame x="288" y="0" w="96" h="544"/>
-            <frame x="384" y="0" w="96" h="544"/>
-				  </fade_wall>
-			  </animations>
-		  </blocked_wall>
-	   </interactiveObject>
-   
-
-      <enemies>
-        <soldier  x="2560" y="1727" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
-          <properties chaseArea ="400" attackArea ="20" speed ="5" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
-          <animations>
-            <idle loop="true" speed ="0.5f">
-              <frame x="0" y="0" w="256" h="256"/>
-            </idle>
-          </animations>
-        </soldier>
-        <instances>
-          <lvl0>
-            <instance enemyType="soldier" entityType ="3">
-              <point x="3000" y="1727"/>
-              <point x="3392" y ="1727"/>
-            </instance>
-          </lvl0>
-        </instances>
-      </enemies>
-		<platforms>
-			<platform name="platform" x="800" y="650" w="353" h="32" texture="Assets/Textures/Platformm.png" gravity="true">
+	<scene>
+		<map path="Assets/Maps/" name="Beach.tmx"/>
+		<map1 path="Assets/Maps/" name="cave.tmx"/>
+		<textures>
+			<Menu_initial path="Assets/Textures/UI/initial_screen.png"/>
+			<Menu_Pause path="Assets/Textures/UI/Pause_menu.png"/>
+			<Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
+			<GameOver path="Assets/Textures/UI/GameOver.png"/>
+			<Feather path="Assets/Textures/UI/Feather.png"/>
+			<Candle w ="64" h="64" path="Assets/Textures/UI/candle ui.png"/>
+			<WaxUI  w="2688" h="896" path="Assets/Textures/UI/Waxy_Sheet.png">
 				<animations>
-					<idle loop="true" speed ="0.5">
-						<frame x="0" y="0" w="353" h="63"/>
+					<empty loop="true" speed ="0.3">
+						<frame x="0" y="0" w="128" h="128"/>
+					</empty>
+					<fill_to_lvl1 loop="false" speed ="0.3f">
+						<frame x="0" y="0" w="128" h="128"/>
+						<frame x="128" y="0" w="128" h="128"/>
+						<frame x="256" y="0" w="128" h="128"/>
+						<frame x="384" y="0" w="128" h="128"/>
+						<frame x="512" y="0" w="128" h="128"/>
+						<frame x="640" y="0" w="128" h="128"/>
+						<frame x="768" y="0" w="128" h="128"/>
+						<frame x="896" y="0" w="128" h="128"/>
+						<frame x="1024" y="0" w="128" h="128"/>
+						<frame x="1152" y="0" w="128" h="128"/>
+						<frame x="1280" y="0" w="128" h="128"/>
+						<frame x="1408" y="0" w="128" h="128"/>
+						<frame x="1536" y="0" w="128" h="128"/>
+					</fill_to_lvl1>
+					<still_lvl1 loop="true" speed ="0.3f">
+						<frame x="0" y="128" w="128" h="128"/>
+						<frame x="128" y="128" w="128" h="128"/>
+						<frame x="256" y="128" w="128" h="128"/>
+						<frame x="384" y="128" w="128" h="128"/>
+						<frame x="512" y="128" w="128" h="128"/>
+						<frame x="640" y="128" w="128" h="128"/>
+						<frame x="768" y="128" w="128" h="128"/>
+					</still_lvl1>
+					<fill_to_lvl2 loop="false" speed ="1.0f">
+						<frame x="0" y="384" w="128" h="128"/>
+						<frame x="128" y="256" w="128" h="128"/>
+						<frame x="256" y="256" w="128" h="128"/>
+						<frame x="384" y="256" w="128" h="128"/>
+						<frame x="512" y="256" w="128" h="128"/>
+						<frame x="640" y="256" w="128" h="128"/>
+						<frame x="768" y="256" w="128" h="128"/>
+						<frame x="896" y="256" w="128" h="128"/>
+						<frame x="1024" y="256" w="128" h="128"/>
+						<frame x="1152" y="256" w="128" h="128"/>
+						<frame x="1280" y="256" w="128" h="128"/>
+						<frame x="1408" y="256" w="128" h="128"/>
+						<frame x="1536" y="256" w="128" h="128"/>
+						<frame x="1664" y="256" w="128" h="128"/>
+						<frame x="1792" y="256" w="128" h="128"/>
+						<frame x="1920" y="256" w="128" h="128"/>
+						<frame x="2048" y="256" w="128" h="128"/>
+						<frame x="2176" y="256" w="128" h="128"/>
+						<frame x="2304" y="256" w="128" h="128"/>
+						<frame x="2432" y="256" w="128" h="128"/>
+						<frame x="2560" y="256" w="128" h="128"/>
+					</fill_to_lvl2>
+					<still_lvl2 loop="true" speed ="0.3f">
+						<frame x="0" y="384" w="128" h="128"/>
+						<frame x="128" y="384" w="128" h="128"/>
+						<frame x="256" y="384" w="128" h="128"/>
+						<frame x="384" y="384" w="128" h="128"/>
+						<frame x="512" y="384" w="128" h="128"/>
+						<frame x="640" y="384" w="128" h="128"/>
+						<frame x="768" y="384" w="128" h="128"/>
+					</still_lvl2>
+					<fill_to_lvl3 loop ="false" speed ="0.5f">
+						<frame x="0" y="512" w="128" h="128"/>
+						<frame x="128" y="512" w="128" h="128"/>
+						<frame x="256" y="512" w="128" h="128"/>
+						<frame x="384" y="512" w="128" h="128"/>
+						<frame x="512" y="512" w="128" h="128"/>
+						<frame x="640" y="512" w="128" h="128"/>
+						<frame x="768" y="512" w="128" h="128"/>
+						<frame x="896" y="512" w="128" h="128"/>
+						<frame x="1024" y="512" w="128" h="128"/>
+						<frame x="1152" y="512" w="128" h="128"/>
+						<frame x="1280" y="512" w="128" h="128"/>
+						<frame x="1408" y="512" w="128" h="128"/>
+						<frame x="1536" y="512" w="128" h="128"/>
+					</fill_to_lvl3>
+					<still_lvl3 loop="true" speed ="0.3f">
+						<frame x="0" y="640" w="128" h="128"/>
+						<frame x="128" y="640" w="128" h="128"/>
+						<frame x="256" y="640" w="128" h="128"/>
+						<frame x="384" y="640" w="128" h="128"/>
+						<frame x="512" y="640" w="128" h="128"/>
+						<frame x="640" y="640" w="128" h="128"/>
+						<frame x="768" y="640" w="128" h="128"/>
+					</still_lvl3>
+					<fill_to_full loop ="false" speed ="0.5f">
+						<frame x="0" y="768" w="128" h="128"/>
+						<frame x="128" y="768" w="128" h="128"/>
+						<frame x="256" y="768" w="128" h="128"/>
+						<frame x="384" y="768" w="128" h="128"/>
+						<frame x="512" y="768" w="128" h="128"/>
+						<frame x="640" y="768" w="128" h="128"/>
+						<frame x="768" y="768" w="128" h="128"/>
+						<frame x="896" y="768" w="128" h="128"/>
+						<frame x="1024" y="768" w="128" h="128"/>
+						<frame x="1152" y="768" w="128" h="128"/>
+						<frame x="1280" y="768" w="128" h="128"/>
+						<frame x="1408" y="768" w="128" h="128"/>
+						<frame x="1536" y="768" w="128" h="128"/>
+						<frame x="1664" y="768" w="128" h="128"/>
+					</fill_to_full>
+					<full loop ="true" speed =" 0.5f">
+						<frame x="1792" y="768" w="128" h="128"/>
+					</full>
+				</animations>
+			</WaxUI>
+			<FeatherUI path="Assets/Textures/Feather_item.png"/>
+			<moon x="220" y="1180" texture="Assets/Textures/Moon Sprites.png">
+				<animations>
+					<idle loop="true" speed ="0.2">
+						<frame x="0" y="0" w="288" h="288"/>
+						<frame x="288" y="0" w="288" h="288"/>
+						<frame x="576" y="0" w="288" h="288"/>
+						<frame x="0" y="288" w="288" h="288"/>
+						<frame x="288" y="288" w="288" h="288"/>
+						<frame x="576" y="288" w="288" h="288"/>
+						<frame x="0" y="576" w="288" h="288"/>
+						<frame x="288" y="576" w="288" h="288"/>
+						<frame x="576" y="576" w="288" h="288"/>
 					</idle>
 				</animations>
-			</platform>
-		</platforms>
-    </entities>
-  </scene>
-	
+			</moon>
+		</textures>
+		<entities>
+			<player x="784" y="600" w="256" h = "256" texture="Assets/Textures/player/ikaro_sheet.png" gravity="true">
+				<animations>
+					<idle loop = "true" speed ="0.2f">
+						<frame x ="0" y="0" w="256" h="256"/>
+						<frame x ="256" y="0" w="256" h="256"/>
+						<frame x ="512" y="0" w="256" h="256"/>
+						<frame x ="768" y="0" w="256" h="256"/>
+						<frame x ="1024" y="0" w="256" h="256"/>
+					</idle>
+					<walk loop = "true" speed ="0.5f">
+						<frame x ="0" y="256" w="256" h="256"/>
+						<frame x ="256" y="256" w="256" h="256"/>
+						<frame x ="512" y="256" w="256" h="256"/>
+						<frame x ="768" y="256" w="256" h="256"/>
+						<frame x ="1024" y="256" w="256" h="256"/>
+						<frame x ="1280" y="256" w="256" h="256"/>
+						<frame x ="1536" y="256" w="256" h="256"/>
+						<frame x ="1792" y="256" w="256" h="256"/>
+					</walk>
+					<hide loop = "false" speed ="0.5f">
+						<frame x ="0" y="512" w="256" h="256"/>
+						<frame x ="256" y="512" w="256" h="256"/>
+						<frame x ="512" y="512" w="256" h="256"/>
+						<frame x ="768" y="512" w="256" h="256"/>
+						<frame x ="1024" y="512" w="256" h="256"/>
+						<frame x ="1280" y="512" w="256" h="256"/>
+					</hide>
+					<crawl loop ="true" speed ="0.1f">
+						<!-- piece of hide anims -->
+						<frame x ="0" y="768" w="256" h="256"/>
+						<frame x ="256" y="768" w="256" h="256"/>
+					</crawl>
+					<unhide loop ="false"  speed ="0.5f">
+						<frame x ="0" y="768" w="256" h="256"/>
+						<frame x ="256" y="768" w="256" h="256"/>
+						<frame x ="512" y="768" w="256" h="256"/>
+						<frame x ="768" y="768" w="256" h="256"/>
+						<frame x ="1024" y="768" w="256" h="256"/>
+						<frame x ="1280" y="768" w="256" h="256"/>
+					</unhide>
+					<jump loop ="false" speed ="1.0f">
+						<frame x ="0" y="1024" w="256" h="256"/>
+						<frame x ="256" y="1024" w="256" h="256"/>
+						<frame x ="512" y="1024" w="256" h="256"/>
+						<frame x ="768" y="1024" w="256" h="256"/>
+					</jump>
+					<fall loop ="false" speed ="0.3f">
+						<frame x ="0"    y="1280" w="256" h="256"/>
+						<frame x ="256" y="1280" w="256" h="256"/>
+						<frame x ="512" y="1280" w="256" h="256"/>
+						<frame x ="768" y="1280" w="256" h="256"/>
+						<frame x ="1024" y="1280" w="256" h="256"/>
+						<!--<frame x ="1280" y="1280" w="256" h="256"/>-->
+					</fall>
+					<land loop="false" speed =" 0.2f">
+						<frame x ="1536" y="1280" w="256" h="256"/>
+						<frame x ="1792" y="1280" w="256" h="256"/>
+						<frame x ="2048" y="1280" w="256" h="256"/>
+					</land>
+					<death loop ="false" speed ="0.5f">
+						<frame x ="0"   y="1536" w="256" h="256"/>
+						<frame x ="256" y="1536" w="256" h="256"/>
+						<frame x ="512" y="1536" w="256" h="256"/>
+						<frame x ="768" y="1536" w="256" h="256"/>
+						<frame x ="1024" y="1536" w="256" h="256"/>
+						<frame x ="1280" y="1536" w="256" h="256"/>
+						<frame x ="1536" y="1536" w="256" h="256"/>
+						<frame x ="1792" y="1536" w="256" h="256"/>
+						<frame x ="2048" y="1536" w="256" h="256"/>
+						<frame x ="2304" y="1536" w="256" h="256"/>
+					</death>
+					<turn2back loop ="false" speed ="0.5f">
+						<frame x ="0"   y="1792" w="256" h="256"/>
+						<frame x ="256" y="1792" w="256" h="256"/>
+						<frame x ="512" y="1792" w="256" h="256"/>
+						<frame x ="768" y="1792" w="256" h="256"/>
+						<frame x ="1024" y="1792" w="256" h="256"/>
+					</turn2back>
+					<climb loop ="true" speed ="0.5f">
+						<frame x ="0"   y="2048" w="256" h="256"/>
+						<frame x ="256" y="2048" w="256" h="256"/>
+						<frame x ="512" y="2048" w="256" h="256"/>
+						<frame x ="768" y="2048" w="256" h="256"/>
+						<frame x ="1024" y="2048" w="256" h="256"/>
+						<frame x ="1280" y="2048" w="256" h="256"/>
+						<frame x ="1536" y="2048" w="256" h="256"/>
+						<frame x ="1792" y="2048" w="256" h="256"/>
+						<frame x ="2048" y="2048" w="256" h="256"/>
+					</climb>
+					<turn2front>
+						<frame x ="1024" y="1792" w="256" h="256"/>
+						<frame x ="768" y="1792" w="256" h="256"/>
+						<frame x ="512" y="1792" w="256" h="256"/>
+						<frame x ="256" y="1792" w="256" h="256"/>
+						<frame x ="0"   y="1792" w="256" h="256"/>
+					</turn2front>
+				</animations>
+			</player>
+			<items>
+				<item name="wax" x="200" y="672" w="65" h="55" isWax="true" isPicked="false" texture="Assets/Textures/Tileset_Cave.png" gravity="true">
+					<animations>
+						<idle loop="true" speed ="0.5">
+							<frame x="221" y="427" w="65" h="55"/>
+						</idle>
+					</animations>
+				</item>
+				<feather_item name="feather" x="200" y="672" w="64" h="64" isFeather="true" isPicked="false" texture1="Assets/Textures/Tileset_Cave.png" gravity="true">
+					<animations>
+						<idle_feather loop="true" speed ="0.5">
+							<frame x="0" y="224" w="64" h="64"/>
+						</idle_feather>
+					</animations>
+				</feather_item>
+			</items>
+			<interactiveObject>
+				<stalactites_item name="stalactites" x="2000" y="1000" w="128" h="152" isStalactites="true" isPicked="false" texture2="Assets/Textures/cave stalactite.png" gravity="false">
+					<animations>
+						<idle_stalactites loop="true" speed ="0.5">
+							<frame x="0" y="0" w="64" h="152"/>
+						</idle_stalactites>
+						<idle_stalactites_falls loop="true" speed ="0.5">
+							<frame x="64" y="0" w="64" h="152"/>
+						</idle_stalactites_falls>
+					</animations>
+				</stalactites_item>
+				<blocked_wall name="wall" x="4224" y="3000" w="480" h="544" isWall="true" isPicked="false" texture3="Assets/Textures/column door.png" gravity="false">
+					<animations>
+						<idle_wall loop="true" speed ="0.5">
+							<frame x="0" y="0" w="96" h="544"/>
+						</idle_wall>
+						<fade_wall loop="false" speed ="0.1">
+							<frame x="0" y="0" w="96" h="544"/>
+							<frame x="96" y="0" w="96" h="544"/>
+							<frame x="192" y="0" w="96" h="544"/>
+							<frame x="288" y="0" w="96" h="544"/>
+							<frame x="384" y="0" w="96" h="544"/>
+						</fade_wall>
+					</animations>
+				</blocked_wall>
+			</interactiveObject>
+
+			<enemies>
+				<soldier x="1560" y="1727" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
+					<properties chaseArea ="400" attackArea ="20" speed ="5" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
+					<animations>
+						<idle loop="true" speed ="0.5f">
+							<frame x="0" y="0" w="256" h="256"/>
+						</idle>
+					</animations>
+				</soldier>
+			</enemies>
+			<platforms>
+				<platform name="platform" x="800" y="650" w="353" h="32" texture="Assets/Textures/Platformm.png" gravity="true">
+					<animations>
+						<idle loop="true" speed ="0.5">
+							<frame x="0" y="0" w="353" h="63"/>
+						</idle>
+					</animations>
+				</platform>
+			</platforms>
+		</entities>
+	</scene>
+
 </config>

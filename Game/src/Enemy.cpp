@@ -24,6 +24,9 @@ bool Enemy::Awake() {
 }
 
 bool Enemy::Start() {
+	followPlayer = false;
+	velocity = 0;
+	speed = 4.f;
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
@@ -35,52 +38,93 @@ bool Enemy::Start() {
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
-	
+
 	//Add a physics to an item - initialize the physics body
-	//pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+
+	//Sensor
+	sensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, texH, bodyType::KINEMATIC);
+	sensor->ctype = ColliderType::CHASESENSOR;
+	sensor->listener = this;
 
 	////Assign collider type
-	//pbody->ctype = ColliderType::ENEMY;
-	//pbody->listener = this;
+	pbody->ctype = ColliderType::ENEMY;
+	pbody->listener = this;
 
 	//// Set the gravity of the body
-	//if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
 	//// Initialize pathfinding
-	//pathfinding = new Pathfinding();
-	//ResetPath();
+	pathfinding = new Pathfinding();
+	ResetPath();
 
 	return true;
 }
 
 bool Enemy::Update(float dt)
 {
-	 return true;
 
+	velocity = 0;
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
+	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
 
-	//b2Transform pbodyPos = pbody->body->GetTransform();
-	//position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	//position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+	b2Vec2 enemyPos = pbody->body->GetPosition();
+	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
-	//Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	//currentAnimation->Update();
+	if (followPlayer) {
+		MovementEnemy(dt);
+	}
 
-	//// Draw pathfinding 
-	//pathfinding->DrawPath();
+	pbody->body->SetLinearVelocity({ velocity,0 });
+
 	return true;
+}
+
+void Enemy::MovementEnemy(float dt) {
+	//Reset
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	pathfinding->ResetPath(tilePos);
+
+	int max = 200;
+	bool found = false;
+	while (!found) {
+		found = pathfinding->PropagateAStar(MANHATTAN);
+		max--;
+		if (max == 0) break;
+		if (Engine::GetInstance().physics.get()->GetDebug())
+			pathfinding->DrawPath();
+	}
+
+	if (found) {
+		int sizeBread = pathfinding->breadcrumbs.size();
+		Vector2D posBread;
+		if (sizeBread >= 2) posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
+		else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
+
+		//Movement Enemy
+		if (posBread.getX() <= tilePos.getX()) {
+			velocity = -speed;
+		}
+		else {
+			velocity = speed;
+		}
+	}
+
 }
 
 bool Enemy::CleanUp()
 {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		
+
 		pbody = nullptr;
 	}
 
-	pathfinding->CleanUp();
-	delete pathfinding;
 	return true;
 }
 
@@ -129,7 +173,7 @@ void Enemy::ResumeMovement() {
 
 void Enemy::SetPath(pugi::xml_node pathNode)
 {
-	route.clear();
+	/*route.clear();
 
 	if (pathNode)
 	{
@@ -145,8 +189,8 @@ void Enemy::SetPath(pugi::xml_node pathNode)
 			destPointIndex = 0;
 			destPoint = route[destPointIndex];
 		}
-	
-	}
+
+	}*/
 }
 
 
@@ -161,11 +205,11 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 	switch (physB->ctype)
 	{
-	//case ColliderType::WEAPON:
-	//	if (enemyState != DEAD) {
-	//		
-	//	}
-	//	break;
+	case ColliderType::PLAYER:
+		if (physA->ctype == ColliderType::CHASESENSOR) {
+			followPlayer = true;
+		}
+		break;
 	case ColliderType::UNKNOWN:
 		break;
 
@@ -180,7 +224,11 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		break;
-
+	case ColliderType::PLAYER:
+		if (physA->ctype == ColliderType::CHASESENSOR) {
+			followPlayer = false;
+		}
+		break;
 	case ColliderType::UNKNOWN:
 		break;
 	default:

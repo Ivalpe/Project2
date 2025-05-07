@@ -37,6 +37,8 @@ public:
 
 	virtual bool Update(float dt);
 
+	void MovementEnemy(float dt);
+
 	bool CleanUp();
 
 	void SetParameters(pugi::xml_node _parameters) {
@@ -79,7 +81,9 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 	PhysBody* pbody;
+	PhysBody* sensor;
 	Pathfinding* pathfinding;
+	bool followPlayer;
 
 
 	Player* player;
@@ -99,5 +103,5 @@ public:
 	Timer deathTimer;
 	float deathTime;
 	bool dead;
-
+	float velocity;
 };
