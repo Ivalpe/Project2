@@ -18,7 +18,7 @@
 #include "GuiManager.h"
 #include "Physics.h"
 #include "Platform.h"
-
+#include "pugixml.hpp"
 
 
 Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
@@ -35,7 +35,7 @@ Scene::~Scene()
 bool Scene::Awake()
 {
 	LOG("Loading Scene");
-	bool ret = true;
+	bool ret = true;+
 
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
@@ -644,7 +644,20 @@ void Scene::GameOver_State()
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
 
-		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+		if (language == 1) {
+
+		Engine::GetInstance().render.get()->DrawText(const_cast<pugi::char_t*>("Lore1"), Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+		Engine::GetInstance().render.get()->DrawTextD(true, const_cast<pugi::char_t*>("Lore1"));
+		}
+		else if(language==2)
+		{}
+		else if (language==3)
+		{}
+		else 
+		{
+			LOG("Error Language");
+		}
+		
 	}
 }
 

@@ -9,6 +9,7 @@
 #include "GuiControlButton.h"
 #include "Animation.h"
 #include "Platform.h"
+#include "pugixml.hpp"
 
 struct SDL_Texture;
 enum WaxState {
@@ -174,4 +175,6 @@ private:
 	bool showBlackTransition = false;
 	float blackTransitionStart;
 	int blackTransitionDuration = 4000;
+	int language = 1;
+	
 };
