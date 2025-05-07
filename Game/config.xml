@@ -300,6 +300,9 @@
 						<idle loop="true" speed ="0.5f">
 							<frame x="0" y="0" w="256" h="256"/>
 						</idle>
+						<attack loop="false" speed="1.0f">
+							<frame x="0" y="0" w="256" h="256"/>
+						</attack>
 					</animations>
 				</soldier>
 			</enemies>
