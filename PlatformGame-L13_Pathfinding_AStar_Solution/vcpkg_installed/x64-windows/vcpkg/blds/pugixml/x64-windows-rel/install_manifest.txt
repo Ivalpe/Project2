@@ -1,0 +1,9 @@
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/lib/pugixml.lib
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/bin/pugixml.dll
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/lib/cmake/pugixml/pugixml-targets.cmake
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/lib/cmake/pugixml/pugixml-targets-release.cmake
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/lib/cmake/pugixml/pugixml-config-version.cmake
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/lib/cmake/pugixml/pugixml-config.cmake
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/lib/pkgconfig/pugixml.pc
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/include/pugiconfig.hpp
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/pugixml_x64-windows/include/pugixml.hpp

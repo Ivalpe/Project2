@@ -1,0 +1,25 @@
+# ninja log v5
+11	623	7646852280263982	CMakeFiles/SDL2_image.dir/src/IMG_WIC.c.obj	aba699bad639c4a3
+25	1256	7646852287992008	CMakeFiles/SDL2_image.dir/src/IMG_bmp.c.obj	986864f99a87d33f
+55	1363	7646852289431028	CMakeFiles/SDL2_image.dir/src/IMG_jxl.c.obj	ad7610c013fdf6b2
+5	1372	7646852290441974	CMakeFiles/SDL2_image.dir/src/IMG.c.obj	66f18851b9b443f
+18	1401	7646852288997560	CMakeFiles/SDL2_image.dir/src/IMG_avif.c.obj	16fddf1210cfb633
+39	1420	7646852289743251	CMakeFiles/SDL2_image.dir/src/IMG_jpg.c.obj	6cc8fa88d0c2ee1
+76	1487	7646852290441974	CMakeFiles/SDL2_image.dir/src/IMG_pcx.c.obj	b9e5ab1ac9a1a20d
+33	2134	7646852293450785	CMakeFiles/SDL2_image.dir/src/IMG_gif.c.obj	c5c6dc882e7a3dff
+66	2142	7646852297097275	CMakeFiles/SDL2_image.dir/src/IMG_lbm.c.obj	be293f05bccd9c21
+626	2152	7646852298298712	CMakeFiles/SDL2_image.dir/src/IMG_png.c.obj	b0b05789403efe8a
+1372	2478	7646852301684576	CMakeFiles/SDL2_image.dir/src/IMG_stb.c.obj	e1335bf7bc07ec1c
+1420	2640	7646852303183086	CMakeFiles/SDL2_image.dir/src/IMG_tga.c.obj	31226ba91a86ab01
+1363	2843	7646852301262162	CMakeFiles/SDL2_image.dir/src/IMG_qoi.c.obj	5e86672224ca2c5
+2134	2845	7646852304339725	CMakeFiles/SDL2_image.dir/src/IMG_webp.c.obj	d37202fa03747f4a
+1258	2847	7646852303676571	CMakeFiles/SDL2_image.dir/src/IMG_pnm.c.obj	7ea2a138e9887ecf
+1488	2849	7646852304339725	CMakeFiles/SDL2_image.dir/src/IMG_tif.c.obj	e442287d417ad02a
+2152	3460	7646852311483566	CMakeFiles/SDL2_image.dir/src/IMG_xpm.c.obj	93b894d1f88074d5
+2640	3461	7646852311327177	CMakeFiles/SDL2_image.dir/src/version.rc.res	2c202830800ead7
+2478	3466	7646852311600189	CMakeFiles/SDL2_image.dir/src/IMG_xv.c.obj	9a19af55d3938c4c
+2142	3502	7646852311931725	CMakeFiles/SDL2_image.dir/src/IMG_xcf.c.obj	4c511cceae8f3359
+1401	3615	7646852313089180	CMakeFiles/SDL2_image.dir/src/IMG_svg.c.obj	c166efb2946a7f1d
+3615	3891	7646852315592385	SDL2_image.dll	c6808eb1b330f0fb
+3615	3891	7646852315592385	SDL2_image.lib	c6808eb1b330f0fb
+3891	4110	0	CMakeFiles/install.util	d58b2e0872657125

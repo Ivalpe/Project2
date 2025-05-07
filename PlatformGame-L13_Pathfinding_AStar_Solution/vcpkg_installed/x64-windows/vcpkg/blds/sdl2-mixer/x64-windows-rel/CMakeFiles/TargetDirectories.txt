@@ -1,0 +1,6 @@
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/sdl2-mixer/x64-windows-rel/CMakeFiles/SDL2_mixer.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/sdl2-mixer/x64-windows-rel/CMakeFiles/edit_cache.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/sdl2-mixer/x64-windows-rel/CMakeFiles/rebuild_cache.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/sdl2-mixer/x64-windows-rel/CMakeFiles/list_install_components.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/sdl2-mixer/x64-windows-rel/CMakeFiles/install.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/sdl2-mixer/x64-windows-rel/CMakeFiles/install/local.dir

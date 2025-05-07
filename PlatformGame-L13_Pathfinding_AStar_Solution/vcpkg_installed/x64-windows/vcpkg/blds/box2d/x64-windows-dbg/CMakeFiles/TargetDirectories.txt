@@ -1,0 +1,11 @@
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/CMakeFiles/edit_cache.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/CMakeFiles/rebuild_cache.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/CMakeFiles/list_install_components.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/CMakeFiles/install.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/CMakeFiles/install/local.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/src/CMakeFiles/box2d.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/src/CMakeFiles/edit_cache.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/src/CMakeFiles/rebuild_cache.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/src/CMakeFiles/list_install_components.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/src/CMakeFiles/install.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/box2d/x64-windows-dbg/src/CMakeFiles/install/local.dir

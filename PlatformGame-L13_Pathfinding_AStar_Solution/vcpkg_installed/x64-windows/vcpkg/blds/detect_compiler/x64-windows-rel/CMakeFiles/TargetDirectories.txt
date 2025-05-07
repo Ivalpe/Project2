@@ -1,0 +1,2 @@
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/detect_compiler/x64-windows-rel/CMakeFiles/edit_cache.dir
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/blds/detect_compiler/x64-windows-rel/CMakeFiles/rebuild_cache.dir

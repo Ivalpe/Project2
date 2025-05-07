@@ -1,0 +1,11 @@
+<texts>
+	<Lore1 text="Ikaros, no busquis força en la llum,busca-la en les ombres" />
+	<Lore2 text="Ikaros, tingues plomes" />
+	<Lore3 text="Ikaros, busca plomes" />
+	<Continue text="Continuar" />
+	<Exit text="Sortir" />
+	<Settings text="Configuració" />
+	<MusicVolume text="Volumen música" />
+	<AmbientSound text="Volumen sons ambient"/>
+	<Language text ="Idioma"/>
+</texts>

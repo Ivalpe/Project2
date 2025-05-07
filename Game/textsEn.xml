@@ -1,0 +1,11 @@
+<texts>
+	<Lore1 text="Ikaros, don't seek the strength in the light, seek it in the shades" />
+	<Lore2 text="Ikaros, have feathers" />
+	<Lore3 text="Ikaros, seek feathers" />
+	<Continue text="Continue" />
+	<Exit text="Exit" />
+	<Settings text="Settings" />
+	<MusicVolume text="Music Volume" />
+	<AmbientSound text="Ambient Sounds"/>
+	<Language text ="Language"/>
+</texts>

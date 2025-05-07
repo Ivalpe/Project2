@@ -1,0 +1,7 @@
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/wavpack_x64-windows/debug/lib/wavpackdll.lib
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/wavpack_x64-windows/debug/bin/wavpackdll.dll
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/wavpack_x64-windows/debug/include/wavpack/wavpack.h
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/wavpack_x64-windows/debug/cmake/wavpack-config.cmake
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/wavpack_x64-windows/debug/cmake/wavpack-config-debug.cmake
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/wavpack_x64-windows/debug/cmake/wavpack-config-version.cmake
+C:/Users/mariabo7/Documents/GitHub/Project2/PlatformGame-L13_Pathfinding_AStar_Solution/vcpkg_installed/x64-windows/vcpkg/pkgs/wavpack_x64-windows/debug/lib/pkgconfig/wavpack.pc
