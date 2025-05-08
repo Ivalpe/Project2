@@ -70,6 +70,10 @@
     <ClCompile Include="src\InteractiveObject.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Soldier.cpp" />
+    <ClCompile Include="src\Boss.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio.h">
@@ -148,6 +152,10 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\InteractiveObject.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Soldier.h" />
+    <ClInclude Include="src\Boss.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>

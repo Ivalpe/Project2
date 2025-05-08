@@ -84,8 +84,8 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ENEMY:
 		entity = new Enemy();
 		break;
-	case EntityType::SOLDIER:
-		entity = new Soldier();
+	case EntityType::BOSS:
+		entity = new Boss();
 		break;
 	case EntityType::PLATFORM:
 		entity = new Platform();

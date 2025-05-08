@@ -10,20 +10,20 @@
 #include "Map.h"
 #include "Player.h"
 
-Enemy::Enemy() : Entity(EntityType::ENEMY)
+Boss::Boss() : Entity(EntityType::ENEMY)
 {
 
 }
 
-Enemy::~Enemy() {
+Boss::~Boss() {
 	delete pathfinding;
 }
 
-bool Enemy::Awake() {
+bool Boss::Awake() {
 	return true;
 }
 
-bool Enemy::Start() {
+bool Boss::Start() {
 	followPlayer = false;
 	velocity = 0;
 	speed = 4.f;
@@ -44,9 +44,14 @@ bool Enemy::Start() {
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
 	//Sensor
-	sensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, texH, bodyType::KINEMATIC);
-	sensor->ctype = ColliderType::CHASESENSOR;
-	sensor->listener = this;
+	sensorLeft = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW * 5, texH * 3, bodyType::KINEMATIC);
+	sensorLeft->ctype = ColliderType::RANGELEFT;
+	sensorLeft->listener = this;
+
+	//Sensor
+	sensorRight = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW * 5, texH * 3, bodyType::KINEMATIC);
+	sensorRight->ctype = ColliderType::RANGERIGHT;
+	sensorRight->listener = this;
 
 	////Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
@@ -62,7 +67,7 @@ bool Enemy::Start() {
 	return true;
 }
 
-bool Enemy::Update(float dt)
+bool Boss::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
@@ -71,14 +76,32 @@ bool Enemy::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	if (dir == RIGHT) {
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	}
+	else {
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	}
 	currentAnimation->Update();
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();
-	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+	sensorLeft->body->SetTransform({ enemyPos.x - PIXEL_TO_METERS(32 * 20), enemyPos.y }, 0);
+	sensorRight->body->SetTransform({ enemyPos.x + PIXEL_TO_METERS(32 * 20), enemyPos.y }, 0);
 
-	if (followPlayer) {
-		MovementEnemy(dt);
+	if (state == RUNNING) {
+		velocity = dir == LEFT ? -15.0f : 15.0f;
+		timer++;
+		if (timer == 180) {
+			timer = 0;
+			state = WAITING;
+		}
+	}
+	else if (state == WAITING) {
+		timer++;
+		if (timer == 180) {
+			timer = 0;
+			state = IDLE;
+		}
 	}
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
@@ -86,40 +109,7 @@ bool Enemy::Update(float dt)
 	return true;
 }
 
-void Enemy::MovementEnemy(float dt) {
-	//Reset
-	Vector2D pos = GetPosition();
-	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
-	pathfinding->ResetPath(tilePos);
-
-	int max = 200;
-	bool found = false;
-	while (!found) {
-		found = pathfinding->PropagateAStar(MANHATTAN);
-		max--;
-		if (max == 0) break;
-		if (Engine::GetInstance().physics.get()->GetDebug())
-			pathfinding->DrawPath();
-	}
-
-	if (found) {
-		int sizeBread = pathfinding->breadcrumbs.size();
-		Vector2D posBread;
-		if (sizeBread >= 2) posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
-		else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
-
-		//Movement Enemy
-		if (posBread.getX() <= tilePos.getX()) {
-			velocity = -speed;
-		}
-		else {
-			velocity = speed;
-		}
-	}
-
-}
-
-bool Enemy::CleanUp()
+bool Boss::CleanUp()
 {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
@@ -130,29 +120,29 @@ bool Enemy::CleanUp()
 	return true;
 }
 
-void Enemy::SetPlayer(Player* _player)
+void Boss::SetPlayer(Player* _player)
 {
 	player = _player;
 }
 
-void Enemy::SetPosition(Vector2D pos) {
+void Boss::SetPosition(Vector2D pos) {
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
 	pbody->body->SetTransform(bodyPos, 0);
 }
 
-Vector2D Enemy::GetPosition() {
+Vector2D Boss::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
 }
 
-void Enemy::ResetPath() {
+void Boss::ResetPath() {
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 	pathfinding->ResetPath(tilePos);
 }
 
-void Enemy::StopMovement() {
+void Boss::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
@@ -163,7 +153,7 @@ void Enemy::StopMovement() {
 	}
 }
 
-void Enemy::ResumeMovement() {
+void Boss::ResumeMovement() {
 	if (pbody == nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
@@ -173,43 +163,31 @@ void Enemy::ResumeMovement() {
 	}
 }
 
-void Enemy::SetPath(pugi::xml_node pathNode)
-{
-	/*route.clear();
-
-	if (pathNode)
-	{
-		for (pugi::xml_node pointNode : pathNode.children("point")) {
-
-			float x = pointNode.attribute("x").as_float();
-			float y = pointNode.attribute("y").as_float();
-
-			route.emplace_back(x, y);
-		}
-
-		if (!route.empty()) {
-			destPointIndex = 0;
-			destPoint = route[destPointIndex];
-		}
-
-	}*/
-}
-
-
-bool Enemy::CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance)
+bool Boss::CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance)
 {
 	b2Vec2 vectorBetweenPoints = { point1.getX() - point2.getX(), point1.getY() - point2.getY() };
 	return vectorBetweenPoints.Length() < nearDistance;
 }
 
-void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
+void Boss::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
-		if (physA->ctype == ColliderType::CHASESENSOR) {
-			followPlayer = true;
+		if (physA->ctype == ColliderType::RANGELEFT) {
+
+			if (state == IDLE) {
+				dir = Direction::LEFT;
+				state = RUNNING;
+			}
+		}
+		else if (physA->ctype == ColliderType::RANGERIGHT) {
+
+			if (state == IDLE) {
+				dir = Direction::RIGHT;
+				state = RUNNING;
+			}
 		}
 		break;
 	case ColliderType::UNKNOWN:
@@ -220,7 +198,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	}
 }
 
-void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
+void Boss::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 {
 	switch (physB->ctype)
 	{

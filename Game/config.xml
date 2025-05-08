@@ -13,7 +13,7 @@
 	<window>
 		<resolution width="1920" height="1080" scale="1"/>
 		<fullscreen value="true"/>
-		<borderless value="false"/>
+		<borderless value="true"/>
 		<resizable value="false"/>
 		<fullscreen_window value="true"/>
 	</window>
@@ -294,7 +294,7 @@
 			</interactiveObject>
 
 			<enemies>
-				<soldier x="2560" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
+				<soldier x="6560" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
 					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
 					<animations>
 						<idle loop="true" speed ="0.5f">
@@ -302,7 +302,7 @@
 						</idle>
 					</animations>
 				</soldier>
-				<minotaure x="1560" y="1227" w="256" h="256" texture="Assets/Textures/enemy/placeholder_min.png" gravity="true">
+				<minotaure x="2560" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder_min.png" gravity="true">
 					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
 					<animations>
 						<idle loop="true" speed ="0.5f">
