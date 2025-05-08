@@ -177,4 +177,21 @@ private:
 	int blackTransitionDuration = 4000;
 	int language = 1;
 	
+	void DrawTextD(bool draw, pugi::char_t* dialogueSearch = const_cast<pugi::char_t*>("")) {
+		drawCText = draw;
+		searchText = dialogueSearch;
+	}
+
+	bool drawCText = false;
+
+	pugi::xml_document textsDoc1;
+	pugi::xml_document textsDoc2;
+	pugi::xml_document textsDoc3;
+	pugi::xml_node textsParameters1;
+	pugi::xml_node textsParameters2;
+	pugi::xml_node textsParameters3;
+	pugi::char_t* searchText;
+
+
+
 };

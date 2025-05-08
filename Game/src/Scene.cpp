@@ -24,6 +24,13 @@
 Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
 {
 	name = "scene";
+	textsDoc1.load_file("textsEn.xml");
+	textsDoc2.load_file("textsEs.xml");
+	textsDoc3.load_file("textsCat.xml");
+	textsParameters1 = textsDoc1.child("textsEn");
+	textsParameters2 = textsDoc2.child("textsEs");
+	textsParameters3 = textsDoc3.child("textsCat");
+
 }
 
 // Destructor
@@ -35,7 +42,7 @@ Scene::~Scene()
 bool Scene::Awake()
 {
 	LOG("Loading Scene");
-	bool ret = true;+
+	bool ret = true;
 
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
@@ -633,31 +640,60 @@ void Scene::GameOver_State()
 		int textWidthExit, textHeightExit;
 		int textWidthSentence, textHeightSentence;
 
-		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
-		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
-		TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, don't seek the strength int the light, seek it in the shades", &textWidthSentence, &textHeightSentence);
+		//TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+		//TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
+		//TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, don't seek the strength int the light, seek it in the shades", &textWidthSentence, &textHeightSentence);
+
+		std::string text3 = textsParameters1.child(searchText).attribute("Exit").as_string();
+
+		if (language == 1) {
+		
+		std::string text = textsParameters1.child(searchText).attribute("Lore1").as_string();
+		TTF_SizeText(Engine::GetInstance().render.get()->font,text.c_str(), &textWidthSentence, &textHeightSentence);
+		//Engine::GetInstance().scene.get()->DrawTextD(true, const_cast<pugi::char_t*>("Lore1"));
+
+		std::string text2 = textsParameters1.child(searchText).attribute("Continue").as_string();
+		
+
+		TTF_SizeText(Engine::GetInstance().render.get()->font, text2.c_str(), &textWidthContinue, &textHeightContinue);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, text3.c_str(), &textWidthExit, &textHeightExit);
+
+		}
+		else if(language==2)
+		{
+			std::string text = textsParameters2.child(searchText).attribute("Lore1").as_string();
+			std::string text2 = textsParameters1.child(searchText).attribute("Continue").as_string();
+			std::string text3 = textsParameters1.child(searchText).attribute("Exit").as_string();
+
+			TTF_SizeText(Engine::GetInstance().render.get()->font, text.c_str(), &textWidthSentence, &textHeightSentence);
+			TTF_SizeText(Engine::GetInstance().render.get()->font, text2.c_str(), &textWidthContinue, &textHeightContinue);
+			TTF_SizeText(Engine::GetInstance().render.get()->font, text3.c_str(), &textWidthExit, &textHeightExit);
+
+
+		}
+		else if (language==3)
+		{
+			std::string text = textsParameters3.child(searchText).attribute("Lore1").as_string();
+			std::string text2 = textsParameters1.child(searchText).attribute("Continue").as_string();
+			std::string text3 = textsParameters1.child(searchText).attribute("Exit").as_string();
+
+			TTF_SizeText(Engine::GetInstance().render.get()->font, text.c_str(), &textWidthSentence, &textHeightSentence);
+			TTF_SizeText(Engine::GetInstance().render.get()->font, text2.c_str(), &textWidthContinue, &textHeightContinue);
+			TTF_SizeText(Engine::GetInstance().render.get()->font, text3.c_str(), &textWidthExit, &textHeightExit);
+			
+		}
+		else 
+		{
+			LOG("Error Language");
+		}
 
 		SDL_Rect Continue = { 865, 760, textWidthContinue + 20, textHeightContinue + 10 };
 		SDL_Rect Exit = { 940, 860, textWidthExit + 20, textHeightExit + 10 };
 		SDL_Rect Sentence = { 260 - 85, 600, textWidthSentence + 20, textHeightSentence + 10 };
 
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
-		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, text3.c_str(), Exit, this));
 
-		if (language == 1) {
-
-		Engine::GetInstance().render.get()->DrawText(const_cast<pugi::char_t*>("Lore1"), Sentence.x, Sentence.y, Sentence.w, Sentence.h);
-		Engine::GetInstance().render.get()->DrawTextD(true, const_cast<pugi::char_t*>("Lore1"));
-		}
-		else if(language==2)
-		{}
-		else if (language==3)
-		{}
-		else 
-		{
-			LOG("Error Language");
-		}
-		
 	}
 }
 
