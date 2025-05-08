@@ -64,6 +64,7 @@ public:
 	void StopMovement();
 	void ResumeMovement();
 
+	int isJumpingpos();
 public:
 
 	//Declare player parameters

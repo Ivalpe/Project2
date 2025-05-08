@@ -390,7 +390,7 @@ bool Scene::Update(float dt)
 
 	//Moon animation
 	if (level == 0) {
-		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX()- camX, (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX()- camX, (int)MoonPos.getY()- player->isJumpingpos(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
 	}
 
@@ -425,6 +425,7 @@ bool Scene::PostUpdate()
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
+
 		level = 1;
 		Change_level(level);
 		player->SetPosition(Vector2D{ 64, 64 });

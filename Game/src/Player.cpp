@@ -138,6 +138,7 @@ bool Player::Update(float dt)
 				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 				canDoubleJump = false;
 			}
+
 		}
 
 		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
@@ -384,6 +385,13 @@ bool Player::Update(float dt)
 	return true;
 }
 
+int Player::isJumpingpos() {
+	if (isJumping) 
+	{
+		return (1642 - (int)position.getY());
+
+	}
+}
 bool Player::CleanUp()
 {
 	LOG("Cleanup player");
