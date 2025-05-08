@@ -316,6 +316,8 @@ bool Scene::Start()
 	MoonPos.setX(configParameters.child("textures").child("moon").attribute("x").as_int());
 	MoonPos.setY(configParameters.child("textures").child("moon").attribute("y").as_int());
 
+	const char* exit = textsParameters1.child("Exit").attribute("text").as_string();
+
 	return true;
 }
 
@@ -644,7 +646,10 @@ void Scene::GameOver_State()
 		//TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 		//TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, don't seek the strength int the light, seek it in the shades", &textWidthSentence, &textHeightSentence);
 
-		std::string text3 = textsParameters1.child(searchText).attribute("Exit").as_string();
+		std::string text3;
+
+
+		
 
 		if (language == 1) {
 		
@@ -653,10 +658,12 @@ void Scene::GameOver_State()
 		//Engine::GetInstance().scene.get()->DrawTextD(true, const_cast<pugi::char_t*>("Lore1"));
 
 		std::string text2 = textsParameters1.child(searchText).attribute("Continue").as_string();
-		
+		 text3 = textsParameters1.child(searchText).attribute("Exit").as_string();
 
 		TTF_SizeText(Engine::GetInstance().render.get()->font, text2.c_str(), &textWidthContinue, &textHeightContinue);
 		TTF_SizeText(Engine::GetInstance().render.get()->font, text3.c_str(), &textWidthExit, &textHeightExit);
+
+		//guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, text3.c_str(), Continue, this));
 
 		}
 		else if(language==2)
