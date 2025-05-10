@@ -108,6 +108,37 @@ void Map::DrawFront() {
     }
 }
 
+void Map::DrawFloor() {
+    for (const auto& mapLayer : mapData.layers) {
+        //Check if the property Draw exist get the value, if it's true draw the lawyer
+        if (mapLayer->name == "Floor" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+            for (int i = 0; i < mapData.width; i++) {
+                for (int j = 0; j < mapData.height; j++) {
+
+                    Vector2D mapInWorld = MapToWorld(i, j);
+                    if (Engine::GetInstance().render.get()->InCameraView(mapInWorld.getX(), mapInWorld.getY(), mapData.tileWidth, mapData.tileHeight))
+                    {
+                        //Get the gid from tile
+                        int gid = mapLayer->Get(i, j);
+                        //Check if the gid is different from 0 - some tiles are empty
+                        if (gid != 0) {
+
+                            TileSet* tileSet = GetTilesetFromTileId(gid);
+                            if (tileSet != nullptr) {
+                                //Get the Rect from the tileSetTexture;
+                                SDL_Rect tileRect = tileSet->GetRect(gid);
+                                //Get the screen coordinates from the tile coordinates
+                                Vector2D mapCoord = MapToWorld(i, j);
+                                //Draw the texture
+                                Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 TileSet* Map::GetTilesetFromTileId(int gid) const
 {
 	TileSet* set = nullptr;

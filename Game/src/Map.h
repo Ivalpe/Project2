@@ -146,6 +146,7 @@ public:
     MapLayer* GetNavigationLayer();
 
     void DrawFront();
+    void DrawFloor();
 public: 
     std::string mapFileName;
     std::string mapPath;

@@ -385,13 +385,6 @@ bool Player::Update(float dt)
 	return true;
 }
 
-int Player::isJumpingpos() {
-	if (isJumping) 
-	{
-		return (1642 - (int)position.getY());
-
-	}
-}
 bool Player::CleanUp()
 {
 	LOG("Cleanup player");
