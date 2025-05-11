@@ -89,8 +89,8 @@ public:
 	PhysBody* attackSensor;
 
 	Pathfinding* pathfinding;
-	bool followPlayer;
-	bool attackPlayer;
+	bool followPlayer = false;
+	bool attackPlayer = false;
 
 
 	Player* player;

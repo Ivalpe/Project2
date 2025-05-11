@@ -120,10 +120,12 @@ void EntityManager::AddEntity(Entity* entity)
 bool EntityManager::Update(float dt)
 {
 	bool ret = true;
-	for(const auto entity : entities)
-	{
-		if (entity->active == false) continue;
-		ret = entity->Update(dt);
+	if (!Engine::GetInstance().scene.get()->reset_level) {
+		for (const auto entity : entities)
+		{
+			if (entity->active == false) continue;
+			ret = entity->Update(dt);
+		}
 	}
 	return ret;
 }
