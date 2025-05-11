@@ -407,16 +407,19 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 		cleanup_pbody = true;
 		break;
+	case ColliderType::ENEMY:
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
-		Engine::GetInstance().entityManager.get()->candleNum--;
-		if (Engine::GetInstance().entityManager.get()->candleNum > 0) {
-			//Engine::GetInstance().scene.get()->PreUpdate();
-			Engine::GetInstance().scene.get()->reset_level = true;
-
-
+		if (!takenDMG) {
+			Engine::GetInstance().entityManager.get()->candleNum--;
+			if (Engine::GetInstance().entityManager.get()->candleNum <= 0) {
+				//Engine::GetInstance().scene.get()->PreUpdate();
+				Engine::GetInstance().scene.get()->reset_level = true;
+			}
 		}
+
+		takenDMG = true;
 		break;
 		//Engine::GetInstance().scene.get()->drainedWaxy = false;
 	case ColliderType::WALL:
@@ -486,8 +489,10 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 
 			cleanup_pbody = false;
 		}
+	case ColliderType::ENEMY:
 	case ColliderType::DAMAGE:
 		/*Engine::GetInstance().scene.get()->reset_level = true;*/
+		takenDMG = false;
 
 		break;
   case ColliderType::M_PLATFORM:
