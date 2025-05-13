@@ -47,7 +47,7 @@ bool Player::Start() {
 	}
 
 	//Load animations
-	hide.LoadAnimations(parameters.child("animations").child("hide"));
+	/*hide.LoadAnimations(parameters.child("animations").child("hide"));*/
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
@@ -147,7 +147,7 @@ bool Player::Update(float dt)
 
 		if (playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
 
-			isJumping = false;
+     		isJumping = false;
 			if (playerState != CRAWL) {
 				playerState = HIDE;
 			}
@@ -161,9 +161,7 @@ bool Player::Update(float dt)
 					playerState = CRAWL;
 
 				}
-				else {
-					playerState = HIDE;
-				}
+				
 			}
 
 		}
@@ -299,33 +297,28 @@ bool Player::Update(float dt)
 		break;
 	case CLIMB:
 
-		
-		/*if (isClimbing) {
-			if (currentAnimation != &turn2front) {
-				turn2front.Reset();
-				currentAnimation = &turn2front;
-			}
-			else if (turn2front.HasFinished()) {
-				playerState = IDLE;
-			}
-
-		}*/
-		
-		
-		
 
 		break;
 	case HIDE:
+		LOG("hiding");
 		if (currentAnimation != &hide) {
+		
 			hide.Reset();
+			LOG("Hide Reset");
 			currentAnimation = &hide;
+			
+			
 		}
+
+		LOG("Current hide frame: %d; totalframes: %d", currentAnimation->GetCurrentFrame().x, currentAnimation->totalFrames);
 		break;
 	case CRAWL:
 		currentAnimation = &crawl;
 		unhide.Reset();
+		LOG("crawling");
 		break;
 	case UNHIDE:
+		LOG("unhiding");
 		if (currentAnimation != &unhide) {
 			unhide.Reset();
 			currentAnimation = &unhide;
@@ -364,6 +357,7 @@ bool Player::Update(float dt)
 	}
 	
 	currentAnimation->Update();
+	LOG("playerstate: %i", playerState);
 	return true;
 }
 

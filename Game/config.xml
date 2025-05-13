@@ -7,15 +7,15 @@
 	</engine>
 
 	<render>
-		<vsync value="false"/>
+		<vsync value="true"/>
 	</render>
 
 	<window>
-		<resolution width="1920" height="1080" scale="1"/>
-		<fullscreen value="true"/>
+		<resolution width="1900" height="1060" scale="1"/>
+		<fullscreen value="false"/>
 		<borderless value="false"/>
 		<resizable value="false"/>
-		<fullscreen_window value="true"/>
+		<fullscreen_window value="false"/>
 	</window>
 
 	<scene>
