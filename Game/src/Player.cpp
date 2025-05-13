@@ -47,7 +47,7 @@ bool Player::Start() {
 	}
 
 	//Load animations
-	hide.LoadAnimations(parameters.child("animations").child("hide"));
+	
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
@@ -58,6 +58,7 @@ bool Player::Start() {
 	land.LoadAnimations(parameters.child("animations").child("land"));
 	turn2back.LoadAnimations(parameters.child("animations").child("turn2back"));
 	climb.LoadAnimations(parameters.child("animations").child("climb"));
+	onrope.LoadAnimations(parameters.child("animations").child("onrope"));
 	turn2front.LoadAnimations(parameters.child("animations").child("turn2front"));
 	death.LoadAnimations(parameters.child("animations").child("death"));
 	
@@ -103,6 +104,9 @@ bool Player::Update(float dt)
 
 			velocity.x = -0.2 * speed;
 			dir = RIGHT;
+			if (playerState == CLIMB) {
+				
+			}
 			if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
 				playerState = WALK;
 			}
@@ -110,6 +114,9 @@ bool Player::Update(float dt)
 		// Move right
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
 			velocity.x = 0.2 * speed;
+			if (playerState == CLIMB) {
+				LOG("MOVING LEFT");
+			}
 			dir = LEFT;
 			if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
 				playerState = WALK;
@@ -117,7 +124,7 @@ bool Player::Update(float dt)
 		}
 
 		if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE && playerState != CLIMB) {
-			if (velocity.x == 0) {
+			if (velocity.x >= -0.05 && velocity.x <= 0.05) {
 				playerState = IDLE;
 			}
 		}
@@ -147,7 +154,7 @@ bool Player::Update(float dt)
 
 		if (playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
 
-			isJumping = false;
+     		isJumping = false;
 			if (playerState != CRAWL) {
 				playerState = HIDE;
 			}
@@ -161,9 +168,7 @@ bool Player::Update(float dt)
 					playerState = CRAWL;
 
 				}
-				else {
-					playerState = HIDE;
-				}
+				
 			}
 
 		}
@@ -207,52 +212,63 @@ bool Player::Update(float dt)
 		}
 
 		if (playerState == CLIMB) {
-			
-
-			velocity.y = 0;
 			pbody->body->SetGravityScale(0);
-			
-			// Move Up
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || currentAnimation == &fall || currentAnimation == &jump) {
+			velocity.y = 0;
 
-				if (!isClimbing) {
-					if (currentAnimation != &turn2back) {
-						turn2back.Reset();
-						currentAnimation = &turn2back;
-						/*turnTimer.Start();*/
-					}
-					else if (currentAnimation == &turn2back) {
-						if (turn2back.HasFinished()/*turnTimer.ReadSec() > 1.0f*/) isClimbing = true;
-					}
+			// If still auto-grabbing
+			if (!isClimbing) {
+				if (currentAnimation == &turn2back && turn2back.HasFinished()) {
+					isClimbing = true;
+					
+				}
+				
+				pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
+				
+			}
+			else {
+				// Now allow climbing movement
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+					velocity.y = -0.3f * 16;
+					currentAnimation = &climb;
+				}
+				else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+					velocity.y = 0.3f * 16;
+					currentAnimation = &climb;
+
 				}
 				else {
-					velocity.y = -0.3 * 16;
-					currentAnimation = &climb;
-					pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
+					currentAnimation = &onrope;
+				}
 
+				// Press space to jump off 
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+					LOG("Jumped off rope");
+					
+					isClimbing = false;
+					exitingRope = true;
+
+					playerState = JUMP;
+					velocity.y = -6.0f; // or whatever your jump velocity is
+					pbody->body->SetGravityScale(GRAVITY);
+					return true;
+				}
+
+				// press left/right to exit rope
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
+					Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+					LOG("Walked off rope");
+					isClimbing = false;
+					exitingRope = true;
+
+					playerState = FALL;
+					pbody->body->SetGravityScale(GRAVITY);
+					return true;
 				}
 				
-
 			}
-			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-				velocity.y = 0.3 * 16;
-				currentAnimation = &climb;
-				pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
-
-			}
-			else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_UP || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP) {
-				currentAnimation = &turn2back;
-				
-			}
-			
-			
-
 		}
 		else {
 			pbody->body->SetGravityScale(GRAVITY);
-			/*playerState = IDLE;*/
-			
-
 		}
     
     // When on a m_platform, add platform velocity to player movement
@@ -267,12 +283,25 @@ bool Player::Update(float dt)
 
 	switch (playerState) {
 	case IDLE:
-		if (currentAnimation == &fall) {
+		if (currentAnimation == &turn2front) {
+
+			if (!turn2front.HasFinished()) {
+				currentAnimation == &turn2front;
+				break;
+			}
+		}
+
+			
+		if (currentAnimation == &fall && fall.HasFinished()) {
 			land.Reset();
 			currentAnimation = &land;
+			exitingRope = false;
 		}
 		else if (currentAnimation == &land) {
-			if (land.HasFinished()) currentAnimation = &idle;
+			if (land.HasFinished()) {
+				currentAnimation = &idle;
+				
+			}
 		}
 		else {
 			currentAnimation = &idle;
@@ -286,46 +315,35 @@ bool Player::Update(float dt)
 		break;
 	case JUMP:
 		if (currentAnimation != &jump) {
-			jump.Reset();
+
+			if(!exitingRope) jump.Reset();
 			currentAnimation = &jump;
 		}
 
 		break;
 	case FALL:
-		if (currentAnimation != &fall) {
-			fall.Reset();
+		if (currentAnimation != &fall && !onGround) {
+			if (!exitingRope) fall.Reset();
 			currentAnimation = &fall;
+
+			
 		}
 		break;
-	case CLIMB:
-
-		
-		/*if (isClimbing) {
-			if (currentAnimation != &turn2front) {
-				turn2front.Reset();
-				currentAnimation = &turn2front;
-			}
-			else if (turn2front.HasFinished()) {
-				playerState = IDLE;
-			}
-
-		}*/
-		
-		
-		
-
-		break;
 	case HIDE:
+		LOG("hiding");
 		if (currentAnimation != &hide) {
+		
 			hide.Reset();
-			currentAnimation = &hide;
+			currentAnimation = &hide;	
 		}
 		break;
 	case CRAWL:
 		currentAnimation = &crawl;
 		unhide.Reset();
+		LOG("crawling");
 		break;
 	case UNHIDE:
+		LOG("unhiding");
 		if (currentAnimation != &unhide) {
 			unhide.Reset();
 			currentAnimation = &unhide;
@@ -363,7 +381,11 @@ bool Player::Update(float dt)
 		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX() + texH / 2, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
 	}
 	
+	
 	currentAnimation->Update();
+	
+	
+	/*LOG("playerstate: %i", playerState);*/
 	return true;
 }
 
@@ -382,6 +404,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision PLATFORM");
 		isJumping = false;
 		canDoubleJump = false;
+		onGround = true;
 		lastJump = 0;
 		fallForce = 1.5;
 
@@ -394,10 +417,21 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
 		break;
 	case ColliderType::CLIMBABLE:
+		LOG("Collision CLIMBABLE");
+
+		// Auto-grab triggered
 		playerState = CLIMB;
-		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+		isClimbing = false;
+		isJumping = false;
 		pbody->body->SetGravityScale(0);
-		
+		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+
+		// auto-grab animation
+		if (currentAnimation != &turn2back) {
+			turn2back.Reset();
+			currentAnimation = &turn2back;
+		}
+
 		climbableX = physB->body->GetPosition().x;
 		break;
 	case ColliderType::CHANGE_LEVEL:
@@ -427,13 +461,13 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 
   case ColliderType::M_PLATFORM:
-    LOG("Collision M_PLATFORM");
-    isJumping = false;
-    canDoubleJump = false;
-    lastJump = 0;
-    fallForce = 1.5;
-    isClimbing = false;
-    isOnPlatform = true;
+		LOG("Collision M_PLATFORM");
+		isJumping = false;
+		canDoubleJump = false;
+		lastJump = 0;
+		fallForce = 1.5;
+		isClimbing = false;
+		isOnPlatform = true;
 
     // Assign the platform listener if valid.
     if (physB->listener != nullptr && dynamic_cast<Platform*>(physB->listener)) {
@@ -455,24 +489,23 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		LOG("End Collision PLATFORM");
+		onGround = false;
 		break;
 	case ColliderType::ITEM:
 		LOG("End Collision ITEM");
 		break;
 	case ColliderType::CLIMBABLE:
-		
-		pbody->body->SetGravityScale(GRAVITY);
-		playerState = IDLE;
 
-		/*if (currentAnimation != &turn2front) {
+		if (currentAnimation != &turn2front) {
+			isClimbing = false;
 			turn2front.Reset();
 			currentAnimation = &turn2front;
+			
+			playerState = IDLE;
+			pbody->body->SetGravityScale(GRAVITY);
+			
 		}
-		else if (currentAnimation == &turn2front) {
-			if (turn2front.HasFinished()) playerState = IDLE;
-		}*/
 		
-
 		LOG("End Collision CLIMABLE");
 		break;
 	
