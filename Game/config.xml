@@ -297,14 +297,22 @@
 			</interactiveObject>
 
 			<enemies>
-				<soldier x="1560" y="1727" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
+				<soldier x="1560" y="1727" w="300" h="300" texture="Assets/Textures/enemy/soldier spritesheet.png" gravity="true">
 					<properties chaseArea ="400" attackArea ="20" speed ="5" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
 					<animations>
 						<idle loop="true" speed ="0.5f">
-							<frame x="0" y="0" w="256" h="256"/>
+							<frame x="0" y="0" w="300" h="300"/>
+              <frame x="300" y="0" w="300" h="300"/>
+              <frame x="600" y="0" w="300" h="300"/>
+              <frame x="900" y="0" w="300" h="300"/>
+              <frame x="1200" y="0" w="300" h="300"/>
+              <frame x="1800" y="0" w="300" h="300"/>
+              <frame x="2100" y="0" w="300" h="300"/>
+              <frame x="2400" y="0" w="300" h="300"/>
+              <frame x="2700" y="0" w="300" h="300"/>
 						</idle>
 						<attack loop="false" speed="1.0f">
-							<frame x="0" y="0" w="256" h="256"/>
+							<frame x="0" y="0" w="300" h="300"/>
 						</attack>
 					</animations>
 				</soldier>
