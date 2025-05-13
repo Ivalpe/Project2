@@ -124,7 +124,7 @@ bool Player::Update(float dt)
 		}
 
 		if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE && playerState != CLIMB) {
-			if (velocity.x == 0) {
+			if (velocity.x >= -0.05 && velocity.x <= 0.05) {
 				playerState = IDLE;
 			}
 		}
@@ -322,7 +322,7 @@ bool Player::Update(float dt)
 
 		break;
 	case FALL:
-		if (currentAnimation != &fall) {
+		if (currentAnimation != &fall && !onGround) {
 			if (!exitingRope) fall.Reset();
 			currentAnimation = &fall;
 
@@ -404,6 +404,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision PLATFORM");
 		isJumping = false;
 		canDoubleJump = false;
+		onGround = true;
 		lastJump = 0;
 		fallForce = 1.5;
 
@@ -485,6 +486,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::PLATFORM:
 		LOG("End Collision PLATFORM");
+		onGround = false;
 		break;
 	case ColliderType::ITEM:
 		LOG("End Collision ITEM");
