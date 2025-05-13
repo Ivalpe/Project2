@@ -92,7 +92,7 @@ public:
 	bool takenDMG = false;
 	bool pickedItem = true;
 
-	bool isTurning = false;
+	bool exitingRope = false;
 
 
 	pugi::xml_node parameters;

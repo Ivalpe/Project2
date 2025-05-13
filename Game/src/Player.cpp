@@ -240,32 +240,31 @@ bool Player::Update(float dt)
 					currentAnimation = &onrope;
 				}
 
-				// --- NEW: Press space to jump off ---
+				// Press space to jump off 
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 					LOG("Jumped off rope");
+					
 					isClimbing = false;
+					exitingRope = true;
+
 					playerState = JUMP;
 					velocity.y = -6.0f; // or whatever your jump velocity is
 					pbody->body->SetGravityScale(GRAVITY);
 					return true;
 				}
 
-				// Optional: allow left/right to walk off the rope
+				// press left/right to exit rope
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
 					Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 					LOG("Walked off rope");
 					isClimbing = false;
+					exitingRope = true;
+
 					playerState = FALL;
 					pbody->body->SetGravityScale(GRAVITY);
 					return true;
 				}
-
-				/*currentAnimation = &climb;*/
-
-				// Lock X to rope to prevent drifting
-				/*if (fabs(pbody->body->GetPosition().x - climbableX) > 0.01f) {
-					pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
-				}*/
+				
 			}
 		}
 		else {
@@ -296,9 +295,13 @@ bool Player::Update(float dt)
 		if (currentAnimation == &fall && fall.HasFinished()) {
 			land.Reset();
 			currentAnimation = &land;
+			exitingRope = false;
 		}
 		else if (currentAnimation == &land) {
-			if (land.HasFinished()) currentAnimation = &idle;
+			if (land.HasFinished()) {
+				currentAnimation = &idle;
+				
+			}
 		}
 		else {
 			currentAnimation = &idle;
@@ -312,33 +315,27 @@ bool Player::Update(float dt)
 		break;
 	case JUMP:
 		if (currentAnimation != &jump) {
-			jump.Reset();
+
+			if(!exitingRope) jump.Reset();
 			currentAnimation = &jump;
 		}
 
 		break;
 	case FALL:
 		if (currentAnimation != &fall) {
-			fall.Reset();
+			if (!exitingRope) fall.Reset();
 			currentAnimation = &fall;
+
+			
 		}
-		break;
-	case CLIMB:
-
-
 		break;
 	case HIDE:
 		LOG("hiding");
 		if (currentAnimation != &hide) {
 		
 			hide.Reset();
-			LOG("Hide Reset");
-			currentAnimation = &hide;
-			
-			
+			currentAnimation = &hide;	
 		}
-
-		/*LOG("Current hide frame: %d; totalframes: %d", currentAnimation->GetCurrentFrame().x, currentAnimation->totalFrames);*/
 		break;
 	case CRAWL:
 		currentAnimation = &crawl;
@@ -384,7 +381,10 @@ bool Player::Update(float dt)
 		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX() + texH / 2, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
 	}
 	
+	
 	currentAnimation->Update();
+	
+	
 	/*LOG("playerstate: %i", playerState);*/
 	return true;
 }
@@ -501,19 +501,6 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 			
 		}
 		
-
-		
-		
-
-		/*if (currentAnimation != &turn2front) {
-			turn2front.Reset();
-			currentAnimation = &turn2front;
-		}
-		else if (currentAnimation == &turn2front) {
-			if (turn2front.HasFinished()) playerState = IDLE;
-		}*/
-		
-
 		LOG("End Collision CLIMABLE");
 		break;
 	
