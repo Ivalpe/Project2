@@ -47,7 +47,7 @@ bool Player::Start() {
 	}
 
 	//Load animations
-	/*hide.LoadAnimations(parameters.child("animations").child("hide"));*/
+	
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
@@ -265,7 +265,7 @@ bool Player::Update(float dt)
 
 	switch (playerState) {
 	case IDLE:
-		if (currentAnimation == &fall) {
+		if (currentAnimation == &fall && fall.HasFinished()) {
 			land.Reset();
 			currentAnimation = &land;
 		}
@@ -310,7 +310,7 @@ bool Player::Update(float dt)
 			
 		}
 
-		LOG("Current hide frame: %d; totalframes: %d", currentAnimation->GetCurrentFrame().x, currentAnimation->totalFrames);
+		/*LOG("Current hide frame: %d; totalframes: %d", currentAnimation->GetCurrentFrame().x, currentAnimation->totalFrames);*/
 		break;
 	case CRAWL:
 		currentAnimation = &crawl;
@@ -357,7 +357,7 @@ bool Player::Update(float dt)
 	}
 	
 	currentAnimation->Update();
-	LOG("playerstate: %i", playerState);
+	/*LOG("playerstate: %i", playerState);*/
 	return true;
 }
 

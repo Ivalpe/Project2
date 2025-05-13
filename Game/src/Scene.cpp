@@ -377,10 +377,10 @@ bool Scene::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
 		//LOG("%d x, %d y", Px, Py);
 
-		if (interactiveObject->name == "stalactites") 
+		/*if (interactiveObject->name == "stalactites") 
 		{
 			LOG("%d", interactiveObject->position.getY());
-		}
+		}*/
 		
 	}
 
