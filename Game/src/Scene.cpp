@@ -398,6 +398,9 @@ bool Scene::Update(float dt)
 		currentAnimation->Update();
 	}
 
+
+	
+
 	// Wax animation
 	animationWaxy();
 
@@ -434,6 +437,7 @@ bool Scene::PostUpdate()
 		player->SetPosition(Vector2D{ 64, 64 });
 	}
 
+	
 
 	show_UI();
 
@@ -609,6 +613,9 @@ void Scene::MenuInitialScreen()
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 9, "Continue", ConitnuesButton, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "Settings", Settings, this));
 		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "Exit", Exit, this));
+
+		
+	
 	}
 }
 

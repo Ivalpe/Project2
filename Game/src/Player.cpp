@@ -62,6 +62,7 @@ bool Player::Start() {
 	turn2front.LoadAnimations(parameters.child("animations").child("turn2front"));
 	death.LoadAnimations(parameters.child("animations").child("death"));
 	
+	currentAnimation = &idle;
 	playerState = IDLE;
 	hide.Reset();
 
@@ -85,6 +86,10 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+
+
+
+
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
@@ -100,7 +105,7 @@ bool Player::Update(float dt)
 	
 
 		// Move left
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f) {
 
 			velocity.x = -0.2 * speed;
 			dir = RIGHT;
@@ -112,11 +117,9 @@ bool Player::Update(float dt)
 			}
 		}
 		// Move right
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f) {
 			velocity.x = 0.2 * speed;
-			if (playerState == CLIMB) {
-				LOG("MOVING LEFT");
-			}
+			
 			dir = LEFT;
 			if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
 				playerState = WALK;
@@ -132,7 +135,7 @@ bool Player::Update(float dt)
 
 		//Jump
 		if (isJumping && lastJump <= 25) lastJump++;
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN /*|| Engine::GetInstance().input.get()->pads[0].b*/) {
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN || Engine::GetInstance().input.get()->pads[0].b) {
 
 			if (!isJumping) {
 				// Apply an initial upward force
@@ -152,7 +155,7 @@ bool Player::Update(float dt)
 
 		// hide
 
-		if (playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
+		if (playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].l2 > 0*/)) {
 
      		isJumping = false;
 			if (playerState != CRAWL) {
@@ -163,7 +166,7 @@ bool Player::Update(float dt)
 			if (playerState == HIDE && hide.HasFinished()) {
 
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT
-					/*|| Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
+					|| Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f) {
 					velocity.x /= 4;
 					playerState = CRAWL;
 
@@ -179,7 +182,7 @@ bool Player::Update(float dt)
 		}
 
 		//Unhide
-		if (playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP /*|| !Engine::GetInstance().input.get()->pads[0].zl*/) {
+		if (playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP /*|| Engine::GetInstance().input.get()->pads[0].l2 <= 0*/) {
 			playerState = UNHIDE;
 			isCrawling = false;
 		}
@@ -191,7 +194,6 @@ bool Player::Update(float dt)
 			/*else playerState = FALL;*/
 		}
 
-		//printf("%f\n", velocity.y);
 
 		if (velocity.y > 1.0f && playerState != CLIMB && !isClimbing) {
 
@@ -199,8 +201,10 @@ bool Player::Update(float dt)
 		}
 
 
+
+
 		//To glide
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].r2 <= 0*/)
 		{
 			playerState = GLIDE;
 			++glid_time;
@@ -227,11 +231,11 @@ bool Player::Update(float dt)
 			}
 			else {
 				// Now allow climbing movement
-				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].r_y <= -0.1f) {
 					velocity.y = -0.3f * 16;
 					currentAnimation = &climb;
 				}
-				else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+				else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].r_y >= 0.1f) {
 					velocity.y = 0.3f * 16;
 					currentAnimation = &climb;
 
@@ -241,7 +245,7 @@ bool Player::Update(float dt)
 				}
 
 				// Press space to jump off 
-				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN || Engine::GetInstance().input.get()->pads[0].b) {
 					LOG("Jumped off rope");
 					
 					isClimbing = false;
@@ -254,8 +258,8 @@ bool Player::Update(float dt)
 				}
 
 				// press left/right to exit rope
-				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT ||
-					Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f||
+					Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f ) {
 					LOG("Walked off rope");
 					isClimbing = false;
 					exitingRope = true;
@@ -384,8 +388,33 @@ bool Player::Update(float dt)
 	
 	currentAnimation->Update();
 	
+	GamePad& pad = Engine::GetInstance().input.get()->pads[0];
 	
-	/*LOG("playerstate: %i", playerState);*/
+	
+
+	
+	if (pad.a) 
+		std::cout << "Input: A ";
+	if (pad.b) 
+		std::cout << "Input: B ";
+	if (pad.x) 
+		std::cout << "Input: X ";
+	if (pad.y) 
+		std::cout << "Input: Y ";
+	if (pad.left) 
+		std::cout << "Input: LEFT ";
+	if (pad.right) 
+		std::cout << "Input: RIGHT ";
+	if (pad.up) 
+		std::cout << "Input: UP ";
+	if (pad.down) 
+		std::cout << "Input: DOWN ";
+	if (pad.l2 > 0.1f) 
+		std::cout << "Input: ZL ";
+	if (pad.r2 > 0.1f) 
+		std::cout << "Input: ZR ";
+	std::cout << std::endl;
+
 	return true;
 }
 
@@ -581,4 +610,6 @@ void Player::ResumeMovement() {
 		pbody->ctype = ColliderType::PLAYER;
 
 	}
+
+	
 }

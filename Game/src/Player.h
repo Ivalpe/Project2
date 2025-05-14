@@ -95,6 +95,7 @@ public:
 
 	bool exitingRope = false;
 
+	//bool inputWalkLeft = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
