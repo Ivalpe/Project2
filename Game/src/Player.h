@@ -72,7 +72,15 @@ public:
 	int texW, texH;
 
 	//Audio fx
-	int pickCoinFxId;
+	int pickCoinFxId,
+		jumpFxId,
+		glideFxId,
+		attackFxId,
+		hideFxId,
+		climbFxId,
+		deathFxId,
+		waterFxId,
+		walkFxId;
 
 	
 	PhysBody* pbody;

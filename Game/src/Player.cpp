@@ -79,7 +79,15 @@ bool Player::Start() {
 
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
-	
+	jumpFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	glideFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	attackFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	hideFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	climbFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	deathFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	waterFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	walkFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+
 	return true;
 }
 
@@ -97,11 +105,9 @@ bool Player::Update(float dt)
 
 	if (playerState != DEAD) {
 
-	
-
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
-
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
 			velocity.x = -0.2 * speed;
 			dir = RIGHT;
 			if (playerState == CLIMB) {
@@ -113,6 +119,7 @@ bool Player::Update(float dt)
 		}
 		// Move right
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
 			velocity.x = 0.2 * speed;
 			if (playerState == CLIMB) {
 				LOG("MOVING LEFT");
@@ -139,11 +146,13 @@ bool Player::Update(float dt)
 				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 				isJumping = true;
 				canDoubleJump = true;
+				Engine::GetInstance().audio.get()->PlayFx(jumpFxId);
 			}
 			else if (canDoubleJump && lastJump > 25) {
 				pbody->body->SetLinearVelocity(b2Vec2(pbody->body->GetLinearVelocity().x, 0));
 				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 				canDoubleJump = false;
+				Engine::GetInstance().audio.get()->PlayFx(jumpFxId);
 			}
 		}
 
@@ -157,6 +166,7 @@ bool Player::Update(float dt)
      		isJumping = false;
 			if (playerState != CRAWL) {
 				playerState = HIDE;
+				Engine::GetInstance().audio.get()->PlayFx(hideFxId);
 			}
 
 			// crawl
@@ -182,6 +192,7 @@ bool Player::Update(float dt)
 		if (playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_UP /*|| !Engine::GetInstance().input.get()->pads[0].zl*/) {
 			playerState = UNHIDE;
 			isCrawling = false;
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
 		}
 
 
@@ -202,6 +213,7 @@ bool Player::Update(float dt)
 		//To glide
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
 		{
+			Engine::GetInstance().audio.get()->PlayFx(glideFxId);
 			playerState = GLIDE;
 			++glid_time;
 			if (fallForce >= 1.0 && glid_time > glid_reduce) {
@@ -211,6 +223,7 @@ bool Player::Update(float dt)
 			velocity.y = pbody->body->GetLinearVelocity().y / fallForce;
 		}
 
+		//to climb
 		if (playerState == CLIMB) {
 			pbody->body->SetGravityScale(0);
 			velocity.y = 0;
@@ -230,10 +243,12 @@ bool Player::Update(float dt)
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
 					velocity.y = -0.3f * 16;
 					currentAnimation = &climb;
+					Engine::GetInstance().audio.get()->PlayFx(climbFxId);
 				}
 				else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 					velocity.y = 0.3f * 16;
 					currentAnimation = &climb;
+					Engine::GetInstance().audio.get()->PlayFx(climbFxId);
 
 				}
 				else {
@@ -243,7 +258,7 @@ bool Player::Update(float dt)
 				// Press space to jump off 
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 					LOG("Jumped off rope");
-					
+					Engine::GetInstance().audio.get()->PlayFx(jumpFxId);
 					isClimbing = false;
 					exitingRope = true;
 
