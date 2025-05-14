@@ -36,6 +36,7 @@ enum class ColliderType {
 	CHASESENSOR,
 	RANGELEFT,
 	RANGERIGHT,
+	WALLBOSS,
 	UNKNOWN
 	// ..
 };

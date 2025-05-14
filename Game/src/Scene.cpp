@@ -97,7 +97,7 @@ bool Scene::Awake()
 
 	}
 
-	 //Create a enemy using the entity manager 
+	//Create a enemy using the entity manager 
 	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
 	{
 		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
@@ -121,7 +121,7 @@ bool Scene::Awake()
 void Scene::CreateEnemies(int level)
 {
 
-	if (level == 0) 
+	if (level == 0)
 	{
 		for (auto& it : enemyList) {
 			it->position = Vector2D(1500, 1322 + 350);
@@ -134,11 +134,11 @@ void Scene::CreateEnemies(int level)
 		for (auto& it : enemyList) {
 			it->position = Vector2D(-1000, -1000);
 
-			
+
 		}
 	}
 }
-void Scene::CreateItems(int level) 
+void Scene::CreateItems(int level)
 {
 	/*int currentLvl = level;*/
 	LOG("Current Level: %d", level);
@@ -149,7 +149,7 @@ void Scene::CreateItems(int level)
 	std::vector<Vector2D> waxPositions{
 		  Vector2D(6966, 1930),
 		  Vector2D(5542, 6350),
-		  Vector2D(795, 4900+300),
+		  Vector2D(795, 4900 + 300),
 		  Vector2D(2604, 5068),
 		  Vector2D(4828, 4750)
 	};
@@ -158,15 +158,15 @@ void Scene::CreateItems(int level)
 		  Vector2D(795, 4874),
 		  Vector2D(4702,4010),
 		  Vector2D(9789, 1962),
-		  Vector2D(3210+200, 6442),
-		  Vector2D(4335+200, 2058), //alto
+		  Vector2D(3210 + 200, 6442),
+		  Vector2D(4335 + 200, 2058), //alto
 		  Vector2D(10875, 6154)
 	};
 
 	std::vector<Vector2D> stalactitePositions{
 		Vector2D(5324, 5340),
 		//Vector2D(5619, 5680),
-	
+
 	};
 
 	std::vector<Vector2D> platformPositions{
@@ -192,22 +192,22 @@ void Scene::CreateItems(int level)
 				}
 			}
 
-				if (it->pbody != nullptr && it->pbody->body != nullptr) {
-					it->pbody->body->SetTransform(
-						b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
-							PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
-						0);
-				}
-			
-			
+			if (it->pbody != nullptr && it->pbody->body != nullptr) {
+				it->pbody->body->SetTransform(
+					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
+						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
+					0);
+			}
+
+
 		}
 
 		for (auto& it : itemList) {
-			
+
 			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-			
-					it->position = Vector2D(-1000, -1000);
-				
+
+				it->position = Vector2D(-1000, -1000);
+
 			}
 			if (it->pbody != nullptr) {
 				it->pbody->body->SetTransform(
@@ -217,7 +217,7 @@ void Scene::CreateItems(int level)
 			}
 		}
 
-		for (auto& it : interactiveObjectList) 
+		for (auto& it : interactiveObjectList)
 		{
 			it->position = Vector2D(-1000, -1000);
 
@@ -229,7 +229,7 @@ void Scene::CreateItems(int level)
 			}
 		}
 	}
-	else if(level==1){
+	else if (level == 1) {
 
 		for (auto& it : itemList) {
 			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
@@ -241,21 +241,21 @@ void Scene::CreateItems(int level)
 				it->SetPosition(factherPositions[fatherIndex++]);
 			}
 
-			
+
 		}
 
 		for (auto& it : interactiveObjectList) {
 			if (it->name == "wall") {
-				it->SetPosition(Vector2D{ 6377+50, 3880-50 });
+				it->SetPosition(Vector2D{ 6377 + 50, 3880 - 50 });
 
 			}
 
-		
+
 		}
 
 
 		for (auto& it : interactiveObjectList) {
-			if (it->name == "stalactites" && stalactiteIndex<stalactitePositions.size()) {
+			if (it->name == "stalactites" && stalactiteIndex < stalactitePositions.size()) {
 				it->SetPosition(stalactitePositions[stalactiteIndex++]);
 
 			}
@@ -328,7 +328,7 @@ void Scene::Change_level(int level)
 
 	if (level == 0)
 	{
-		
+
 		Engine::GetInstance().map.get()->CleanUp();
 		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
 		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
@@ -337,8 +337,7 @@ void Scene::Change_level(int level)
 		CreateEnemies(level);
 	}
 
-	if (level == 1)
-	{
+	else if (level == 1) {
 		Engine::GetInstance().map.get()->CleanUp();
 		LOG("Current Level: %d", level);
 		//REMOVE // WHEN SECOND STAGE ENEMYS ADDED
@@ -352,6 +351,14 @@ void Scene::Change_level(int level)
 
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
+	}
+
+	else if (level == 2) {
+		Engine::GetInstance().map.get()->CleanUp();
+
+		Engine::GetInstance().map->Load(configParameters.child("map2").attribute("path").as_string(), configParameters.child("map2").attribute("name").as_string());
+		CreateItems(level);
+		CreateEnemies(level);
 	}
 }
 
@@ -377,18 +384,18 @@ bool Scene::Update(float dt)
 	if (camY > 0) camY = 0;
 
 	// Limitar la cámara final
-	if(camX< -11520)camX = -11520;
-	
+	if (camX < -11520)camX = -11520;
+
 	Engine::GetInstance().render.get()->camera.x = (camX);
 	Engine::GetInstance().render.get()->camera.y = (camY  /*+ player->crouch*/);
-	
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
 		//LOG("%d x, %d y", Px, Py);
-		if (interactiveObject->name == "stalactites") 
+		if (interactiveObject->name == "stalactites")
 		{
 			LOG("%d", interactiveObject->position.getY());
 		}
-		
+
 	}
 
 	//Reset levels
@@ -415,7 +422,7 @@ bool Scene::Update(float dt)
 
 	MenuInitialScreen();
 
-	if(showSettingsMenu) 	MenuSettings();
+	if (showSettingsMenu) 	MenuSettings();
 
 	return true;
 }
@@ -441,10 +448,16 @@ bool Scene::PostUpdate()
 		player->SetPosition(Vector2D{ 64, 64 });
 	}
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
+		level = 2;
+		Change_level(level);
+		player->SetPosition(Vector2D{ 64, 64 });
+	}
+
 
 	show_UI();
 
-	
+
 
 	if (showBlackTransition) {
 		Uint32 now = SDL_GetTicks();
@@ -467,10 +480,10 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) {
 		Engine::GetInstance().map.get()->DrawFront();
 	}
-	
 
-	
-	
+
+
+
 
 	return ret;
 }
@@ -489,10 +502,10 @@ void Scene::show_UI() {
 
 		if (current_time > 180) UI = false; //3 seconds
 	}
-	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && !InitialScreenMenu&& UI) {
+	if (!showPauseMenu && !showSettingsMenu && !GameOverMenu && !InitialScreenMenu && UI) {
 
 		//Crea
-		
+
 		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &currentWaxAnim->GetCurrentFrame(), false);
 
 		//vela
@@ -606,10 +619,10 @@ void Scene::MenuInitialScreen()
 
 		float scaleFactor = 0.8f;
 
-		SDL_Rect NewGameButton = {300-60-7, 445 + 50, static_cast<int>(textWidthNewGame* scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
-		SDL_Rect ConitnuesButton = { 320-50-7, 520 + 50, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
-		SDL_Rect Settings = { 330-45-7, 595 + 50, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
-		SDL_Rect Exit = {350-25-7, 670 + 50, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
+		SDL_Rect NewGameButton = { 300 - 60 - 7, 445 + 50, static_cast<int>(textWidthNewGame * scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
+		SDL_Rect ConitnuesButton = { 320 - 50 - 7, 520 + 50, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
+		SDL_Rect Settings = { 330 - 45 - 7, 595 + 50, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
+		SDL_Rect Exit = { 350 - 25 - 7, 670 + 50, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
 
 
 		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "New Game", NewGameButton, this));
@@ -667,14 +680,14 @@ void Scene::Active_MenuPause() {
 		showSettingsMenu = false;
 		if (showPauseMenu) {
 			player->StopMovement();
-				for (Enemy* enemy : enemyList) {
-					if (enemy!=NULL) {
-						enemy->visible = false;
-						enemy->StopMovement();
-					}
+			for (Enemy* enemy : enemyList) {
+				if (enemy != NULL) {
+					enemy->visible = false;
+					enemy->StopMovement();
 				}
+			}
 			for (Platform* platform : platformList) {
-				if (platform !=NULL) {
+				if (platform != NULL) {
 					platform->StopMovement();
 				}
 			}
@@ -940,7 +953,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
-	
+
 		break;
 	case 7:// Game Over: Exit
 
@@ -962,7 +975,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 
 		break;
 	case 10:// Initial Screen: Settings
-		
+
 		//InitialScreenMenu = false;
 		guiBt0->state = GuiControlState::DISABLED;
 		DisableGuiControlButtons();
@@ -981,15 +994,15 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 }
 
 
-void Scene::FillWaxy(){
+void Scene::FillWaxy() {
 
 	currentWaxAnim->playReverse = false;
-	switch (waxState) 
+	switch (waxState)
 	{
 	case EMPTY:
 		waxState = FILL_TO_LOW;
 	case FILL_TO_LOW:
-		
+
 		if (currentWaxAnim == &fill2lvl1 && fill2lvl1.HasFinished()) {
 			waxState = QUARTER_FULL;
 			filledWaxy = true;
@@ -1006,7 +1019,7 @@ void Scene::FillWaxy(){
 	case HALF_FULL:
 		waxState = FILL_TO_HIGH;
 	case FILL_TO_HIGH:
-		
+
 		if (fill2lvl3.HasFinished()) {
 			waxState = ALMOST_FULL;
 			filledWaxy = true;
@@ -1026,7 +1039,7 @@ void Scene::FillWaxy(){
 		waxState = EMPTY;
 		Engine::GetInstance().entityManager.get()->candleNum++;
 		filledWaxy = true;
-		
+
 		break;
 	}
 }
@@ -1034,7 +1047,7 @@ void Scene::FillWaxy(){
 void Scene::DrainWaxy() {
 
 	currentWaxAnim->playReverse = true;
-	
+
 	switch (waxState) {
 	case FULL:
 		waxState = FILL_TO_FULL;
@@ -1055,7 +1068,7 @@ void Scene::DrainWaxy() {
 	case FILL_TO_HALF:
 		waxState = FILL_TO_HALF;
 	case HALF_FULL:
-		
+
 		if (fill2lvl2.HasFinished()) {
 			waxState = QUARTER_FULL;
 			drainedWaxy = true;
@@ -1066,7 +1079,7 @@ void Scene::DrainWaxy() {
 	case FILL_TO_LOW:
 		if (fill2lvl1.HasFinished()) {
 			waxState = EMPTY;
-			
+
 			drainedWaxy = true;
 		}
 		break;

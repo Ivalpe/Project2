@@ -80,6 +80,8 @@ public:
 	PhysBody* pbody;
 	PhysBody* sensorLeft;
 	PhysBody* sensorRight;
+	PhysBody* sensorLimitLeft;
+	PhysBody* sensorLimitRight;
 	Pathfinding* pathfinding;
 	bool followPlayer;
 

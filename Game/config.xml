@@ -21,6 +21,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="Beach.tmx"/>
 		<map1 path="Assets/Maps/" name="cave.tmx"/>
+		<map2 path="Assets/Maps/" name="Boss.tmx"/>
 		<textures>
 			<Menu_initial path="Assets/Textures/UI/initial_screen.png"/>
 			<Menu_Pause path="Assets/Textures/UI/Pause_menu.png"/>
