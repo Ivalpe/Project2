@@ -41,6 +41,10 @@ public:
 
 	void AttackEnemy(float dt);
 
+	void IdleEnemy(float dt);
+
+	void IdleReset();
+
 	bool CleanUp();
 
 	void SetParameters(pugi::xml_node _parameters) {
@@ -72,7 +76,8 @@ public:
 	bool CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance);
 public:
 	int visible = true;
-
+	bool idleDir = false;
+	Vector2D targetTile;
 
 
 	SDL_Texture* texture;

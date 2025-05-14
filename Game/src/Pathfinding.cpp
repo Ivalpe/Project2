@@ -262,11 +262,19 @@ void Pathfinding::PropagateDijkstra() {
 	}
 }
 
-bool Pathfinding::PropagateAStar(ASTAR_HEURISTICS heuristic) {
+bool Pathfinding::PropagateAStar(ASTAR_HEURISTICS heuristic, Vector2D pos) {
 	// L13: TODO 2: Adapt Dijkstra algorithm for AStar. Consider the different heuristics
 
-	Vector2D playerPos = Engine::GetInstance().scene.get()->GetPlayerPosition();
-	Vector2D playerPosTile = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX() + 32, (int)playerPos.getY() + 32);
+	Vector2D playerPos;
+	Vector2D playerPosTile;
+
+	if (pos.getX() == 0 and pos.getY() == 0) {
+		playerPos = Engine::GetInstance().scene.get()->GetPlayerPosition();
+		playerPosTile = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX() + 32, (int)playerPos.getY() + 32);
+	}
+	else {
+		playerPosTile = pos;
+	}
 
 	bool foundDestination = false;
 	if (frontierAStar.size() > 0) {

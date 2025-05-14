@@ -98,12 +98,12 @@ bool Scene::Awake()
 	}
 
 	 //Create a enemy using the entity manager 
-	/*for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
+	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
 	{
 		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 		enemy->SetParameters(enemyNode);
 		enemyList.push_back(enemy);
-	}*/
+	}
 	CreateEnemies(level);
 	CreateItems(level);
 

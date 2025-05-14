@@ -33,7 +33,7 @@ public:
 	void PropagateDijkstra();
 
 	// L13: A* Pathfinding methods
-	bool PropagateAStar(ASTAR_HEURISTICS heuristic);
+	bool PropagateAStar(ASTAR_HEURISTICS heuristic, Vector2D pos = {0,0});
 
 	bool PathComplete() {
 		return path;

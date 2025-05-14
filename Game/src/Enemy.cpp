@@ -64,6 +64,12 @@ bool Enemy::Start() {
 	pathfinding = new Pathfinding();
 	ResetPath();
 
+	// Initialize idle position
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	targetTile.setY(pos.getY());
+	targetTile.setX(tilePos.getX() - 12);
+
 	return true;
 }
 
@@ -100,15 +106,72 @@ bool Enemy::Update(float dt)
 
 	if (followPlayer) {
 		MovementEnemy(dt);
-	}
-
-	if (attackPlayer) {
+	} else if (attackPlayer) {
 		AttackEnemy(dt);
+	}
+	else {
+		IdleEnemy(dt);
 	}
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
 
 	return true;
+}
+
+void Enemy::IdleReset() {
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+
+	targetTile.setY(tilePos.getY());
+
+	if (idleDir) {
+		idleDir = false;
+		targetTile.setX(tilePos.getX() - 10);
+	}
+	else {
+		idleDir = true;
+		targetTile.setX(tilePos.getX() + 10);
+	}
+}
+
+void Enemy::IdleEnemy(float dt) {
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	targetTile.setY(tilePos.getY());
+
+	if (targetTile == tilePos) {
+		IdleReset();
+	}
+
+	pathfinding->ResetPath(tilePos);
+
+	int max = 200;
+	bool found = false;
+	while (!found) {
+		found = pathfinding->PropagateAStar(MANHATTAN, targetTile);
+		max--;
+		if (max == 0) break;
+		if (Engine::GetInstance().physics.get()->GetDebug())
+			pathfinding->DrawPath();
+	}
+
+	if (found) {
+
+		int sizeBread = pathfinding->breadcrumbs.size();
+		Vector2D posBread;
+		if (sizeBread >= 2) posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
+		else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
+
+		//Movement Enemy
+		if (posBread.getX() <= tilePos.getX()) {
+			velocity = -speed;
+			dir = LEFT;
+		}
+		else {
+			velocity = speed;
+			dir = RIGHT;
+		}
+	}
 }
 
 void Enemy::MovementEnemy(float dt) {
@@ -267,6 +330,7 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		if (physA->ctype == ColliderType::CHASESENSOR) {
 			followPlayer = false;
 		}
+		IdleReset();
 		break;
 	case ColliderType::UNKNOWN:
 		break;
