@@ -26,6 +26,7 @@ bool Enemy::Awake() {
 bool Enemy::Start() {
 	followPlayer = false;
 	velocity = 0;
+	speed = 4.f;
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
@@ -33,11 +34,9 @@ bool Enemy::Start() {
 	//position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
-	speed = parameters.child("properties").attribute("speed").as_int();
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
-	attack.LoadAnimations(parameters.child("animations").child("attack")); 
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
@@ -47,11 +46,6 @@ bool Enemy::Start() {
 	sensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, texH, bodyType::KINEMATIC);
 	sensor->ctype = ColliderType::CHASESENSOR;
 	sensor->listener = this;
-
-	//Attack Sensor
-	attackSensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 1.5, texH, bodyType::KINEMATIC);
-	attackSensor->ctype = ColliderType::ATTACKSENSOR;
-	attackSensor->listener = this;
 
 	////Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
@@ -69,12 +63,6 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
-	if (Engine::GetInstance().scene.get()->GameOverMenu == true) {
-		//// Initialize pathfinding
-		pathfinding = new Pathfinding();
-		ResetPath();
-	}
-
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
 	velocity = 0;
@@ -82,28 +70,14 @@ bool Enemy::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	if (!attackPlayer and currentAnimation != &idle) {
-		currentAnimation = &idle;
-	}
-
-	if (dir == RIGHT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	}
-	else {
-		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	}
+	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();
 	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
-	attackSensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
 	if (followPlayer) {
 		MovementEnemy(dt);
-	}
-
-	if (attackPlayer) {
-		AttackEnemy(dt);
 	}
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
@@ -136,20 +110,12 @@ void Enemy::MovementEnemy(float dt) {
 		//Movement Enemy
 		if (posBread.getX() <= tilePos.getX()) {
 			velocity = -speed;
-			dir = LEFT;
 		}
 		else {
 			velocity = speed;
-			dir = RIGHT;
 		}
 	}
 
-}
-
-void Enemy::AttackEnemy(float dt) {
-	if (currentAnimation->HasFinished()) {
-		attackPlayer = false;
-	}
 }
 
 bool Enemy::CleanUp()
@@ -241,12 +207,8 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
-		if (physA->ctype == ColliderType::CHASESENSOR and !attackPlayer) {
+		if (physA->ctype == ColliderType::CHASESENSOR) {
 			followPlayer = true;
-		} else if (physA->ctype == ColliderType::ATTACKSENSOR){
-			attackPlayer = true;
-			currentAnimation = &attack;
-			followPlayer = false;
 		}
 		break;
 	case ColliderType::UNKNOWN:

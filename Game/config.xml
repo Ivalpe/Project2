@@ -7,15 +7,15 @@
 	</engine>
 
 	<render>
-		<vsync value="true"/>
+		<vsync value="false"/>
 	</render>
 
 	<window>
-		<resolution width="1900" height="1060" scale="1"/>
-		<fullscreen value="false"/>
+		<resolution width="1920" height="1080" scale="1"/>
+		<fullscreen value="true"/>
 		<borderless value="false"/>
 		<resizable value="false"/>
-		<fullscreen_window value="false"/>
+		<fullscreen_window value="true"/>
 	</window>
 
 	<scene>
@@ -230,9 +230,6 @@
 						<frame x ="768" y="1792" w="256" h="256"/>
 						<frame x ="1024" y="1792" w="256" h="256"/>
 					</turn2back>
-          <onrope loop =" false" speed ="0.5f">
-            <frame x ="1024" y="1792" w="256" h="256"/>
-          </onrope>
 					<climb loop ="true" speed ="0.5f">
 						<frame x ="0"   y="2048" w="256" h="256"/>
 						<frame x ="256" y="2048" w="256" h="256"/>
@@ -244,7 +241,7 @@
 						<frame x ="1792" y="2048" w="256" h="256"/>
 						<frame x ="2048" y="2048" w="256" h="256"/>
 					</climb>
-					<turn2front loop ="false" speed ="0.5f">
+					<turn2front>
 						<frame x ="1024" y="1792" w="256" h="256"/>
 						<frame x ="768" y="1792" w="256" h="256"/>
 						<frame x ="512" y="1792" w="256" h="256"/>
@@ -303,9 +300,6 @@
 						<idle loop="true" speed ="0.5f">
 							<frame x="0" y="0" w="256" h="256"/>
 						</idle>
-						<attack loop="false" speed="1.0f">
-							<frame x="0" y="0" w="256" h="256"/>
-						</attack>
 					</animations>
 				</soldier>
 			</enemies>
