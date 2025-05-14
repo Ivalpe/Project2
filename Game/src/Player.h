@@ -76,7 +76,7 @@ public:
 
 	
 	PhysBody* pbody;
-	float jumpForce = 200.0f; // The force to apply when jumping
+	float jumpForce = 100.0f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	bool isHiding = false; // Flag to check if the player is currently hiding
 	bool isCrawling = false;

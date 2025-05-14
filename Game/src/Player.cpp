@@ -66,7 +66,7 @@ bool Player::Start() {
 
 	
 	//pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, (texW / 3) - 20, texH + 10, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, (texW / 3) - 20, (texW / 3) +80 , bodyType::DYNAMIC);
 
 	
 	pbody->listener = this;
@@ -528,7 +528,7 @@ void Player::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, (texW / 3) - 20, texH + 10, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, (texW / 3) - 20, (texW / 3) + 80, bodyType::STATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
 
@@ -539,7 +539,7 @@ void Player::ResumeMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, (texW / 3) - 20, texH + 10, bodyType::DYNAMIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, (texW / 3) - 20, (texW / 3) + 80, bodyType::DYNAMIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::PLAYER;
 
