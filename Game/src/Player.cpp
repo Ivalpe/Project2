@@ -63,6 +63,7 @@ bool Player::Start() {
 	death.LoadAnimations(parameters.child("animations").child("death"));
 	
 	playerState = IDLE;
+	lastState = playerState;
 	hide.Reset();
 
 	
@@ -107,7 +108,6 @@ bool Player::Update(float dt)
 
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
-			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
 			velocity.x = -0.2 * speed;
 			dir = RIGHT;
 			if (playerState == CLIMB) {
@@ -119,7 +119,6 @@ bool Player::Update(float dt)
 		}
 		// Move right
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
-			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
 			velocity.x = 0.2 * speed;
 			if (playerState == CLIMB) {
 				LOG("MOVING LEFT");
@@ -295,6 +294,12 @@ bool Player::Update(float dt)
 
 	}
 
+	//comprobador de cambiaos de estado
+	if (lastState != playerState) {
+		lastState = playerState;
+		playingFx = false;
+		Engine::GetInstance().audio.get()->StopFx();
+	}
 
 	switch (playerState) {
 	case IDLE:
@@ -325,6 +330,10 @@ bool Player::Update(float dt)
 		
 		break;
 	case WALK:
+		if (!playingFx) {
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
+			playingFx = true;
+		}
 		currentAnimation = &walk;
 		hide.Reset();
 		break;
@@ -334,14 +343,11 @@ bool Player::Update(float dt)
 			if(!exitingRope) jump.Reset();
 			currentAnimation = &jump;
 		}
-
 		break;
 	case FALL:
 		if (currentAnimation != &fall && !onGround) {
 			if (!exitingRope) fall.Reset();
 			currentAnimation = &fall;
-
-			
 		}
 		break;
 	case HIDE:

@@ -63,6 +63,7 @@ public:
 
 	void StopMovement();
 	void ResumeMovement();
+	bool playingFx = false;
 
 public:
 
@@ -117,7 +118,7 @@ public:
 
 	b2Vec2 velocity;
 	Direction dir = LEFT;
-	State playerState;
+	State playerState, lastState;
 
 	Timer hideTimer;
 	Timer turnTimer;
