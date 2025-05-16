@@ -9,8 +9,9 @@ enum class EntityType
 	ITEM,
 	INTERACTIVEOBJECT,
 	ENEMY,
-	SOLDIER,
 	PLATFORM,
+	BOSS,
+	COLUMN,
 	UNKNOWN
 };
 

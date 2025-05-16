@@ -11,9 +11,9 @@
 	</render>
 
 	<window>
-		<resolution width="1900" height="1060" scale="1"/>
-		<fullscreen value="false"/>
-		<borderless value="false"/>
+		<resolution width="1920" height="1080" scale="1"/>
+		<fullscreen value="true"/>
+		<borderless value="true"/>
 		<resizable value="false"/>
 		<fullscreen_window value="false"/>
 	</window>
@@ -21,6 +21,7 @@
 	<scene>
 		<map path="Assets/Maps/" name="Beach.tmx"/>
 		<map1 path="Assets/Maps/" name="cave.tmx"/>
+		<map2 path="Assets/Maps/" name="Boss.tmx"/>
 		<textures>
 			<Menu_initial path="Assets/Textures/UI/initial_screen.png"/>
 			<Menu_Pause path="Assets/Textures/UI/Pause_menu.png"/>
@@ -295,10 +296,18 @@
 					</animations>
 				</blocked_wall>
 			</interactiveObject>
-
+			<columns>
+				<minotaur x="6333" y="1328" w="256" h="1120" texture="Assets/Maps/Stage3/Tilesets/Column.png">
+					<animations>
+						<idle loop="true" speed ="0.5f">
+							<frame x="0" y="0" w="256" h="1120"/>
+						</idle>
+					</animations>
+				</minotaur>
+			</columns>
 			<enemies>
-				<soldier x="1560" y="1727" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
-					<properties chaseArea ="400" attackArea ="20" speed ="5" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
+				<soldier x="16560" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
+					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
 					<animations>
 						<idle loop="true" speed ="0.5f">
 							<frame x="0" y="0" w="256" h="256"/>
@@ -308,6 +317,14 @@
 						</attack>
 					</animations>
 				</soldier>
+				<minotaur x="4500" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder_min.png" gravity="true">
+					<properties chaseArea ="400" attackArea ="20" speed ="7.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
+					<animations>
+						<idle loop="true" speed ="0.5f">
+							<frame x="0" y="0" w="256" h="256"/>
+						</idle>
+					</animations>
+				</minotaur>
 			</enemies>
 			<platforms>
 				<platform name="platform" x="800" y="650" w="353" h="32" texture="Assets/Textures/Platformm.png" gravity="true">
