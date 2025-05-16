@@ -11,6 +11,7 @@ enum class EntityType
 	ENEMY,
 	PLATFORM,
 	BOSS,
+	COLUMN,
 	UNKNOWN
 };
 

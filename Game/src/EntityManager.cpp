@@ -90,6 +90,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::PLATFORM:
 		entity = new Platform();
 		break;
+	case EntityType::COLUMN:
+		entity = new Column();
+		break;
 	default:
 		break;
 	}

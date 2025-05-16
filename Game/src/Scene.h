@@ -10,6 +10,7 @@
 #include "GuiControlButton.h"
 #include "Animation.h"
 #include "Platform.h"
+#include "Column.h"
 
 struct SDL_Texture;
 enum WaxState {
@@ -147,6 +148,7 @@ private:
 	std::vector<Enemy*> enemyList;
 	std::vector<Boss*> bossList;
 	std::vector<Item*> itemList;
+	std::vector<Column*> columnList;
 	std::vector<InteractiveObject*> interactiveObjectList;
 	std::vector<Platform*> platformList;
 

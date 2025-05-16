@@ -105,8 +105,16 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 
-	//Create a enemy using the entity manager 
-	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("minotaure"); enemyNode; enemyNode = enemyNode.next_sibling("minotaure"))
+	//Create a column using the entity manager 
+	for (pugi::xml_node colNode = configParameters.child("entities").child("columns").child("minotaur"); colNode; colNode = colNode.next_sibling("minotaur"))
+	{
+		Column* col = (Column*)Engine::GetInstance().entityManager->CreateEntity(EntityType::COLUMN);
+		col->SetParameters(colNode);
+		columnList.push_back(col);
+	}
+
+	//Create a boss using the entity manager 
+	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("minotaur"); enemyNode; enemyNode = enemyNode.next_sibling("minotaur"))
 	{
 		Boss* boss = (Boss*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BOSS);
 		boss->SetParameters(enemyNode);

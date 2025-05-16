@@ -6,31 +6,20 @@
 #include "Pathfinding.h"
 #include "Timer.h"
 
-
-class Player;
 struct SDL_Texture;
 
-
-
-class Boss : public Entity
+class Column : public Entity
 {
 public:
 
 	enum eState {
 		IDLE,
-		RUNNING,
-		STUNNED,
-		WAITING,
-		DEAD
+		BREAKING,
+		BROKEN
 	};
 
-	enum Direction {
-		LEFT,
-		RIGHT
-	};
-
-	Boss();
-	virtual ~Boss();
+	Column();
+	virtual ~Column();
 
 	bool Awake();
 
@@ -48,27 +37,16 @@ public:
 		this->instanceParameters = _instanceParameters;
 	}
 
-	void SetPlayer(Player* player);
-
 	void SetPosition(Vector2D pos);
 
 	Vector2D GetPosition();
-
-	void ResetPath();
 
 	void OnCollision(PhysBody* physA, PhysBody* physB) override;
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB) override;
 
-	void StopMovement();
-	void ResumeMovement();
-
-
-	bool CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance);
 public:
 	int visible = true;
-
-
 
 	SDL_Texture* texture;
 	const char* texturePath;
@@ -78,31 +56,11 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 	PhysBody* pbody;
-	PhysBody* sensorLeft;
-	PhysBody* sensorLimitLeft;
-	PhysBody* sensorRight;
-	Pathfinding* pathfinding;
-	bool followPlayer;
 	int contColumn;
+	bool openColumn;
 
-
-	Player* player;
 	eState state = IDLE;
-	Direction dir = LEFT;
 
-	//path: list of points the soldier moves across
-	std::vector<Vector2D> route;
-	Vector2D destPoint;
-	int destPointIndex;
-
-	int speed;
-	int lives;
-	int chaseArea;
-	int attackArea;
-
-	Timer deathTimer;
-	float deathTime;
 	bool dead;
-	float velocity;
 	int timer = 0;
 };

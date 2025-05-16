@@ -1,4 +1,4 @@
-#include "Enemy.h"
+#include "Boss.h"
 #include "Engine.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -24,6 +24,7 @@ bool Boss::Awake() {
 }
 
 bool Boss::Start() {
+	contColumn = 3;
 	followPlayer = false;
 	velocity = 0;
 	speed = 4.f;
@@ -44,7 +45,7 @@ bool Boss::Start() {
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
 	//Sensor
-	sensorLeft = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), 10, texH * 3, bodyType::KINEMATIC);
+	sensorLeft = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW * 5, texH * 3, bodyType::KINEMATIC);
 	sensorLeft->ctype = ColliderType::RANGELEFT;
 	sensorLeft->listener = this;
 
@@ -52,11 +53,6 @@ bool Boss::Start() {
 	sensorLimitLeft = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), 10, texH, bodyType::KINEMATIC);
 	sensorLimitLeft->ctype = ColliderType::WALLBOSS;
 	sensorLimitLeft->listener = this;
-
-	//Sensor
-	sensorLimitRight = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW / 2, texH, bodyType::KINEMATIC);
-	sensorLimitRight->ctype = ColliderType::WALLBOSS;
-	sensorLimitRight->listener = this;
 
 	//Sensor
 	sensorRight = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW * 5, texH * 3, bodyType::KINEMATIC);
@@ -98,17 +94,10 @@ bool Boss::Update(float dt)
 	sensorLeft->body->SetTransform({ enemyPos.x - PIXEL_TO_METERS(32 * 20), enemyPos.y }, 0);
 	sensorLimitLeft->body->SetTransform({ PIXEL_TO_METERS(1921), PIXEL_TO_METERS(1828) }, 0);
 	sensorRight->body->SetTransform({ enemyPos.x + PIXEL_TO_METERS(32 * 20), enemyPos.y }, 0);
-	sensorLimitRight->body->SetTransform({ PIXEL_TO_METERS(6208), PIXEL_TO_METERS(1828) }, 0);
-
 
 
 	if (state == RUNNING) {
 		velocity = dir == LEFT ? -15.0f : 15.0f;
-		timer++;
-		if (timer == 180) {
-			timer = 0;
-			state = WAITING;
-		}
 	}
 	else if (state == WAITING) {
 		timer++;
@@ -206,7 +195,17 @@ void Boss::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::UNKNOWN:
 		break;
-
+	case ColliderType::WALLBOSS:
+		if (physA->ctype == ColliderType::ENEMY) {
+			state = WAITING;
+		}
+		break;
+	case ColliderType::WALLBOSSDES:
+		if (physA->ctype == ColliderType::ENEMY) {
+			state = WAITING;
+			contColumn--;
+		}
+		break;
 	default:
 		break;
 	}
@@ -219,9 +218,6 @@ void Boss::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::PLATFORM:
 		break;
 	case ColliderType::PLAYER:
-		if (physA->ctype == ColliderType::CHASESENSOR) {
-			followPlayer = false;
-		}
 		break;
 	case ColliderType::UNKNOWN:
 		break;

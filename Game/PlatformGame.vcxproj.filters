@@ -74,6 +74,9 @@
     <ClCompile Include="src\Boss.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Column.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio.h">
@@ -156,6 +159,9 @@
     </ClInclude>
     <ClInclude Include="src\Soldier.h" />
     <ClInclude Include="src\Boss.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Column.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
