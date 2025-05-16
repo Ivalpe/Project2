@@ -7,7 +7,7 @@
 	</engine>
 
 	<render>
-		<vsync value="false"/>
+		<vsync value="true"/>
 	</render>
 
 	<window>
@@ -15,7 +15,7 @@
 		<fullscreen value="true"/>
 		<borderless value="true"/>
 		<resizable value="false"/>
-		<fullscreen_window value="true"/>
+		<fullscreen_window value="false"/>
 	</window>
 
 	<scene>
@@ -231,6 +231,9 @@
 						<frame x ="768" y="1792" w="256" h="256"/>
 						<frame x ="1024" y="1792" w="256" h="256"/>
 					</turn2back>
+          <onrope loop =" false" speed ="0.5f">
+            <frame x ="1024" y="1792" w="256" h="256"/>
+          </onrope>
 					<climb loop ="true" speed ="0.5f">
 						<frame x ="0"   y="2048" w="256" h="256"/>
 						<frame x ="256" y="2048" w="256" h="256"/>
@@ -242,7 +245,7 @@
 						<frame x ="1792" y="2048" w="256" h="256"/>
 						<frame x ="2048" y="2048" w="256" h="256"/>
 					</climb>
-					<turn2front>
+					<turn2front loop ="false" speed ="0.5f">
 						<frame x ="1024" y="1792" w="256" h="256"/>
 						<frame x ="768" y="1792" w="256" h="256"/>
 						<frame x ="512" y="1792" w="256" h="256"/>
@@ -309,6 +312,9 @@
 						<idle loop="true" speed ="0.5f">
 							<frame x="0" y="0" w="256" h="256"/>
 						</idle>
+						<attack loop="false" speed="1.0f">
+							<frame x="0" y="0" w="256" h="256"/>
+						</attack>
 					</animations>
 				</soldier>
 				<minotaur x="4500" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder_min.png" gravity="true">

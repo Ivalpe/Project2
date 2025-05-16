@@ -87,17 +87,18 @@ public:
 	int glid_reduce=0;
 	float fallForce = 1.5f;
 
-	bool isClimbing=false;
+	bool isClimbing = false;
+	bool onGround = false;
 
 	bool takenDMG = false;
 	bool pickedItem = true;
 
-	bool isTurning = false;
+	bool exitingRope = false;
 
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, death;
+	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, onrope, death;
 	
 
 	bool change_level = false;

@@ -137,7 +137,7 @@ void Scene::CreateEnemies(int level)
 		}
 	}
 
-	else if (level == 0)
+	else if (level == 1)
 	{
 		for (auto& it : enemyList) {
 			it->position = Vector2D(-1000, -1000);
@@ -399,11 +399,12 @@ bool Scene::Update(float dt)
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
 		//LOG("%d x, %d y", Px, Py);
-		if (interactiveObject->name == "stalactites")
+
+		/*if (interactiveObject->name == "stalactites") 
 		{
 			LOG("%d", interactiveObject->position.getY());
-		}
-
+		}*/
+		
 	}
 
 	//Reset levels

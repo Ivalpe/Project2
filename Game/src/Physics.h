@@ -38,6 +38,7 @@ enum class ColliderType {
 	RANGERIGHT,
 	WALLBOSS,
 	WALLBOSSDES,
+	ATTACKSENSOR,
 	UNKNOWN
 	// ..
 };

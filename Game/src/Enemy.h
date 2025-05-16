@@ -39,6 +39,8 @@ public:
 
 	void MovementEnemy(float dt);
 
+	void AttackEnemy(float dt);
+
 	bool CleanUp();
 
 	void SetParameters(pugi::xml_node _parameters) {
@@ -80,10 +82,15 @@ public:
 	pugi::xml_node instanceParameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+	Animation attack;
+
 	PhysBody* pbody;
 	PhysBody* sensor;
+	PhysBody* attackSensor;
+
 	Pathfinding* pathfinding;
-	bool followPlayer;
+	bool followPlayer = false;
+	bool attackPlayer = false;
 
 
 	Player* player;
