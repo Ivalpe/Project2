@@ -34,6 +34,10 @@ enum class ColliderType {
 	DAMAGE,
 	WALL,
 	CHASESENSOR,
+	RANGELEFT,
+	RANGERIGHT,
+	WALLBOSS,
+	WALLBOSSDES,
 	ATTACKSENSOR,
 	UNKNOWN
 	// ..
@@ -96,6 +100,10 @@ public:
 	void EndContact(b2Contact* contact);
 
 	void DeletePhysBody(PhysBody* physBody);
+
+	void DeleteBody(b2Body* body) {
+		world->DestroyBody(body);
+	}
 
 	std::list<PhysBody*> listToDelete;
 
