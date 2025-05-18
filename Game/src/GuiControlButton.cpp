@@ -54,13 +54,13 @@ bool GuiControlButton::Update(float dt)
 				switch (state)
 				{
 				case GuiControlState::NORMAL:
-					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 255, true, false);
+					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 100, true, false);
 					break;
 				case GuiControlState::FOCUSED:
-					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 255, true, false);
+					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 100, true, false);
 					break;
 				case GuiControlState::PRESSED:
-					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 255, true, false);
+					Engine::GetInstance().render->DrawRectangle(bounds, 255, 255, 255, 100, true, false);
 					break;
 				}
 			}

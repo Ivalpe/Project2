@@ -306,6 +306,7 @@ bool Scene::Start()
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
 	Menu_Settings_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings_back").attribute("path").as_string());
 	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
+	GameOver_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver_back").attribute("path").as_string());
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
@@ -663,24 +664,23 @@ void Scene::GameOver_State()
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
 		int cameraY = Engine::GetInstance().render.get()->camera.y;
 
+		SDL_SetTextureAlphaMod(GameOver_Back, 200);
+
+		Engine::GetInstance().render.get()->DrawTexture(GameOver_Back, -cameraX, -cameraY);
+
 		Engine::GetInstance().render.get()->DrawTexture(GameOver, -cameraX, -cameraY);
 
 		int textWidthContinue, textHeightContinue;
 		int textWidthExit, textHeightExit;
-		int textWidthSentence, textHeightSentence;
 
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
-		TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, don't seek the strength int the light, seek it in the shades", &textWidthSentence, &textHeightSentence);
 
-		SDL_Rect Continue = { 865, 760, textWidthContinue + 20, textHeightContinue + 10 };
-		SDL_Rect Exit = { 940, 860, textWidthExit + 20, textHeightExit + 10 };
-		SDL_Rect Sentence = { 260 - 85, 600, textWidthSentence + 20, textHeightSentence + 10 };
+		SDL_Rect Continue = { 865+20, 760+10-5, textWidthContinue + 10, textHeightContinue + 10 };
+		SDL_Rect Exit = { 940-10, 860-15-5, textWidthExit + 10, textHeightExit + 10 };
 
-		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
-		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
-
-		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "", Continue, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "", Exit, this));
 	}
 }
 

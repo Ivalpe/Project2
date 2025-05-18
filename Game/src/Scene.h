@@ -111,6 +111,7 @@ public:
 	SDL_Texture* Menu_Settings = NULL;
 	SDL_Texture* Menu_Settings_Back = NULL;
 	SDL_Texture* GameOver = NULL;
+	SDL_Texture* GameOver_Back = NULL;
 	SDL_Texture* InitialScreen = NULL;
 	SDL_Texture* Feather = NULL;
 	SDL_Texture* Feather_UI = NULL;
