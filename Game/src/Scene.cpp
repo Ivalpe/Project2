@@ -40,31 +40,6 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 
-
-	//L08 Create a new item using the entity manager and set the position to (200, 672) to test
-	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
-	{
-		for (int i = 0; i < 5; i++)
-		{
-			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-			item->SetParameters(itemNode);
-			item->name = "wax";
-			itemList.push_back(item);
-		}
-	}
-
-	for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("feather_item"); itemNode; itemNode = itemNode.next_sibling("item"))
-	{
-
-		for (int i = 0; i < 7; i++)
-		{
-			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-			item->SetParameters(itemNode);
-			item->name = "feather";
-			itemList.push_back(item);
-		}
-	}
-
 	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
 	{
 
@@ -97,29 +72,6 @@ bool Scene::Awake()
 
 	}
 
-	//Create a enemy using the entity manager 
-	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
-	{
-		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
-		enemy->SetParameters(enemyNode);
-		enemyList.push_back(enemy);
-	}
-
-	//Create a column using the entity manager 
-	for (pugi::xml_node colNode = configParameters.child("entities").child("columns").child("minotaur"); colNode; colNode = colNode.next_sibling("minotaur"))
-	{
-		Column* col = (Column*)Engine::GetInstance().entityManager->CreateEntity(EntityType::COLUMN);
-		col->SetParameters(colNode);
-		columnList.push_back(col);
-	}
-
-	//Create a boss using the entity manager 
-	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("minotaur"); enemyNode; enemyNode = enemyNode.next_sibling("minotaur"))
-	{
-		Boss* boss = (Boss*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BOSS);
-		boss->SetParameters(enemyNode);
-		bossList.push_back(boss);
-	}
 	CreateEnemies(level);
 	CreateItems(level);
 
@@ -128,162 +80,91 @@ bool Scene::Awake()
 
 void Scene::CreateEnemies(int level)
 {
+	for (auto e : enemyList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetAttackSensorBody());
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorBody());
+		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	enemyList.clear();
 
-	if (level == 0)
-	{
-		for (auto& it : enemyList) {
-			it->position = Vector2D(1500, 1322 + 350);
+	for (auto e : bossList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLeftBody());
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLimitLeft());
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorRight());
+		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	bossList.clear();
 
-		}
+	for (auto e : columnList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	columnList.clear();
+
+	std::vector<Vector2D> listEnemy;
+
+	//Enemies
+	listEnemy = Engine::GetInstance().map->GetEnemyList();
+	for (auto enemy : listEnemy) {
+		Enemy* en;
+		en = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+		en->SetParameters(configParameters.child("entities").child("enemies").child("soldier"));
+		en->Start();
+		en->SetPosition({ enemy.getX(), enemy.getY() });
+		enemyList.push_back(en);
 	}
 
-	else if (level == 1)
-	{
-		for (auto& it : enemyList) {
-			it->position = Vector2D(-1000, -1000);
+	//Column Boss
+	listEnemy = Engine::GetInstance().map->GetColumnBossList();
+	for (auto columnBoss : listEnemy) {
+		Column* col = (Column*)Engine::GetInstance().entityManager->CreateEntity(EntityType::COLUMN);
+		col->SetParameters(configParameters.child("entities").child("columns").child("minotaur"));
+		col->Start();
+		columnList.push_back(col);
+	}
 
-
-		}
+	//Boss
+	listEnemy = Engine::GetInstance().map->GetBossList();
+	for (auto bosses : listEnemy) {
+		Boss* boss = (Boss*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BOSS);
+		boss->SetParameters(configParameters.child("entities").child("enemies").child("minotaur"));
+		boss->Start();
+		boss->SetPosition({ bosses.getX(), bosses.getY() });
+		bossList.push_back(boss);
 	}
 }
 void Scene::CreateItems(int level)
 {
-	/*int currentLvl = level;*/
-	LOG("Current Level: %d", level);
-	int WaxIndex = 0;
-	int fatherIndex = 0;
-	int stalactiteIndex = 0;
-	int platformIndex = 0;
-	std::vector<Vector2D> waxPositions{
-		  Vector2D(6966, 1930),
-		  Vector2D(5542, 6350),
-		  Vector2D(795, 4900 + 300),
-		  Vector2D(2604, 5068),
-		  Vector2D(4828, 4750)
-	};
-	std::vector<Vector2D> factherPositions{
-		  Vector2D(2064, 5578),
-		  Vector2D(795, 4874),
-		  Vector2D(4702,4010),
-		  Vector2D(9789, 1962),
-		  Vector2D(3210 + 200, 6442),
-		  Vector2D(4335 + 200, 2058), //alto
-		  Vector2D(10875, 6154)
-	};
-
-	std::vector<Vector2D> stalactitePositions{
-		Vector2D(5324, 5340),
-		//Vector2D(5619, 5680),
-
-	};
-
-	std::vector<Vector2D> platformPositions{
-		Vector2D(4870 + 300, 2698 + 350),
-		Vector2D(300, 6634 + 150),
-		Vector2D(8528, 6634 + 85),
-
-	};
-
-
-	if (level == 0) {
-
-		for (auto& it : itemList) {
-			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
-				if (WaxIndex == 0) {
-					it->position = Vector2D(5500, 1322);
-					WaxIndex++;
-				}
-				else {
-					it->position = Vector2D(-10000, -1000);
-					fatherIndex++;
-
-				}
-			}
-
-			if (it->pbody != nullptr && it->pbody->body != nullptr) {
-				it->pbody->body->SetTransform(
-					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
-						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
-					0);
-			}
-
-
-		}
-
-		for (auto& it : itemList) {
-
-			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-
-				it->position = Vector2D(-1000, -1000);
-
-			}
-			if (it->pbody != nullptr) {
-				it->pbody->body->SetTransform(
-					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
-						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
-					0);
-			}
-		}
-
-		for (auto& it : interactiveObjectList)
-		{
-			it->position = Vector2D(-1000, -1000);
-
-			if (it->pbody != nullptr) {
-				it->pbody->body->SetTransform(
-					b2Vec2(PIXEL_TO_METERS(it->position.getX() + it->texW / 2),
-						PIXEL_TO_METERS(it->position.getY() + it->texH / 2)),
-					0);
-			}
-		}
+	for (auto e : itemList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
 	}
-	else if (level == 1) {
+	itemList.clear();
 
-		for (auto& it : itemList) {
-			if (it->name == "wax" && WaxIndex < waxPositions.size()) {
-				it->SetPosition(waxPositions[WaxIndex++]);
+	std::vector<Vector2D> listItems;
 
-
-			}
-			if (it->name == "feather" && fatherIndex < factherPositions.size()) {
-				it->SetPosition(factherPositions[fatherIndex++]);
-			}
-
-
-		}
-
-		for (auto& it : interactiveObjectList) {
-			if (it->name == "wall") {
-				it->SetPosition(Vector2D{ 6377 + 50, 3880 - 50 });
-
-			}
-
-
-		}
-
-
-		for (auto& it : interactiveObjectList) {
-			if (it->name == "stalactites" && stalactiteIndex < stalactitePositions.size()) {
-				it->SetPosition(stalactitePositions[stalactiteIndex++]);
-
-			}
-
-
-		}
-
-		for (auto& it : platformList) {
-			if (platformIndex < platformPositions.size()) {
-				it->SetPosition(platformPositions[platformIndex++]);
-
-			}
-
-
-		}
-
+	listItems = Engine::GetInstance().map->GetWaxList();
+	for (auto wax : listItems) {
+		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		item->SetParameters(configParameters.child("entities").child("items").child("item"));
+		item->name = "wax";
+		item->Start();
+		item->SetPosition({ wax.getX(), wax.getY() });
+		itemList.push_back(item);
 	}
 
+	listItems = Engine::GetInstance().map->GetFeathersList();
+	for (auto feather : listItems) {
+		Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		item->SetParameters(configParameters.child("entities").child("items").child("feather_item"));
+		item->name = "feather";
+		item->Start();
+		item->SetPosition({ feather.getX(), feather.getY() });
+		itemList.push_back(item);
+	}
 }
-
 
 // Called before the first frame
 bool Scene::Start()
@@ -334,12 +215,27 @@ bool Scene::Start()
 void Scene::Change_level(int level)
 {
 
+	for (auto e : itemList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	itemList.clear();
+
+	for (auto e : interactiveObjectList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	interactiveObjectList.clear();
+
+	for (auto e : platformList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	platformList.clear();
+
 	if (level == 0)
 	{
-
 		Engine::GetInstance().map.get()->CleanUp();
-		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
-		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
@@ -348,22 +244,19 @@ void Scene::Change_level(int level)
 	else if (level == 1) {
 		Engine::GetInstance().map.get()->CleanUp();
 		LOG("Current Level: %d", level);
-		//REMOVE // WHEN SECOND STAGE ENEMYS ADDED
-		//Engine::GetInstance().entityManager.get()->RemoveAllEnemies();
-		//Engine::GetInstance().entityManager.get()->RemoveAllItems();
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 
 		CreateItems(level);
 		CreateEnemies(level);
 
-
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
+
+
 	}
 
 	else if (level == 2) {
 		Engine::GetInstance().map.get()->CleanUp();
-
 		Engine::GetInstance().map->Load(configParameters.child("map2").attribute("path").as_string(), configParameters.child("map2").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
@@ -380,6 +273,7 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+
 	float camSpeed = 1;
 	int Px = player->position.getX();
 	int Py = player->position.getY();
@@ -397,19 +291,9 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.x = (camX);
 	Engine::GetInstance().render.get()->camera.y = (camY  /*+ player->crouch*/);
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
-		//LOG("%d x, %d y", Px, Py);
-
-		/*if (interactiveObject->name == "stalactites") 
-		{
-			LOG("%d", interactiveObject->position.getY());
-		}*/
-		
-	}
-
 	//Reset levels
 	if (reset_level) {
-		Change_level(level);
+		//Change_level(level);
 		if (level == 0) player->SetPosition(Vector2D{ 40,70 });
 
 		reset_level = false;
@@ -463,10 +347,7 @@ bool Scene::PostUpdate()
 		player->SetPosition(Vector2D{ 64, 64 });
 	}
 
-
 	show_UI();
-
-
 
 	if (showBlackTransition) {
 		Uint32 now = SDL_GetTicks();
@@ -485,14 +366,9 @@ bool Scene::PostUpdate()
 		}
 	}
 
-
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) {
 		Engine::GetInstance().map.get()->DrawFront();
 	}
-
-
-
-
 
 	return ret;
 }
@@ -963,6 +839,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
 
+		Change_level(level);
 		break;
 	case 7:// Game Over: Exit
 
@@ -978,6 +855,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		InitialScreenMenu = false;
 		guiBt0->state = GuiControlState::DISABLED;
 		DisableGuiControlButtons();
+		CreateEnemies(level);
+		CreateItems(level);
 
 		break;
 	case 9:// Initial Screen: Conitnue

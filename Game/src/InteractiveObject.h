@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "SDL2/SDL.h"
 #include "Animation.h"
+#include "Physics.h"
 
 struct SDL_Texture;
 
@@ -28,7 +29,9 @@ public:
 
 	void SetPosition(Vector2D pos);
 	
-
+	b2Body* GetBody() {
+		return pbody->body;
+	}
 
 public:
 

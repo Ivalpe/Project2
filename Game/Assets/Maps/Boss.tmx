@@ -3,19 +3,19 @@
  <properties>
   <property name="Draw" type="bool" value="true"/>
  </properties>
- <tileset firstgid="1" name="MapMetadata" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="2" columns="2">
-  <image source="MapMetadata.png" width="67" height="34"/>
+ <tileset firstgid="1" name="MapMetadata" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="7" columns="6">
+  <image source="MapMetadata.png" width="199" height="34"/>
  </tileset>
- <tileset firstgid="3" name="BG" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
+ <tileset firstgid="8" name="BG" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
   <image source="Stage3/Tilesets/BG.png" width="7680" height="2176"/>
  </tileset>
- <tileset firstgid="16323" name="WALK" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
+ <tileset firstgid="16328" name="WALK" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
   <image source="Stage3/Tilesets/WALK.png" width="7680" height="2176"/>
  </tileset>
- <tileset firstgid="32643" name="FOREGROUND" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
+ <tileset firstgid="32648" name="FOREGROUND" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
   <image source="Stage3/Tilesets/FOREGROUND.png" width="7680" height="2176"/>
  </tileset>
- <tileset firstgid="48963" name="LIGHT" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
+ <tileset firstgid="48968" name="LIGHT" tilewidth="32" tileheight="32" tilecount="16320" columns="240">
   <image source="Stage3/Tilesets/LIGHT.png" width="7680" height="2176"/>
  </tileset>
  <layer id="27" name="Ref" width="240" height="68" visible="0">
@@ -32674,11 +32674,6 @@
    <property name="Draw" type="bool" value="true"/>
   </properties>
   <data>
-   <tile gid="3"/>
-   <tile gid="4"/>
-   <tile gid="5"/>
-   <tile gid="6"/>
-   <tile gid="7"/>
    <tile gid="8"/>
    <tile gid="9"/>
    <tile gid="10"/>
@@ -48994,6 +48989,11 @@
    <tile gid="16320"/>
    <tile gid="16321"/>
    <tile gid="16322"/>
+   <tile gid="16323"/>
+   <tile gid="16324"/>
+   <tile gid="16325"/>
+   <tile gid="16326"/>
+   <tile gid="16327"/>
   </data>
  </layer>
  <layer id="26" name="Ground" width="240" height="68">
@@ -49001,11 +49001,6 @@
    <property name="Draw" type="bool" value="true"/>
   </properties>
   <data>
-   <tile gid="16323"/>
-   <tile gid="16324"/>
-   <tile gid="16325"/>
-   <tile gid="16326"/>
-   <tile gid="16327"/>
    <tile gid="16328"/>
    <tile gid="16329"/>
    <tile gid="16330"/>
@@ -65321,6 +65316,11 @@
    <tile gid="32640"/>
    <tile gid="32641"/>
    <tile gid="32642"/>
+   <tile gid="32643"/>
+   <tile gid="32644"/>
+   <tile gid="32645"/>
+   <tile gid="32646"/>
+   <tile gid="32647"/>
   </data>
  </layer>
  <layer id="28" name="Front" width="240" height="68">
@@ -65328,11 +65328,6 @@
    <property name="Draw" type="bool" value="true"/>
   </properties>
   <data>
-   <tile gid="32643"/>
-   <tile gid="32644"/>
-   <tile gid="32645"/>
-   <tile gid="32646"/>
-   <tile gid="32647"/>
    <tile gid="32648"/>
    <tile gid="32649"/>
    <tile gid="32650"/>
@@ -81648,6 +81643,11 @@
    <tile gid="48960"/>
    <tile gid="48961"/>
    <tile gid="48962"/>
+   <tile gid="48963"/>
+   <tile gid="48964"/>
+   <tile gid="48965"/>
+   <tile gid="48966"/>
+   <tile gid="48967"/>
   </data>
  </layer>
  <layer id="29" name="Light" width="240" height="68">
@@ -108259,6 +108259,7 @@
    <tile/>
    <tile/>
    <tile/>
+   <tile gid="6"/>
    <tile/>
    <tile/>
    <tile/>
@@ -108298,7 +108299,6 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile/>
    <tile gid="1"/>
    <tile/>
    <tile/>
@@ -111719,7 +111719,6 @@
    <tile/>
    <tile/>
    <tile gid="1"/>
-   <tile/>
    <tile/>
    <tile/>
    <tile/>
@@ -111785,6 +111784,7 @@
    <tile/>
    <tile/>
    <tile/>
+   <tile gid="3"/>
    <tile/>
    <tile/>
    <tile/>

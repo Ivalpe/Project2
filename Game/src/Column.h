@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Physics.h"
 #include "Entity.h"
 #include "SDL2/SDL.h"
 #include "Animation.h"
@@ -44,6 +45,10 @@ public:
 	void OnCollision(PhysBody* physA, PhysBody* physB) override;
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB) override;
+
+	b2Body* GetBody() {
+		return pbody->body;
+	}
 
 public:
 	int visible = true;

@@ -29,8 +29,8 @@ bool Enemy::Start() {
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
+	//position.setX(parameters.attribute("x").as_int());
+	//position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 	speed = parameters.child("properties").attribute("speed").as_int();
@@ -108,6 +108,7 @@ bool Enemy::Update(float dt)
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
 
+	LOG("Enemy pos: %f, %f", position.getX(), position.getY());
 	return true;
 }
 

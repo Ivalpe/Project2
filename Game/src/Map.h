@@ -3,77 +3,78 @@
 #include "Module.h"
 #include <list>
 #include <vector>
+#include <map>
 
 enum MapOrientation
 {
-    ORTOGRAPHIC = 0,
-    ISOMETRIC
+	ORTOGRAPHIC = 0,
+	ISOMETRIC
 };
 
 struct Properties
 {
-    struct Property
-    {
-        std::string name;
-        bool value; //We assume that we are going to work only with bool for the moment
-    };
+	struct Property
+	{
+		std::string name;
+		bool value; //We assume that we are going to work only with bool for the moment
+	};
 
-    std::list<Property*> propertyList;
+	std::list<Property*> propertyList;
 
-    ~Properties()
-    {
-        for (const auto& property : propertyList)
-        {
-            delete property;
-        }
+	~Properties()
+	{
+		for (const auto& property : propertyList)
+		{
+			delete property;
+		}
 
-        propertyList.clear();
-    }
+		propertyList.clear();
+	}
 
-    Property* GetProperty(const char* name);
+	Property* GetProperty(const char* name);
 
 };
 
 struct MapLayer
 {
-    int id;
-    std::string name;
-    int width;
-    int height;
-    std::vector<int> tiles;
-    Properties properties;
+	int id;
+	std::string name;
+	int width;
+	int height;
+	std::vector<int> tiles;
+	Properties properties;
 
-    int Get(int i, int j) const
-    {
-        return tiles[(j * width) + i];
-    }
+	int Get(int i, int j) const
+	{
+		return tiles[(j * width) + i];
+	}
 };
 
 // Ignore Terrain Types and Tile Types for now, but we want the image!
 
 struct TileSet
 {
-    int firstGid;
-    std::string name;
-    int tileWidth;
-    int tileHeight;
-    int spacing;
-    int margin;
-    int tileCount;
-    int columns;
-    SDL_Texture* texture;
+	int firstGid;
+	std::string name;
+	int tileWidth;
+	int tileHeight;
+	int spacing;
+	int margin;
+	int tileCount;
+	int columns;
+	SDL_Texture* texture;
 
-    SDL_Rect GetRect(unsigned int gid) {
-        SDL_Rect rect = { 0 };
+	SDL_Rect GetRect(unsigned int gid) {
+		SDL_Rect rect = { 0 };
 
-        int relativeIndex = gid - firstGid;
-        rect.w = tileWidth;
-        rect.h = tileHeight;
-        rect.x = margin + (tileWidth + spacing) * (relativeIndex % columns);
-        rect.y = margin + (tileHeight + spacing) * (relativeIndex / columns);
+		int relativeIndex = gid - firstGid;
+		rect.w = tileWidth;
+		rect.h = tileHeight;
+		rect.x = margin + (tileWidth + spacing) * (relativeIndex % columns);
+		rect.y = margin + (tileHeight + spacing) * (relativeIndex / columns);
 
-        return rect;
-    }
+		return rect;
+	}
 
 };
 
@@ -83,74 +84,99 @@ struct MapData
 	int height;
 	int tileWidth;
 	int tileHeight;
-    std::list<TileSet*> tilesets;
-    MapOrientation orientation;
+	std::list<TileSet*> tilesets;
+	MapOrientation orientation;
 
-    std::list<MapLayer*> layers;
+	std::list<MapLayer*> layers;
 };
 
 class Map : public Module
 {
 public:
 
-    Map();
+	Map();
 
-    // Destructor
-    virtual ~Map();
+	// Destructor
+	virtual ~Map();
 
-    // Called before render is available
-    bool Awake();
+	// Called before render is available
+	bool Awake();
 
-    // Called before the first frame
-    bool Start();
+	// Called before the first frame
+	bool Start();
 
-    // Called each loop iteration
-    bool Update(float dt);
+	// Called each loop iteration
+	bool Update(float dt);
 
-    // Called before quitting
-    bool CleanUp();
+	// Called before quitting
+	bool CleanUp();
 
-    // Load new map
-    bool Load(std::string path, std::string mapFileName);
+	// Load new map
+	bool Load(std::string path, std::string mapFileName);
 
-    Vector2D MapToWorld(int x, int y) const;
+	Vector2D MapToWorld(int x, int y) const;
 
-    Vector2D WorldToMap(int x, int y);
+	Vector2D WorldToMap(int x, int y);
 
-    Vector2D MapToWorldCentered(int x, int y);
+	Vector2D MapToWorldCentered(int x, int y);
 
-    Vector2D WorldToWorldCenteredOnTile(int x, int y);
+	Vector2D WorldToWorldCenteredOnTile(int x, int y);
 
 
 
-    TileSet* GetTilesetFromTileId(int gid) const;
+	TileSet* GetTilesetFromTileId(int gid) const;
 
-    bool LoadProperties(pugi::xml_node& node, Properties& properties);
+	bool LoadProperties(pugi::xml_node& node, Properties& properties);
 
-    int GetWidth() {
-        return mapData.width;
-    }
+	int GetWidth() {
+		return mapData.width;
+	}
 
-    int GetHeight() {
-        return mapData.height;
-    }
+	int GetHeight() {
+		return mapData.height;
+	}
 
-    int GetTileWidth() {
-        return mapData.tileWidth;
-    }
+	int GetTileWidth() {
+		return mapData.tileWidth;
+	}
 
-    int GetTileHeight() {
-        return mapData.tileHeight;
-    }
+	int GetTileHeight() {
+		return mapData.tileHeight;
+	}
 
-    MapLayer* GetNavigationLayer();
+	std::vector<Vector2D> GetEnemyList() {
+		return posEnemy;
+	}
 
-    void DrawFront();
-public: 
-    std::string mapFileName;
-    std::string mapPath;
+	std::vector<Vector2D> GetWaxList() {
+		return posWaxys;
+	}
+	
+	std::vector<Vector2D> GetFeathersList() {
+		return posFeathers;
+	}
+
+	std::vector<Vector2D> GetBossList() {
+		return posBoss;
+	}
+
+	std::vector<Vector2D> GetColumnBossList() {
+		return posColumnBoss;
+	}
+
+	MapLayer* GetNavigationLayer();
+
+	void DrawFront();
+public:
+	std::string mapFileName;
+	std::string mapPath;
 
 private:
-    bool mapLoaded;
-    MapData mapData;
+	bool mapLoaded;
+	MapData mapData;
+	std::vector<Vector2D> posEnemy;
+	std::vector<Vector2D> posWaxys;
+	std::vector<Vector2D> posFeathers;
+	std::vector<Vector2D> posColumnBoss;
+	std::vector<Vector2D> posBoss;
 };
