@@ -107,6 +107,7 @@ public:
 
 
 	SDL_Texture* Menu_Pause = NULL;
+	SDL_Texture* Menu_Pause_Back = NULL;
 	SDL_Texture* Menu_Settings = NULL;
 	SDL_Texture* Menu_Settings_Back = NULL;
 	SDL_Texture* GameOver = NULL;

@@ -302,6 +302,7 @@ bool Scene::Start()
 
 	InitialScreen = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_initial").attribute("path").as_string());
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
+	Menu_Pause_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause_back").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
 	Menu_Settings_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings_back").attribute("path").as_string());
 	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
@@ -741,9 +742,10 @@ void Scene::MenuPause()
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
 
-	SDL_Rect backgroundRect = { 0, 0, 1920, 1080 };
-	SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 10, 10, 50, 200);
-	SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &backgroundRect);
+
+	SDL_SetTextureAlphaMod(Menu_Pause_Back, 128);
+
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause_Back, -cameraX, -cameraY);
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
 
@@ -752,19 +754,19 @@ void Scene::MenuPause()
 	int textWidthSettings, textHeightSettings;
 	int textWidthExit, textHeightExit;
 
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continues ", &textWidthContinue, &textHeightContinue);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
 
-	SDL_Rect ConitnuesButton = { 862 - 15, 520 - 15, textWidthContinue + 20, textHeightContinue + 10 };
-	SDL_Rect Settings = { 882 - 15, 595 - 10, textWidthSettings + 20, textHeightSettings + 10 };
-	SDL_Rect Exit = { 919 - 15, 670 - 5, textWidthExit + 20, textHeightExit + 10 };
+	SDL_Rect ConitnuesButton = { 862 +7+2, 520 - 15-30+10, textWidthContinue + 20, textHeightContinue + 10 };
+	SDL_Rect Settings = { 882 +7, 595 - 10-30+10, textWidthSettings + 20, textHeightSettings + 10 };
+	SDL_Rect Exit = { 919 +7, 670 - 5-30, textWidthExit + 20, textHeightExit + 10 };
 
 
-	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Continue", ConitnuesButton, this));
-	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
-	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "", ConitnuesButton, this));
+	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "", Settings, this));
+	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "", Exit, this));
 }
 
 void Scene::MenuSettings()
