@@ -6,6 +6,7 @@
 #include "Pathfinding.h"
 #include "Timer.h"
 
+#define PAUSETIME 120
 
 class Player;
 struct SDL_Texture;
@@ -41,6 +42,12 @@ public:
 
 	void AttackEnemy(float dt);
 
+	void IdleEnemy(float dt);
+
+	bool TargetReachCheck(Vector2D target, Vector2D pos, Vector2D worldPos);
+
+	void IdleReset();
+
 	bool CleanUp();
 
 	void SetParameters(pugi::xml_node _parameters) {
@@ -72,7 +79,8 @@ public:
 	bool CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance);
 public:
 	int visible = true;
-
+	bool idleDir = false;
+	Vector2D targetTile;
 
 
 	SDL_Texture* texture;
@@ -91,6 +99,8 @@ public:
 	Pathfinding* pathfinding;
 	bool followPlayer = false;
 	bool attackPlayer = false;
+	bool pauseEnemyIdle = false;
+	int pauseCounter = 0;
 
 
 	Player* player;
@@ -100,6 +110,7 @@ public:
 	//path: list of points the soldier moves across
 	std::vector<Vector2D> route;
 	Vector2D destPoint;
+	Vector2D targetWorld;
 	int destPointIndex;
 
 	int speed;

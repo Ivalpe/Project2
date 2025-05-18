@@ -97,6 +97,7 @@ bool Scene::Awake()
 
 	}
 
+
 	//Create a enemy using the entity manager 
 	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("soldier"); enemyNode; enemyNode = enemyNode.next_sibling("soldier"))
 	{
@@ -120,6 +121,7 @@ bool Scene::Awake()
 		boss->SetParameters(enemyNode);
 		bossList.push_back(boss);
 	}
+
 	CreateEnemies(level);
 	CreateItems(level);
 
