@@ -303,6 +303,7 @@ bool Scene::Start()
 	InitialScreen = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_initial").attribute("path").as_string());
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
+	Menu_Settings_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings_back").attribute("path").as_string());
 	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
@@ -717,16 +718,16 @@ void Scene::Active_MenuPause() {
 			DisableGuiControlButtons();
 		}
 	}
-
 	if (showPauseMenu) {
+		if (!showSettingsMenu) {
+			MenuPause(); 
+		}
 
-		MenuPause();
 		if (showSettingsMenu) {
 			MenuSettings();
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
-			{
-				showSettingsMenu = false;
 
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) {
+				showSettingsMenu = false;
 			}
 		}
 	}
@@ -776,35 +777,10 @@ void Scene::MenuSettings()
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
 
+	SDL_SetTextureAlphaMod(Menu_Settings_Back, 128);
+
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings_Back, -cameraX, -cameraY);
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
-
-	float scaleFactor = 0.5f; // Reducir tama�o al 50%
-
-	int textWidthSettingsTitle, textHeightSettingsTitle;
-	int textWidthMusicVolume, textHeightMusicVolume;
-	int textWidthAmbientSounds, textHeightAmbientSounds;
-	int textWidthLanguage, textHeightLanguage;
-	int textWidthEnglish, textHeightEnglish;
-
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettingsTitle, &textHeightSettingsTitle);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Music Volume", &textWidthMusicVolume, &textHeightMusicVolume);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Ambient Sounds", &textWidthAmbientSounds, &textHeightAmbientSounds);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Language", &textWidthLanguage, &textHeightLanguage);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "English", &textWidthEnglish, &textHeightEnglish);
-
-
-	SDL_Rect SettingsTitle = { 860 - 15, 325 - 15, textWidthSettingsTitle + 20, textHeightSettingsTitle + 10 };
-	SDL_Rect MusicVolume = { 700 - 15, 485 - 15, static_cast<int>(textWidthMusicVolume * scaleFactor), static_cast<int>(textHeightMusicVolume * scaleFactor) };
-	SDL_Rect AmbientSounds = { 700 - 15, 555 - 15, static_cast<int>(textWidthAmbientSounds * scaleFactor), static_cast<int>(textHeightAmbientSounds * scaleFactor) };
-	SDL_Rect Language = { 700 - 15, 630 - 15, static_cast<int>(textWidthLanguage * scaleFactor), static_cast<int>(textHeightLanguage * scaleFactor) };
-	SDL_Rect English = { 1085, 625, static_cast<int>(textWidthEnglish * scaleFactor), static_cast<int>(textHeightEnglish * scaleFactor) };
-
-
-	Engine::GetInstance().render.get()->DrawText("Settings", SettingsTitle.x, SettingsTitle.y, SettingsTitle.w, SettingsTitle.h);
-	Engine::GetInstance().render.get()->DrawText("Music Volume", MusicVolume.x, MusicVolume.y, MusicVolume.w, MusicVolume.h);
-	Engine::GetInstance().render.get()->DrawText("Ambient Sounds", AmbientSounds.x, AmbientSounds.y, AmbientSounds.w, AmbientSounds.h);
-	Engine::GetInstance().render.get()->DrawText("Language", Language.x, Language.y, Language.w, Language.h);
-	Engine::GetInstance().render.get()->DrawText("English", English.x, English.y, English.w, English.h);
 
 
 	SDL_Rect MusicPosition = { musicPosX, 10, 485, 35 };
@@ -872,10 +848,10 @@ void Scene::MenuSettings()
 		}
 	}
 
-	SDL_Rect newMusicPos = { musicPosX, 511 - 5, 6, 15 }; // New music volume position 
+	SDL_Rect newMusicPos = { musicPosX, 511 - 5-7, 6, 15 }; // New music volume position 
 	guiBt->bounds = newMusicPos;
 
-	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5, 6, 15 }; // New music ambient sounds position
+	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5+7, 6, 15 }; // New music ambient sounds position
 	guiBt1->bounds = newFxPos;
 
 	// Adjust music volume
@@ -890,14 +866,14 @@ void Scene::MenuSettings()
 	Mix_Volume(-1, sdlVolumeFx);
 
 	// Music volume background bar
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511, 195, 6 }, 0, 0, 0, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511-7, 195, 6 }, 0, 0, 0, 255, true, false);
 	//Ambient sounds background bar
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, 195, 6 }, 0, 0, 0, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1+7, 195, 6 }, 0, 0, 0, 255, true, false);
 
 	// Music volume filled portion
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511-7, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 	//Ambient sounds filled portion
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1+7, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 }
 
 void Scene::DisableGuiControlButtons()

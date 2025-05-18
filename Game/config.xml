@@ -25,7 +25,8 @@
 		<textures>
 			<Menu_initial path="Assets/Textures/UI/initial_screen.png"/>
 			<Menu_Pause path="Assets/Textures/UI/Pause_menu.png"/>
-			<Menu_Settings path="Assets/Textures/UI/Setting_menu.png"/>
+			<Menu_Settings path="Assets/Textures/UI/Setting_front.png"/>
+			<Menu_Settings_back path="Assets/Textures/UI/Setting_base.png"/>
 			<GameOver path="Assets/Textures/UI/GameOver.png"/>
 			<Feather path="Assets/Textures/UI/Feather.png"/>
 			<Candle w ="64" h="64" path="Assets/Textures/UI/candle ui.png"/>
@@ -35,7 +36,7 @@
 						<frame x="0" y="0" w="128" h="128"/>
 					</empty>
 					<fill_to_lvl1 loop="false" speed ="0.3f">
-						<frame x="0" y="0" w="128" h="128"/>
+						<frame x="0" y="0" w="128" h="128"/>  
 						<frame x="128" y="0" w="128" h="128"/>
 						<frame x="256" y="0" w="128" h="128"/>
 						<frame x="384" y="0" w="128" h="128"/>
