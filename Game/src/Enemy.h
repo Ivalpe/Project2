@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Pathfinding.h"
 #include "Timer.h"
+#include "Physics.h"
 
 #define PAUSETIME 120
 
@@ -75,6 +76,17 @@ public:
 	void StopMovement();
 	void ResumeMovement();
 
+	b2Body* GetBody() {
+		return pbody->body;
+	}
+
+	b2Body* GetSensorBody() {
+		return sensor->body;
+	}
+
+	b2Body* GetAttackSensorBody() {
+		return attackSensor->body;
+	}
 
 	bool CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance);
 public:

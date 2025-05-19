@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Pathfinding.h"
 #include "Timer.h"
+#include "Physics.h"
 
 
 class Player;
@@ -65,6 +66,22 @@ public:
 
 
 	bool CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance);
+
+	b2Body* GetBody() {
+		return pbody->body;
+	}
+
+	b2Body* GetSensorLeftBody() {
+		return sensorLeft->body;
+	}
+
+	b2Body* GetSensorLimitLeft() {
+		return sensorLimitLeft->body;
+	}
+
+	b2Body* GetSensorRight() {
+		return sensorRight->body;
+	}
 public:
 	int visible = true;
 
@@ -105,4 +122,5 @@ public:
 	bool dead;
 	float velocity;
 	int timer = 0;
+	int delay;
 };

@@ -24,15 +24,15 @@ bool Boss::Awake() {
 }
 
 bool Boss::Start() {
-	contColumn = 3;
+	contColumn = 1;
 	followPlayer = false;
 	velocity = 0;
 	speed = 4.f;
+	state = IDLE;
+	delay = 30;
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 	speed = parameters.child("properties").attribute("speed").as_int();
@@ -95,19 +95,27 @@ bool Boss::Update(float dt)
 	sensorLimitLeft->body->SetTransform({ PIXEL_TO_METERS(1921), PIXEL_TO_METERS(1828) }, 0);
 	sensorRight->body->SetTransform({ enemyPos.x + PIXEL_TO_METERS(32 * 20), enemyPos.y }, 0);
 
-
-	if (state == RUNNING) {
-		velocity = dir == LEFT ? -15.0f : 15.0f;
+	if (contColumn <= 0) {
+		state = DEAD;
 	}
-	else if (state == WAITING) {
-		timer++;
-		if (timer == 180) {
-			timer = 0;
-			state = IDLE;
+	else {
+		if (state == RUNNING) {
+			velocity = dir == LEFT ? -15.0f : 15.0f;
+		}
+		else if (state == WAITING) {
+			timer++;
+			if (timer == 180) {
+				timer = 0;
+				state = IDLE;
+			}
 		}
 	}
 
+	if (delay > 0) delay--;
+
 	pbody->body->SetLinearVelocity({ velocity,0 });
+
+
 
 	return true;
 }
@@ -178,18 +186,20 @@ void Boss::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::PLAYER:
-		if (physA->ctype == ColliderType::RANGELEFT) {
+		if (delay <= 0 && state != DEAD) {
+			if (physA->ctype == ColliderType::RANGELEFT) {
 
-			if (state == IDLE) {
-				dir = Direction::LEFT;
-				state = RUNNING;
+				if (state == IDLE) {
+					dir = Direction::LEFT;
+					state = RUNNING;
+				}
 			}
-		}
-		else if (physA->ctype == ColliderType::RANGERIGHT) {
+			else if (physA->ctype == ColliderType::RANGERIGHT) {
 
-			if (state == IDLE) {
-				dir = Direction::RIGHT;
-				state = RUNNING;
+				if (state == IDLE) {
+					dir = Direction::RIGHT;
+					state = RUNNING;
+				}
 			}
 		}
 		break;

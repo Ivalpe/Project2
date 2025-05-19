@@ -4,6 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Animation.h"
 #include <vector>
+#include "Physics.h"
 
 struct SDL_Texture;
 
@@ -33,7 +34,9 @@ public:
 	void StopMovement();
 	void ResumeMovement();
 
-
+	b2Body* GetBody() {
+		return pbody->body;
+	}
 public:
 	PhysBody* pbody;
 

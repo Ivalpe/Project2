@@ -29,7 +29,7 @@ bool Player::Awake() {
 bool Player::Start() {
 
 
-	
+
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
@@ -47,7 +47,7 @@ bool Player::Start() {
 	}
 
 	//Load animations
-	
+
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
@@ -61,17 +61,17 @@ bool Player::Start() {
 	onrope.LoadAnimations(parameters.child("animations").child("onrope"));
 	turn2front.LoadAnimations(parameters.child("animations").child("turn2front"));
 	death.LoadAnimations(parameters.child("animations").child("death"));
-	
+
 	playerState = IDLE;
 	hide.Reset();
 
-	
+
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
 
-	
+
 	pbody->listener = this;
 
-	
+
 	pbody->ctype = ColliderType::PLAYER;
 
 	// Set the gravity of the body
@@ -79,7 +79,7 @@ bool Player::Start() {
 
 	//initialize audio effect
 	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
-	
+
 	return true;
 }
 
@@ -88,7 +88,7 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
-	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0,0);
+	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
 	// press F to die for absolutely no reason lmao (akshually yes, debugging purposes)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
@@ -97,7 +97,7 @@ bool Player::Update(float dt)
 
 	if (playerState != DEAD) {
 
-	
+
 
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
@@ -105,7 +105,7 @@ bool Player::Update(float dt)
 			velocity.x = -0.2 * speed;
 			dir = RIGHT;
 			if (playerState == CLIMB) {
-				
+
 			}
 			if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
 				playerState = WALK;
@@ -154,7 +154,7 @@ bool Player::Update(float dt)
 
 		if (playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
 
-     		isJumping = false;
+			isJumping = false;
 			if (playerState != CRAWL) {
 				playerState = HIDE;
 			}
@@ -168,7 +168,7 @@ bool Player::Update(float dt)
 					playerState = CRAWL;
 
 				}
-				
+
 			}
 
 		}
@@ -219,11 +219,11 @@ bool Player::Update(float dt)
 			if (!isClimbing) {
 				if (currentAnimation == &turn2back && turn2back.HasFinished()) {
 					isClimbing = true;
-					
+
 				}
-				
+
 				pbody->body->SetTransform(b2Vec2(climbableX, pbody->body->GetPosition().y), pbody->body->GetAngle());
-				
+
 			}
 			else {
 				// Now allow climbing movement
@@ -243,7 +243,7 @@ bool Player::Update(float dt)
 				// Press space to jump off 
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 					LOG("Jumped off rope");
-					
+
 					isClimbing = false;
 					exitingRope = true;
 
@@ -264,17 +264,17 @@ bool Player::Update(float dt)
 					pbody->body->SetGravityScale(GRAVITY);
 					return true;
 				}
-				
+
 			}
 		}
 		else {
 			pbody->body->SetGravityScale(GRAVITY);
 		}
-    
-    // When on a m_platform, add platform velocity to player movement
-    if (isOnPlatform) {
-      velocity.x += platform->pbody->body->GetLinearVelocity().x;
-    }
+
+		// When on a m_platform, add platform velocity to player movement
+		if (isOnPlatform) {
+			velocity.x += platform->pbody->body->GetLinearVelocity().x;
+		}
 		// Apply the velocity to the player
 		pbody->body->SetLinearVelocity(velocity);
 
@@ -291,7 +291,7 @@ bool Player::Update(float dt)
 			}
 		}
 
-			
+
 		if (currentAnimation == &fall && fall.HasFinished()) {
 			land.Reset();
 			currentAnimation = &land;
@@ -300,14 +300,14 @@ bool Player::Update(float dt)
 		else if (currentAnimation == &land) {
 			if (land.HasFinished()) {
 				currentAnimation = &idle;
-				
+
 			}
 		}
 		else {
 			currentAnimation = &idle;
 			isClimbing = false;
 		}
-		
+
 		break;
 	case WALK:
 		currentAnimation = &walk;
@@ -316,7 +316,7 @@ bool Player::Update(float dt)
 	case JUMP:
 		if (currentAnimation != &jump) {
 
-			if(!exitingRope) jump.Reset();
+			if (!exitingRope) jump.Reset();
 			currentAnimation = &jump;
 		}
 
@@ -326,15 +326,15 @@ bool Player::Update(float dt)
 			if (!exitingRope) fall.Reset();
 			currentAnimation = &fall;
 
-			
+
 		}
 		break;
 	case HIDE:
 		LOG("hiding");
 		if (currentAnimation != &hide) {
-		
+
 			hide.Reset();
-			currentAnimation = &hide;	
+			currentAnimation = &hide;
 		}
 		break;
 	case CRAWL:
@@ -347,44 +347,44 @@ bool Player::Update(float dt)
 		if (currentAnimation != &unhide) {
 			unhide.Reset();
 			currentAnimation = &unhide;
-		} 
+		}
 
 		if (unhide.HasFinished()) {
 			playerState = IDLE;
 			/*unhide.Reset();
 			hide.Reset();*/
 		}
-	
+
 		break;
 	case DEAD:
 		if (currentAnimation != &death) {
 			currentAnimation = &death;
 			deathTimer.Start();
 		}
-		
+
 		if (deathTimer.ReadSec() >= 2.0f) {
 			Engine::GetInstance().scene.get()->reset_level = true;
 			playerState = IDLE;
-			
+
 		}
 		break;
 	}
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH );
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH );
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
 
 	if (dir == LEFT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + texH/2, (int)position.getY() + texH/3, &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + texH / 2, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
 	}
 	else {
 		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX() + texH / 2, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
 	}
-	
-	
+
+
 	currentAnimation->Update();
-	
-	
+
+
 	/*LOG("playerstate: %i", playerState);*/
 	return true;
 }
@@ -457,10 +457,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 		//Engine::GetInstance().scene.get()->drainedWaxy = false;
 	case ColliderType::WALL:
-		if(Engine::GetInstance().entityManager->feather >= 2) touched_wall = true;
+		if (Engine::GetInstance().entityManager->feather >= 2) touched_wall = true;
 		break;
 
-  case ColliderType::M_PLATFORM:
+	case ColliderType::M_PLATFORM:
 		LOG("Collision M_PLATFORM");
 		isJumping = false;
 		canDoubleJump = false;
@@ -469,11 +469,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		isClimbing = false;
 		isOnPlatform = true;
 
-    // Assign the platform listener if valid.
-    if (physB->listener != nullptr && dynamic_cast<Platform*>(physB->listener)) {
-      platform = static_cast<Platform*>(physB->listener);
-    }
-	break;	
+		// Assign the platform listener if valid.
+		if (physB->listener != nullptr && dynamic_cast<Platform*>(physB->listener)) {
+			platform = static_cast<Platform*>(physB->listener);
+		}
+		break;
 
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
@@ -500,15 +500,15 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 			isClimbing = false;
 			turn2front.Reset();
 			currentAnimation = &turn2front;
-			
+
 			playerState = IDLE;
 			pbody->body->SetGravityScale(GRAVITY);
-			
+
 		}
-		
+
 		LOG("End Collision CLIMABLE");
 		break;
-	
+
 	case ColliderType::CHANGE_LEVEL:
 		change_level = false;
 		Engine::GetInstance().scene.get()->reset_level = true;
@@ -528,11 +528,11 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		takenDMG = false;
 
 		break;
-  case ColliderType::M_PLATFORM:
-    LOG("End Collision M_PLATFORM");
-    isOnPlatform = false;
-    platform = nullptr;
-    break;      
+	case ColliderType::M_PLATFORM:
+		LOG("End Collision M_PLATFORM");
+		isOnPlatform = false;
+		platform = nullptr;
+		break;
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");
 		break;
@@ -545,7 +545,7 @@ void Player::SetPosition(Vector2D pos) {
 	pos.setX(pos.getX() + texW / 2);
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
-	pbody->body->SetTransform(bodyPos,0);
+	pbody->body->SetTransform(bodyPos, 0);
 }
 
 Vector2D Player::GetPosition() {

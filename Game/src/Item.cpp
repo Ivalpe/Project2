@@ -81,7 +81,7 @@ bool Item::Update(float dt)
 bool Item::CleanUp()
 {
 	if (pbody != nullptr) {
-		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		//Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
 	}
 	Engine::GetInstance().textures.get()->UnLoad(texture);
