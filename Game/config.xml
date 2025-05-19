@@ -23,7 +23,7 @@
 		<map1 path="Assets/Maps/" name="cave.tmx"/>
 		<map2 path="Assets/Maps/" name="Boss.tmx"/>
 		<textures>
-			<Menu_initial path="Assets/Textures/UI/initial_screen.png"/>
+			<Menu_initial path="Assets/Textures/UI/Menu_start.png"/>
 			<Menu_Pause path="Assets/Textures/UI/Pause_menu_front.png"/>
 			<Menu_Pause_back path="Assets/Textures/UI/Pause_menu_back.png"/>
 			<Menu_Settings path="Assets/Textures/UI/Setting_front.png"/>
