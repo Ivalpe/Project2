@@ -37,7 +37,7 @@ bool Enemy::Start() {
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
-	attack.LoadAnimations(parameters.child("animations").child("attack")); 
+	attack.LoadAnimations(parameters.child("animations").child("attack"));
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
@@ -69,6 +69,7 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
+
 	if (Engine::GetInstance().scene.get()->GameOverMenu == true) {
 		//// Initialize pathfinding
 		pathfinding = new Pathfinding();
@@ -108,7 +109,7 @@ bool Enemy::Update(float dt)
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
 
-	LOG("Enemy pos: %f, %f", position.getX(), position.getY());
+
 	return true;
 }
 
@@ -157,8 +158,11 @@ bool Enemy::CleanUp()
 {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-
+		Engine::GetInstance().physics.get()->DeletePhysBody(attackSensor);
+		Engine::GetInstance().physics.get()->DeletePhysBody(sensor);
 		pbody = nullptr;
+		attackSensor = nullptr;
+		sensor = nullptr;
 	}
 
 	return true;
@@ -244,7 +248,8 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER:
 		if (physA->ctype == ColliderType::CHASESENSOR and !attackPlayer) {
 			followPlayer = true;
-		} else if (physA->ctype == ColliderType::ATTACKSENSOR){
+		}
+		else if (physA->ctype == ColliderType::ATTACKSENSOR) {
 			attackPlayer = true;
 			currentAnimation = &attack;
 			followPlayer = false;

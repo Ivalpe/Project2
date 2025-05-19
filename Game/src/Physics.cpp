@@ -15,7 +15,7 @@ Physics::Physics() : Module()
 	debug = false;
 	// Initialise all the internal class variables, at least to NULL pointer
 	world = NULL;
-	
+
 }
 
 // Destructor
@@ -44,7 +44,7 @@ bool Physics::PreUpdate()
 
 	// Step (update) the World
 	//Get the dt form the engine. Note that dt is in miliseconds and steps in Box2D are in seconds
-	float dt = Engine::GetInstance().GetDt() / 1000; 
+	float dt = Engine::GetInstance().GetDt() / 1000;
 	world->Step(dt, 6, 2);
 
 	// Because Box2D does not automatically broadcast collisions/contacts with sensors, 
@@ -57,7 +57,7 @@ bool Physics::PreUpdate()
 			// If so, we call the OnCollision listener function (only of the sensor), passing as inputs our custom PhysBody classes
 			PhysBody* pb1 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData().pointer;
 			PhysBody* pb2 = (PhysBody*)c->GetFixtureB()->GetBody()->GetUserData().pointer;
-			
+
 			if (pb1 && pb2 && pb1->listener)
 				pb1->listener->OnCollision(pb1, pb2);
 		}
@@ -89,7 +89,7 @@ PhysBody* Physics::CreateRectangle(int x, int y, int width, int height, bodyType
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
-	b->GetUserData().pointer = (uintptr_t) pbody;
+	b->GetUserData().pointer = (uintptr_t)pbody;
 	pbody->width = width * 0.5f;
 	pbody->height = height * 0.5f;
 
@@ -260,7 +260,7 @@ bool Physics::PostUpdate()
 	// Activate or deactivate debug mode
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
-	
+
 	//  Iterate all objects in the world and draw the bodies
 	if (debug)
 	{
@@ -277,10 +277,10 @@ bool Physics::PostUpdate()
 					int width, height;
 					Engine::GetInstance().window.get()->GetWindowSize(width, height);
 					b2Vec2 pos = f->GetBody()->GetPosition();
-					Engine::GetInstance().render.get()->DrawCircle(METERS_TO_PIXELS(pos.x), 
-																   METERS_TO_PIXELS(pos.y), 
-																   METERS_TO_PIXELS(shape->m_radius) * Engine::GetInstance().window.get()->GetScale(),
-																   255, 255, 255);
+					Engine::GetInstance().render.get()->DrawCircle(METERS_TO_PIXELS(pos.x),
+						METERS_TO_PIXELS(pos.y),
+						METERS_TO_PIXELS(shape->m_radius) * Engine::GetInstance().window.get()->GetScale(),
+						255, 255, 255);
 				}
 				break;
 
@@ -295,21 +295,21 @@ bool Physics::PostUpdate()
 					{
 						v = b->GetWorldPoint(polygonShape->m_vertices[i]);
 						if (i > 0)
-							Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(prev.x), 
-																	     METERS_TO_PIXELS(prev.y), 
-																		 METERS_TO_PIXELS(v.x), 
-																		 METERS_TO_PIXELS(v.y), 
-																		 255, 255, 100);
+							Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(prev.x),
+								METERS_TO_PIXELS(prev.y),
+								METERS_TO_PIXELS(v.x),
+								METERS_TO_PIXELS(v.y),
+								255, 255, 100);
 
 						prev = v;
 					}
 
 					v = b->GetWorldPoint(polygonShape->m_vertices[0]);
 					Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(prev.x),
-																 METERS_TO_PIXELS(prev.y),
-																 METERS_TO_PIXELS(v.x),
-																 METERS_TO_PIXELS(v.y),
-																 255, 255, 100);
+						METERS_TO_PIXELS(prev.y),
+						METERS_TO_PIXELS(v.x),
+						METERS_TO_PIXELS(v.y),
+						255, 255, 100);
 				}
 				break;
 
@@ -323,20 +323,20 @@ bool Physics::PostUpdate()
 					{
 						v = b->GetWorldPoint(shape->m_vertices[i]);
 						if (i > 0)
-							Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(prev.x), 
-																	     METERS_TO_PIXELS(prev.y), 
-																	     METERS_TO_PIXELS(v.x), 
-																	     METERS_TO_PIXELS(v.y), 
-																		 100, 255, 100);
+							Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(prev.x),
+								METERS_TO_PIXELS(prev.y),
+								METERS_TO_PIXELS(v.x),
+								METERS_TO_PIXELS(v.y),
+								100, 255, 100);
 						prev = v;
 					}
 
 					v = b->GetWorldPoint(shape->m_vertices[0]);
-					Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(prev.x), 
-																 METERS_TO_PIXELS(prev.y), 
-															     METERS_TO_PIXELS(v.x), 
-															     METERS_TO_PIXELS(v.y), 
-																 100, 255, 100);
+					Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(prev.x),
+						METERS_TO_PIXELS(prev.y),
+						METERS_TO_PIXELS(v.x),
+						METERS_TO_PIXELS(v.y),
+						100, 255, 100);
 				}
 				break;
 
@@ -348,11 +348,11 @@ bool Physics::PostUpdate()
 
 					v1 = b->GetWorldPoint(shape->m_vertex0);
 					v1 = b->GetWorldPoint(shape->m_vertex1);
-					Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(v1.x), 
-																 METERS_TO_PIXELS(v1.y), 
-																 METERS_TO_PIXELS(v2.x), 
-																 METERS_TO_PIXELS(v2.y), 
-															     100, 100, 255);
+					Engine::GetInstance().render.get()->DrawLine(METERS_TO_PIXELS(v1.x),
+						METERS_TO_PIXELS(v1.y),
+						METERS_TO_PIXELS(v2.x),
+						METERS_TO_PIXELS(v2.y),
+						100, 100, 255);
 				}
 				break;
 				}
@@ -363,8 +363,12 @@ bool Physics::PostUpdate()
 
 	// Process bodies to delete after the world step
 	for (PhysBody* physBody : bodiesToDelete) {
-		world->DestroyBody(physBody->body);
-		
+		if (physBody != nullptr && physBody->body != nullptr) {
+			LOG("Deleting body %p", physBody->body);
+			world->DestroyBody(physBody->body);
+		}
+		else
+			bodiesToDelete.remove(physBody);
 	}
 	bodiesToDelete.clear();
 
@@ -397,7 +401,7 @@ void Physics::BeginContact(b2Contact* contact)
 	}
 
 	if (physB && physB->listener != NULL) {
-		if(physA) // Ensure physA is also valid
+		if (physA) // Ensure physA is also valid
 		{
 			physB->listener->OnCollision(physB, physA);
 		}
@@ -432,7 +436,7 @@ void Physics::DeletePhysBody(PhysBody* physBody) {
 
 //--------------- PhysBody
 
-Vector2D PhysBody::GetPosition(){
+Vector2D PhysBody::GetPosition() {
 	b2Vec2 pos = body->GetPosition();
 	float x = METERS_TO_PIXELS(pos.x) - (width);
 	float y = METERS_TO_PIXELS(pos.y) - (height);
@@ -494,7 +498,7 @@ int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& no
 	return ret;
 }
 
-Vector2D PhysBody::GetPhysBodyWorldPosition(){
+Vector2D PhysBody::GetPhysBodyWorldPosition() {
 	return { (float)METERS_TO_PIXELS(body->GetPosition().x), (float)METERS_TO_PIXELS(body->GetPosition().y) };
 }
 

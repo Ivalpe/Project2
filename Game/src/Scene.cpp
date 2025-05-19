@@ -83,7 +83,6 @@ void Scene::CreateEnemies(int level)
 	for (auto e : enemyList) {
 		Engine::GetInstance().physics->DeleteBody((e)->GetAttackSensorBody());
 		Engine::GetInstance().physics->DeleteBody((e)->GetSensorBody());
-		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 	}
 	enemyList.clear();
@@ -92,13 +91,11 @@ void Scene::CreateEnemies(int level)
 		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLeftBody());
 		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLimitLeft());
 		Engine::GetInstance().physics->DeleteBody((e)->GetSensorRight());
-		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 	}
 	bossList.clear();
 
 	for (auto e : columnList) {
-		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 	}
 	columnList.clear();
@@ -138,8 +135,8 @@ void Scene::CreateEnemies(int level)
 void Scene::CreateItems(int level)
 {
 	for (auto e : itemList) {
-		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
-		Engine::GetInstance().entityManager->DestroyEntity(e);
+		//Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		//Engine::GetInstance().entityManager->DestroyEntity(e);
 	}
 	itemList.clear();
 
@@ -216,7 +213,7 @@ void Scene::Change_level(int level)
 {
 
 	for (auto e : itemList) {
-		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		//Engine::GetInstance().physics->DeleteBody((e)->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 	}
 	itemList.clear();
