@@ -64,6 +64,12 @@ bool Enemy::Start() {
 	pathfinding = new Pathfinding();
 	ResetPath();
 
+	// Initialize idle position
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	targetTile.setY(pos.getY());
+	targetTile.setX(tilePos.getX() - 12);
+
 	return true;
 }
 
@@ -101,16 +107,108 @@ bool Enemy::Update(float dt)
 
 	if (followPlayer) {
 		MovementEnemy(dt);
-	}
-
-	if (attackPlayer) {
+	} else if (attackPlayer) {
 		AttackEnemy(dt);
+	}
+	else {
+		IdleEnemy(dt);
 	}
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
 
 
 	return true;
+}
+
+void Enemy::IdleReset() {
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap((int)pos.getX() + 32, (int)pos.getY() + 32);
+
+	targetTile.setY(tilePos.getY());
+
+	if (idleDir) {
+		idleDir = false;
+		targetTile.setX(targetTile.getX() - 10);
+	}
+	else {
+		idleDir = true;
+		targetTile.setX(targetTile.getX() + 10);
+	}
+}
+
+bool Enemy::TargetReachCheck(Vector2D target, Vector2D pos, Vector2D worldPos) {
+
+	if (targetTile.getX() == pos.getX()) {
+		return true;
+	}
+	if (targetTile.getX() <= pos.getX() and (int)targetTile.getX() + 1 >= pos.getX()) {
+		//SetPosition(targetWorld);
+		return true;
+	}
+	if ((int)targetTile.getX() - 1 <= pos.getX() and targetTile.getX() >= pos.getX()) {
+		//SetPosition(targetWorld);
+		return true;
+	}
+	return false;
+}
+
+void Enemy::IdleEnemy(float dt) {
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	targetTile.setY(tilePos.getY());
+
+	if (TargetReachCheck(targetTile, tilePos, pos)) {
+		targetWorld = Engine::GetInstance().map.get()->MapToWorld(targetTile.getX(), targetTile.getY());
+		IdleReset();
+		pauseEnemyIdle = true;
+	}
+
+	if (pauseEnemyIdle) {
+		if (pauseCounter >= PAUSETIME) {
+			targetWorld.setY(pos.getY());
+			SetPosition(targetWorld);
+			pauseCounter = 0;
+			pauseEnemyIdle = false;
+		}
+		else {
+			if (currentAnimation != &idle) {
+				currentAnimation = &idle;
+			}
+			pauseCounter++;
+		}
+	}
+	else {
+		pathfinding->ResetPath(tilePos);
+
+		int max = 200;
+		bool found = false;
+		while (!found) {
+			found = pathfinding->PropagateAStar(MANHATTAN, targetTile);
+			max--;
+			if (max == 0) break;
+			if (Engine::GetInstance().physics.get()->GetDebug())
+				pathfinding->DrawPath();
+		}
+
+		if (found) {
+
+			int sizeBread = pathfinding->breadcrumbs.size();
+			Vector2D posBread;
+			if (sizeBread >= 2) posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
+			else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
+
+			//Movement Enemy
+			if (posBread.getX() <= tilePos.getX()) {
+				velocity = -speed;
+				dir = LEFT;
+			}
+			else {
+				velocity = speed;
+				dir = RIGHT;
+			}
+		}
+	}
+
 }
 
 void Enemy::MovementEnemy(float dt) {
@@ -272,7 +370,10 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::PLAYER:
 		if (physA->ctype == ColliderType::CHASESENSOR) {
 			followPlayer = false;
+			pauseEnemyIdle = false;
+			IdleReset();
 		}
+		//IdleReset();
 		break;
 	case ColliderType::UNKNOWN:
 		break;

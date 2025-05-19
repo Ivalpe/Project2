@@ -180,8 +180,11 @@ bool Scene::Start()
 
 	InitialScreen = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_initial").attribute("path").as_string());
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
+	Menu_Pause_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause_back").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
+	Menu_Settings_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings_back").attribute("path").as_string());
 	GameOver = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver").attribute("path").as_string());
+	GameOver_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("GameOver_back").attribute("path").as_string());
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
@@ -499,18 +502,18 @@ void Scene::MenuInitialScreen()
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
-		float scaleFactor = 0.8f;
+		float scaleFactor = 1.3f;
 
-		SDL_Rect NewGameButton = { 300 - 60 - 7, 445 + 50, static_cast<int>(textWidthNewGame * scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
-		SDL_Rect ConitnuesButton = { 320 - 50 - 7, 520 + 50, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
-		SDL_Rect Settings = { 330 - 45 - 7, 595 + 50, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
-		SDL_Rect Exit = { 350 - 25 - 7, 670 + 50, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
+		SDL_Rect NewGameButton = { 300 - 60 - 7-70+10, 520 + 50+100-20, static_cast<int>(textWidthNewGame * scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
+		SDL_Rect ConitnuesButton = { 320 - 50 - 7-70, 445 + 50 + 100-30, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
+		SDL_Rect Settings = { 330 - 45 - 7-70-2, 595 + 50 + 90, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
+		SDL_Rect Exit = { 350 - 25 - 7-70, 670 + 50+100-5, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
 
 
-		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "New Game", NewGameButton, this));
-		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 9, "Continue", ConitnuesButton, this));
-		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "Settings", Settings, this));
-		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "Exit", Exit, this));
+		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "", NewGameButton, this));
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 9, "", ConitnuesButton, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "", Settings, this));
+		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "", Exit, this));
 	}
 }
 
@@ -534,24 +537,23 @@ void Scene::GameOver_State()
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
 		int cameraY = Engine::GetInstance().render.get()->camera.y;
 
+		SDL_SetTextureAlphaMod(GameOver_Back, 200);
+
+		Engine::GetInstance().render.get()->DrawTexture(GameOver_Back, -cameraX, -cameraY);
+
 		Engine::GetInstance().render.get()->DrawTexture(GameOver, -cameraX, -cameraY);
 
 		int textWidthContinue, textHeightContinue;
 		int textWidthExit, textHeightExit;
-		int textWidthSentence, textHeightSentence;
 
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
-		TTF_SizeText(Engine::GetInstance().render.get()->font, "Ikaros, don't seek the strength int the light, seek it in the shades", &textWidthSentence, &textHeightSentence);
 
-		SDL_Rect Continue = { 865, 760, textWidthContinue + 20, textHeightContinue + 10 };
-		SDL_Rect Exit = { 940, 860, textWidthExit + 20, textHeightExit + 10 };
-		SDL_Rect Sentence = { 260 - 85, 600, textWidthSentence + 20, textHeightSentence + 10 };
+		SDL_Rect Continue = { 865+20, 760+10-5, textWidthContinue + 10, textHeightContinue + 10 };
+		SDL_Rect Exit = { 940-10, 860-15-5, textWidthExit + 10, textHeightExit + 10 };
 
-		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
-		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
-
-		Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "", Continue, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "", Exit, this));
 	}
 }
 
@@ -590,16 +592,16 @@ void Scene::Active_MenuPause() {
 			DisableGuiControlButtons();
 		}
 	}
-
 	if (showPauseMenu) {
+		if (!showSettingsMenu) {
+			MenuPause(); 
+		}
 
-		MenuPause();
 		if (showSettingsMenu) {
 			MenuSettings();
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
-			{
-				showSettingsMenu = false;
 
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN) {
+				showSettingsMenu = false;
 			}
 		}
 	}
@@ -613,9 +615,10 @@ void Scene::MenuPause()
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
 
-	SDL_Rect backgroundRect = { 0, 0, 1920, 1080 };
-	SDL_SetRenderDrawColor(Engine::GetInstance().render.get()->renderer, 10, 10, 50, 200);
-	SDL_RenderFillRect(Engine::GetInstance().render.get()->renderer, &backgroundRect);
+
+	SDL_SetTextureAlphaMod(Menu_Pause_Back, 128);
+
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause_Back, -cameraX, -cameraY);
 
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Pause, -cameraX, -cameraY);
 
@@ -624,19 +627,19 @@ void Scene::MenuPause()
 	int textWidthSettings, textHeightSettings;
 	int textWidthExit, textHeightExit;
 
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continues ", &textWidthContinue, &textHeightContinue);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
 
-	SDL_Rect ConitnuesButton = { 862 - 15, 520 - 15, textWidthContinue + 20, textHeightContinue + 10 };
-	SDL_Rect Settings = { 882 - 15, 595 - 10, textWidthSettings + 20, textHeightSettings + 10 };
-	SDL_Rect Exit = { 919 - 15, 670 - 5, textWidthExit + 20, textHeightExit + 10 };
+	SDL_Rect ConitnuesButton = { 862 +7+2, 520 - 15-30+10, textWidthContinue + 20, textHeightContinue + 10 };
+	SDL_Rect Settings = { 882 +7, 595 - 10-30+10, textWidthSettings + 20, textHeightSettings + 10 };
+	SDL_Rect Exit = { 919 +7, 670 - 5-30, textWidthExit + 20, textHeightExit + 10 };
 
 
-	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "Continue", ConitnuesButton, this));
-	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "Settings", Settings, this));
-	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "Exit", Exit, this));
+	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "", ConitnuesButton, this));
+	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "", Settings, this));
+	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "", Exit, this));
 }
 
 void Scene::MenuSettings()
@@ -649,35 +652,10 @@ void Scene::MenuSettings()
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
 	int cameraY = Engine::GetInstance().render.get()->camera.y;
 
+	SDL_SetTextureAlphaMod(Menu_Settings_Back, 128);
+
+	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings_Back, -cameraX, -cameraY);
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
-
-	float scaleFactor = 0.5f; // Reducir tama�o al 50%
-
-	int textWidthSettingsTitle, textHeightSettingsTitle;
-	int textWidthMusicVolume, textHeightMusicVolume;
-	int textWidthAmbientSounds, textHeightAmbientSounds;
-	int textWidthLanguage, textHeightLanguage;
-	int textWidthEnglish, textHeightEnglish;
-
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettingsTitle, &textHeightSettingsTitle);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Music Volume", &textWidthMusicVolume, &textHeightMusicVolume);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Ambient Sounds", &textWidthAmbientSounds, &textHeightAmbientSounds);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Language", &textWidthLanguage, &textHeightLanguage);
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "English", &textWidthEnglish, &textHeightEnglish);
-
-
-	SDL_Rect SettingsTitle = { 860 - 15, 325 - 15, textWidthSettingsTitle + 20, textHeightSettingsTitle + 10 };
-	SDL_Rect MusicVolume = { 700 - 15, 485 - 15, static_cast<int>(textWidthMusicVolume * scaleFactor), static_cast<int>(textHeightMusicVolume * scaleFactor) };
-	SDL_Rect AmbientSounds = { 700 - 15, 555 - 15, static_cast<int>(textWidthAmbientSounds * scaleFactor), static_cast<int>(textHeightAmbientSounds * scaleFactor) };
-	SDL_Rect Language = { 700 - 15, 630 - 15, static_cast<int>(textWidthLanguage * scaleFactor), static_cast<int>(textHeightLanguage * scaleFactor) };
-	SDL_Rect English = { 1085, 625, static_cast<int>(textWidthEnglish * scaleFactor), static_cast<int>(textHeightEnglish * scaleFactor) };
-
-
-	Engine::GetInstance().render.get()->DrawText("Settings", SettingsTitle.x, SettingsTitle.y, SettingsTitle.w, SettingsTitle.h);
-	Engine::GetInstance().render.get()->DrawText("Music Volume", MusicVolume.x, MusicVolume.y, MusicVolume.w, MusicVolume.h);
-	Engine::GetInstance().render.get()->DrawText("Ambient Sounds", AmbientSounds.x, AmbientSounds.y, AmbientSounds.w, AmbientSounds.h);
-	Engine::GetInstance().render.get()->DrawText("Language", Language.x, Language.y, Language.w, Language.h);
-	Engine::GetInstance().render.get()->DrawText("English", English.x, English.y, English.w, English.h);
 
 
 	SDL_Rect MusicPosition = { musicPosX, 10, 485, 35 };
@@ -745,10 +723,10 @@ void Scene::MenuSettings()
 		}
 	}
 
-	SDL_Rect newMusicPos = { musicPosX, 511 - 5, 6, 15 }; // New music volume position 
+	SDL_Rect newMusicPos = { musicPosX, 511 - 5-7, 6, 15 }; // New music volume position 
 	guiBt->bounds = newMusicPos;
 
-	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5, 6, 15 }; // New music ambient sounds position
+	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5+7, 6, 15 }; // New music ambient sounds position
 	guiBt1->bounds = newFxPos;
 
 	// Adjust music volume
@@ -763,14 +741,14 @@ void Scene::MenuSettings()
 	Mix_Volume(-1, sdlVolumeFx);
 
 	// Music volume background bar
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511, 195, 6 }, 0, 0, 0, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511-7, 195, 6 }, 0, 0, 0, 255, true, false);
 	//Ambient sounds background bar
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, 195, 6 }, 0, 0, 0, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1+7, 195, 6 }, 0, 0, 0, 255, true, false);
 
 	// Music volume filled portion
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511-7, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 	//Ambient sounds filled portion
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1+7, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 }
 
 void Scene::DisableGuiControlButtons()
