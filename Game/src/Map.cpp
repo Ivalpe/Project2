@@ -323,6 +323,15 @@ bool Map::Load(std::string path, std::string fileName)
 					Engine::GetInstance().physics->listToDelete.push_back(Change_level);
 				}
 
+				if (layerName == "DamageRespawn") {
+					colliderType = ColliderType::DAMAGE_RESPAWN;
+
+					// Crear el objeto de colisi�n con el tipo determinado
+					PhysBody* Damage_respawn = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
+					Damage_respawn->ctype = ColliderType::DAMAGE_RESPAWN;
+					Engine::GetInstance().physics->listToDelete.push_back(Damage_respawn);
+				}
+
 			}
 		}
 
