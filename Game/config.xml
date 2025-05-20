@@ -28,8 +28,8 @@
 			<Menu_Pause_back path="Assets/Textures/UI/Pause_menu_back.png"/>
 			<Menu_Settings path="Assets/Textures/UI/Setting_front.png"/>
 			<Menu_Settings_back path="Assets/Textures/UI/Setting_base.png"/>
-			<GameOver path="Assets/Textures/UI/Game_Over_front.png"/>
-			<GameOver_back path="Assets/Textures/UI/Game_Over_back.png"/>
+			<GameOver path="Assets/Textures/UI/Game_Over_def.png"/>
+			<GameOver_back path="Assets/Textures/UI/GameOver.png"/>
 			<Feather path="Assets/Textures/UI/Feather.png"/>
 			<Candle w ="64" h="64" path="Assets/Textures/UI/candle ui.png"/>
 			<WaxUI  w="2688" h="896" path="Assets/Textures/UI/Waxy_Sheet.png">
