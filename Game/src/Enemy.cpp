@@ -37,6 +37,7 @@ bool Enemy::Start() {
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	attack.LoadAnimations(parameters.child("animations").child("attack"));
 	currentAnimation = &idle;
 
@@ -84,22 +85,7 @@ bool Enemy::Update(float dt)
 
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
-	velocity = 0;
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-	if (!attackPlayer and currentAnimation != &idle) {
-		currentAnimation = &idle;
-	}
-
-	if (dir == RIGHT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	}
-	else {
-		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	}
-	currentAnimation->Update();
+	velocity = 0;	
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();
 	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
@@ -107,6 +93,7 @@ bool Enemy::Update(float dt)
 
 	if (followPlayer) {
 		MovementEnemy(dt);
+		
 	} else if (attackPlayer) {
 		AttackEnemy(dt);
 	}
@@ -114,7 +101,22 @@ bool Enemy::Update(float dt)
 		IdleEnemy(dt);
 	}
 
+	
+	currentAnimation->Update();
+
 	pbody->body->SetLinearVelocity({ velocity,0 });
+	
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+
+	if (dir == RIGHT) {
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	}
+	else {
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	}
 
 
 	return true;
@@ -207,6 +209,8 @@ void Enemy::IdleEnemy(float dt) {
 				dir = RIGHT;
 			}
 		}
+
+		currentAnimation = &idle;
 	}
 
 }
@@ -242,11 +246,14 @@ void Enemy::MovementEnemy(float dt) {
 			velocity = speed;
 			dir = RIGHT;
 		}
+
+		currentAnimation = &walk;
 	}
 
 }
 
 void Enemy::AttackEnemy(float dt) {
+
 	if (currentAnimation->HasFinished()) {
 		attackPlayer = false;
 	}
@@ -349,7 +356,11 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		}
 		else if (physA->ctype == ColliderType::ATTACKSENSOR) {
 			attackPlayer = true;
-			currentAnimation = &attack;
+			if (currentAnimation != &attack) {
+				attack.Reset();
+				currentAnimation = &attack;
+			}
+			
 			followPlayer = false;
 		}
 		break;

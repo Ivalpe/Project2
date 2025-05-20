@@ -101,8 +101,7 @@ public:
 	pugi::xml_node parameters;
 	pugi::xml_node instanceParameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle;
-	Animation attack;
+	Animation idle, walk, attack;
 
 	PhysBody* pbody;
 	PhysBody* sensor;
@@ -131,6 +130,8 @@ public:
 	int attackArea;
 
 	Timer deathTimer;
+	Timer attackTimer;
+	float attackTime;
 	float deathTime;
 	bool dead;
 	float velocity;

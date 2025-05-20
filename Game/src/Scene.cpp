@@ -627,7 +627,7 @@ void Scene::MenuPause()
 	int textWidthSettings, textHeightSettings;
 	int textWidthExit, textHeightExit;
 
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continues ", &textWidthContinue, &textHeightContinue);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
