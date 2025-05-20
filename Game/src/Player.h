@@ -98,7 +98,7 @@ public:
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, onrope, death;
+	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, onrope, death, glide_start, glide, glide_stop;
 	
 
 	bool change_level = false;
@@ -116,6 +116,7 @@ public:
 	Timer deathTimer;
 
 	float climbableX;
+	float climbOffset = 0;
 
 	bool isOnPlatform=false;
 	Platform* platform = nullptr;

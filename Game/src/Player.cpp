@@ -61,6 +61,9 @@ bool Player::Start() {
 	onrope.LoadAnimations(parameters.child("animations").child("onrope"));
 	turn2front.LoadAnimations(parameters.child("animations").child("turn2front"));
 	death.LoadAnimations(parameters.child("animations").child("death"));
+	glide_start.LoadAnimations(parameters.child("animations").child("glide_start"));
+	glide.LoadAnimations(parameters.child("animations").child("glide"));
+	glide_stop.LoadAnimations(parameters.child("animations").child("glide_stop"));
 
 	playerState = IDLE;
 	hide.Reset();
@@ -168,6 +171,9 @@ bool Player::Update(float dt)
 					playerState = CRAWL;
 
 				}
+				/*else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_UP || Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_UP) {
+					playerState = HIDE;
+				}*/
 
 			}
 
@@ -198,11 +204,14 @@ bool Player::Update(float dt)
 			playerState = FALL;
 		}
 
+		
+
 
 		//To glide
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
 		{
 			playerState = GLIDE;
+			
 			++glid_time;
 			if (fallForce >= 1.0 && glid_time > glid_reduce) {
 				fallForce -= 0.1;
@@ -210,6 +219,9 @@ bool Player::Update(float dt)
 			}
 			velocity.y = pbody->body->GetLinearVelocity().y / fallForce;
 		}
+
+	
+
 
 		if (playerState == CLIMB) {
 			pbody->body->SetGravityScale(0);
@@ -240,6 +252,10 @@ bool Player::Update(float dt)
 					currentAnimation = &onrope;
 				}
 
+
+				climbOffset = 40;
+				
+
 				// Press space to jump off 
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 					LOG("Jumped off rope");
@@ -250,6 +266,7 @@ bool Player::Update(float dt)
 					playerState = JUMP;
 					velocity.y = -6.0f; // or whatever your jump velocity is
 					pbody->body->SetGravityScale(GRAVITY);
+					climbOffset = 0;
 					return true;
 				}
 
@@ -262,6 +279,7 @@ bool Player::Update(float dt)
 
 					playerState = FALL;
 					pbody->body->SetGravityScale(GRAVITY);
+					climbOffset = 0;
 					return true;
 				}
 
@@ -286,11 +304,24 @@ bool Player::Update(float dt)
 		if (currentAnimation == &turn2front) {
 
 			if (!turn2front.HasFinished()) {
-				currentAnimation == &turn2front;
+				currentAnimation = &turn2front;
 				break;
 			}
 		}
+		
+		
+		if (currentAnimation == &glide) {
+			glide_stop.Reset();
+			currentAnimation = &glide_stop;
+			break;
+		}
+		if (currentAnimation == &glide_stop) {
 
+			if (!glide_stop.HasFinished()) {
+				currentAnimation = &glide_stop;
+				break;
+			}
+		}
 
 		if (currentAnimation == &fall && fall.HasFinished()) {
 			land.Reset();
@@ -306,6 +337,7 @@ bool Player::Update(float dt)
 		else {
 			currentAnimation = &idle;
 			isClimbing = false;
+			climbOffset = 0;
 		}
 
 		break;
@@ -330,20 +362,20 @@ bool Player::Update(float dt)
 		}
 		break;
 	case HIDE:
-		LOG("hiding");
+		
 		if (currentAnimation != &hide) {
-
-			hide.Reset();
+			if(currentAnimation != &crawl) hide.Reset();
 			currentAnimation = &hide;
 		}
 		break;
 	case CRAWL:
-		currentAnimation = &crawl;
+		if (velocity.x != 0) currentAnimation = &crawl;
+		else currentAnimation = &hide;
 		unhide.Reset();
-		LOG("crawling");
+		
 		break;
 	case UNHIDE:
-		LOG("unhiding");
+		
 		if (currentAnimation != &unhide) {
 			unhide.Reset();
 			currentAnimation = &unhide;
@@ -368,23 +400,36 @@ bool Player::Update(float dt)
 
 		}
 		break;
+
+	case GLIDE:
+		if (currentAnimation != &glide && currentAnimation != &glide_stop && currentAnimation != &glide_start) {
+			glide_start.Reset();
+			currentAnimation = &glide_start;
+			break;
+		}
+		
+		if (currentAnimation == &glide_start && glide_start.HasFinished()) {
+			glide_start.Reset();
+			currentAnimation = &glide;
+			
+		}
+		break;
 	}
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
+
+
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
 
 	if (dir == LEFT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + texH / 2, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + texH / 2 - climbOffset, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
 	}
 	else {
-		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX() + texH / 2, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX() + texH / 2 + climbOffset, (int)position.getY() + texH / 3, &currentAnimation->GetCurrentFrame());
 	}
 
-
 	currentAnimation->Update();
-
-
 	/*LOG("playerstate: %i", playerState);*/
 	return true;
 }
