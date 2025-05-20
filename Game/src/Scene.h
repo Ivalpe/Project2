@@ -170,6 +170,13 @@ private:
 	Animation idle;
 	Vector2D MoonPos;
 
+
+
+	SDL_Texture* WaxiFloatingTexture = nullptr;
+	Animation* WaxiFloating_currentAnimation = nullptr;
+	Animation WaxiFloating_idle;
+	Vector2D WaxiFloatingPos;
+
 	//waxy
 	WaxState waxState = EMPTY;
 

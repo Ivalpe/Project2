@@ -23,7 +23,23 @@
 		<map1 path="Assets/Maps/" name="cave.tmx"/>
 		<map2 path="Assets/Maps/" name="Boss.tmx"/>
 		<textures>
-			<Menu_initial path="Assets/Textures/UI/Menu_start.png"/>
+			<Menu_initial path="Assets/Textures/UI/TROI_Start_Fondo.png"/>
+			<WaxiFloating  x="1360" y="560"  texture="Assets/Textures/UI/waxi_Blue_Floating.png">
+				<animations>
+					<idle loop="true" speed ="0.2">
+						<frame x="0" y="0" w="127" h="143"/>
+						<frame x="127" y="0" w="127" h="143"/>
+						<frame x="254" y="0" w="127" h="143"/>
+						<frame x="381" y="0" w="127" h="143"/>
+						<frame x="508" y="0" w="127" h="143"/>
+						<frame x="635" y="0" w="127" h="143"/>
+						<frame x="762" y="0" w="127" h="143"/>
+						<frame x="889" y="0" w="127" h="143"/>
+						<frame x="1016" y="0" w="127" h="143"/>
+						<frame x="1143" y="0" w="127" h="143"/>
+					</idle>
+				</animations>
+			</WaxiFloating>
 			<Menu_Pause path="Assets/Textures/UI/Pause_menu_front.png"/>
 			<Menu_Pause_back path="Assets/Textures/UI/Pause_menu_back.png"/>
 			<Menu_Settings path="Assets/Textures/UI/Setting_front.png"/>

@@ -179,6 +179,15 @@ bool Scene::Start()
 
 
 	InitialScreen = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_initial").attribute("path").as_string());
+
+	WaxiFloatingTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxiFloating").attribute("texture").as_string());
+
+	WaxiFloating_idle.LoadAnimations(configParameters.child("textures").child("WaxiFloating").child("animations").child("idle"));
+	WaxiFloating_currentAnimation = &WaxiFloating_idle;
+	WaxiFloatingPos.setX(configParameters.child("textures").child("WaxiFloating").attribute("x").as_int());
+	WaxiFloatingPos.setY(configParameters.child("textures").child("WaxiFloating").attribute("y").as_int());
+
+
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 	Menu_Pause_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause_back").attribute("path").as_string());
 	Menu_Settings = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Settings").attribute("path").as_string());
@@ -299,6 +308,8 @@ bool Scene::Update(float dt)
 		reset_level = false;
 	}
 
+	
+
 	//Moon animation
 	if (level == 0) {
 		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
@@ -316,6 +327,12 @@ bool Scene::Update(float dt)
 	MenuInitialScreen();
 
 	if (showSettingsMenu) 	MenuSettings();
+
+	////Waxi floating
+	//if (level == 0) {
+	//	Engine::GetInstance().render.get()->DrawTexture(WaxiFloatingTexture, (int)WaxiFloatingPos.getX(), (int)WaxiFloatingPos.getY(), &WaxiFloating_currentAnimation->GetCurrentFrame());
+	//	WaxiFloating_currentAnimation->Update();
+	//}
 
 	return true;
 }
@@ -497,23 +514,26 @@ void Scene::MenuInitialScreen()
 		int textWidthSettings, textHeightSettings;
 		int textWidthExit, textHeightExit;
 
-		TTF_SizeText(Engine::GetInstance().render.get()->font, "New Game", &textWidthNewGame, &textHeightNewGame);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Start Game", &textWidthNewGame, &textHeightNewGame);
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
-		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
+		TTF_SizeText(Engine::GetInstance().render.get()->font, "Quit", &textWidthExit, &textHeightExit);
 
-		float scaleFactor = 1.3f;
+		float scaleFactor = 0.9f;
 
-		SDL_Rect NewGameButton = { 300 - 60 - 7-70+10, 520 + 50+100-20, static_cast<int>(textWidthNewGame * scaleFactor), static_cast<int>(textHeightNewGame * scaleFactor) };
-		SDL_Rect ConitnuesButton = { 320 - 50 - 7-70, 445 + 50 + 100-30, static_cast<int>(textWidthContinue * scaleFactor), static_cast<int>(textHeightContinue * scaleFactor) };
-		SDL_Rect Settings = { 330 - 45 - 7-70-2, 595 + 50 + 90, static_cast<int>(textWidthSettings * scaleFactor), static_cast<int>(textHeightSettings * scaleFactor) };
-		SDL_Rect Exit = { 350 - 25 - 7-70, 670 + 50+100-5, static_cast<int>(textWidthExit * scaleFactor), static_cast<int>(textHeightExit * scaleFactor) };
+		SDL_Rect NewGameButton = { 300 - 60 - 7-100+7, 445 + 50+10-5, static_cast<int>(textWidthNewGame * scaleFactor)+10, static_cast<int>(textHeightNewGame * scaleFactor)+10 };
+		SDL_Rect ConitnuesButton = { 320 - 50 - 7-130+8, 520 + 50-5-5-3, static_cast<int>(textWidthContinue * scaleFactor)+10, static_cast<int>(textHeightContinue * scaleFactor)+10 };
+		SDL_Rect Settings = { 330 - 45 - 7-130-5, 595 + 50-25-5, static_cast<int>(textWidthSettings * scaleFactor)+10, static_cast<int>(textHeightSettings * scaleFactor)+10 };
+		SDL_Rect Exit = { 350 - 25 - 7-150-30+3, 670+10-5-3 , static_cast<int>(textWidthExit * scaleFactor)+10, static_cast<int>(textHeightExit * scaleFactor)+10 };
 
 
 		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "", NewGameButton, this));
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 9, "", ConitnuesButton, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "", Settings, this));
 		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "", Exit, this));
+
+		Engine::GetInstance().render.get()->DrawTexture(WaxiFloatingTexture, (int)WaxiFloatingPos.getX(), (int)WaxiFloatingPos.getY(), &WaxiFloating_currentAnimation->GetCurrentFrame());
+		WaxiFloating_currentAnimation->Update();
 	}
 }
 
