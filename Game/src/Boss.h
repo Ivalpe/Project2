@@ -94,6 +94,7 @@ public:
 	pugi::xml_node instanceParameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+	Animation die;
 	PhysBody* pbody;
 	PhysBody* sensorLeft;
 	PhysBody* sensorLimitLeft;
@@ -101,6 +102,8 @@ public:
 	Pathfinding* pathfinding;
 	bool followPlayer;
 	int contColumn;
+	float fixedY;
+	bool hasFixedY = false;
 
 
 	Player* player;

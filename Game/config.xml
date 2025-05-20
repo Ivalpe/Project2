@@ -320,12 +320,44 @@
 						</attack>
 					</animations>
 				</soldier>
-				<minotaur x="4500" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder_min.png" gravity="true">
-					<properties chaseArea ="400" attackArea ="20" speed ="7.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
+				<minotaur x="4500" y="1527" w="5200" h="400" texture="Assets/Textures/enemy/MinotaurSpritesheet.png" gravity="true">
+					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
 					<animations>
 						<idle loop="true" speed ="0.5f">
-							<frame x="0" y="0" w="256" h="256"/>
+							<frame x="0" y="0" w="400" h="400"/>
+							<frame x="400" y="0" w="400" h="400"/>
+							<frame x="800" y="0" w="400" h="400"/>
+							<frame x="1200" y="0" w="400" h="400"/>
+							<frame x="1600" y="0" w="400" h="400"/>
+							<frame x="2000" y="0" w="400" h="400"/>
+							<frame x="2400" y="0" w="400" h="400"/>
+							<frame x="2800" y="0" w="400" h="400"/>
+							<frame x="3200" y="0" w="400" h="400"/>
+							<frame x="3600" y="0" w="400" h="400"/>
+							<frame x="4000" y="0" w="400" h="400"/>
+							<frame x="4400" y="0" w="400" h="400"/>
+							<frame x="4800" y="0" w="400" h="400"/>
 						</idle>
+						<die loop="false" speed ="0.5f">
+							<frame x="0" y="400" w="400" h="400"/>
+							<frame x="400" y="400" w="400" h="400"/>
+							<frame x="800" y="400" w="400" h="400"/>
+							<frame x="1200" y="400" w="400" h="400"/>
+							<frame x="1600" y="400" w="400" h="400"/>
+							<frame x="2000" y="400" w="400" h="400"/>
+							<frame x="2400" y="400" w="400" h="400"/>
+							<frame x="2800" y="400" w="400" h="400"/>
+							<frame x="3200" y="400" w="400" h="400"/>
+							<frame x="3600" y="400" w="400" h="400"/>
+							<frame x="4000" y="400" w="400" h="400"/>
+							<frame x="4400" y="400" w="400" h="400"/>
+							<frame x="4800" y="400" w="400" h="400"/>
+							<frame x="5200" y="400" w="400" h="400"/>
+							<frame x="5600" y="400" w="400" h="400"/>
+							<frame x="6000" y="400" w="400" h="400"/>
+							<frame x="6400" y="400" w="400" h="400"/>
+							<frame x="6800" y="400" w="400" h="400"/>
+						</die>
 					</animations>
 				</minotaur>
 			</enemies>

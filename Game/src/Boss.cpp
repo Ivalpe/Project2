@@ -27,7 +27,6 @@ bool Boss::Start() {
 	contColumn = 1;
 	followPlayer = false;
 	velocity = 0;
-	speed = 4.f;
 	state = IDLE;
 	delay = 30;
 
@@ -39,13 +38,14 @@ bool Boss::Start() {
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	die.LoadAnimations(parameters.child("animations").child("die"));
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
 	//Sensor
-	sensorLeft = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW * 5, texH * 3, bodyType::KINEMATIC);
+	sensorLeft = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW / 3, texH, bodyType::KINEMATIC);
 	sensorLeft->ctype = ColliderType::RANGELEFT;
 	sensorLeft->listener = this;
 
@@ -55,7 +55,7 @@ bool Boss::Start() {
 	sensorLimitLeft->listener = this;
 
 	//Sensor
-	sensorRight = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW * 5, texH * 3, bodyType::KINEMATIC);
+	sensorRight = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW / 3, texH, bodyType::KINEMATIC);
 	sensorRight->ctype = ColliderType::RANGERIGHT;
 	sensorRight->listener = this;
 
@@ -77,26 +77,33 @@ bool Boss::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
+	if (!hasFixedY) {
+		fixedY = pbody->body->GetPosition().y;
+		hasFixedY = true;
+	}
+
 	velocity = 0;
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	if (dir == RIGHT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	}
 	else {
-		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	}
 	currentAnimation->Update();
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();
-	sensorLeft->body->SetTransform({ enemyPos.x - PIXEL_TO_METERS(32 * 20), enemyPos.y }, 0);
+	pbody->body->SetTransform(b2Vec2(enemyPos.x, fixedY), pbody->body->GetAngle());
+	sensorLeft->body->SetTransform({ enemyPos.x - PIXEL_TO_METERS(32 * 27), enemyPos.y }, 0);
 	sensorLimitLeft->body->SetTransform({ PIXEL_TO_METERS(1921), PIXEL_TO_METERS(1828) }, 0);
-	sensorRight->body->SetTransform({ enemyPos.x + PIXEL_TO_METERS(32 * 20), enemyPos.y }, 0);
+	sensorRight->body->SetTransform({ enemyPos.x + PIXEL_TO_METERS(32 * 27), enemyPos.y }, 0);
 
 	if (contColumn <= 0) {
 		state = DEAD;
+		currentAnimation = &die;
 	}
 	else {
 		if (state == RUNNING) {
