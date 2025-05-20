@@ -85,8 +85,14 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+	
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
+
+	if (takenDMG and useTemporaryCheckpoint) {
+		TeleportToTemporaryCheckpoint();
+		takenDMG = false;
+	}
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
@@ -396,6 +402,11 @@ bool Player::CleanUp()
 	return true;
 }
 
+void Player::TeleportToTemporaryCheckpoint() {
+	SetPosition(temporaryCheckpoint);
+	takenDMG = false;
+}
+
 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
@@ -442,6 +453,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		cleanup_pbody = true;
 		break;
 	case ColliderType::ENEMY:
+		useTemporaryCheckpoint = false;
+		setTempCheckTrue = true;
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
@@ -454,6 +467,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		}
 
 		takenDMG = true;
+
 		break;
 		//Engine::GetInstance().scene.get()->drainedWaxy = false;
 	case ColliderType::WALL:
@@ -474,7 +488,15 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			platform = static_cast<Platform*>(physB->listener);
 		}
 		break;
-
+	case ColliderType::DAMAGE_RESPAWN:
+		LOG("Collision Damage Respawn");
+		if (!useTemporaryCheckpoint) {
+			useTemporaryCheckpoint = true;
+			temporaryCheckpoint = GetPosition();
+			int y = temporaryCheckpoint.getY();
+			temporaryCheckpoint.setY(y - (5*32));
+		}
+		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;
@@ -523,6 +545,10 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 			cleanup_pbody = false;
 		}
 	case ColliderType::ENEMY:
+		if (setTempCheckTrue) {
+			useTemporaryCheckpoint = true;
+			setTempCheckTrue = false;
+		}
 	case ColliderType::DAMAGE:
 		/*Engine::GetInstance().scene.get()->reset_level = true;*/
 		takenDMG = false;
@@ -532,6 +558,12 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		LOG("End Collision M_PLATFORM");
 		isOnPlatform = false;
 		platform = nullptr;
+		break;
+	case ColliderType::DAMAGE_RESPAWN:
+		LOG("End Collision Damage Respawn");
+		if (useTemporaryCheckpoint) {
+			useTemporaryCheckpoint = false;
+		}
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");

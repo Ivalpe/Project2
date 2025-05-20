@@ -46,6 +46,8 @@ public:
 
 	bool CleanUp();
 
+	void TeleportToTemporaryCheckpoint();
+
 	 
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 
@@ -95,6 +97,9 @@ public:
 
 	bool exitingRope = false;
 
+	bool useTemporaryCheckpoint = false;
+	bool setTempCheckTrue = false;
+	Vector2D temporaryCheckpoint;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
