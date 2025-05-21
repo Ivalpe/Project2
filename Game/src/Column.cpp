@@ -23,7 +23,7 @@ bool Column::Awake() {
 
 bool Column::Start() {
 
-	contColumn = 4;
+	contColumn = 2;
 	openColumn = false;
 
 	//initilize textures
@@ -61,8 +61,11 @@ bool Column::Update(float dt)
 
 	if (!openColumn && contColumn <= 0) {
 		openColumn = true;
+		Engine::GetInstance().physics->DeletePhysBody(pbody);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)parameters.attribute("x").as_int(), (int)parameters.attribute("y").as_int(), texW, texH, bodyType::STATIC);
 	}
 
+	if (!openColumn)
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + (texW * 1.7), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 
 	currentAnimation->Update();

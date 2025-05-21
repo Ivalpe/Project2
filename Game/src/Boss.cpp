@@ -24,7 +24,7 @@ bool Boss::Awake() {
 }
 
 bool Boss::Start() {
-	contColumn = 1;
+	contColumn = 2;
 	followPlayer = false;
 	velocity = 0;
 	state = IDLE;
