@@ -102,6 +102,8 @@ public:
 
 	void DeletePhysBody(PhysBody* physBody);
 
+	bool IsPendingToDelete(PhysBody* physBody);
+
 	void DeleteBody(b2Body* body) {
 		world->DestroyBody(body);
 	}

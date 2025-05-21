@@ -81,11 +81,14 @@ bool Scene::Awake()
 void Scene::CreateEnemies(int level)
 {
 	for (auto e : enemyList) {
+		//Engine::GetInstance().entityManager->DestroyEntity(e);
 		Engine::GetInstance().physics->DeleteBody((e)->GetAttackSensorBody());
 		Engine::GetInstance().physics->DeleteBody((e)->GetSensorBody());
-		Engine::GetInstance().entityManager->DestroyEntity(e);
+		
 	}
 	enemyList.clear();
+
+	Engine::GetInstance().entityManager->RemoveAllEnemies();
 
 	for (auto e : bossList) {
 		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLeftBody());
@@ -246,8 +249,9 @@ void Scene::Change_level(int level)
 	{
 		Engine::GetInstance().map.get()->CleanUp();
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
-		CreateItems(level);
+		
 		CreateEnemies(level);
+		CreateItems(level);
 	}
 
 	else if (level == 1) {
@@ -255,8 +259,9 @@ void Scene::Change_level(int level)
 		LOG("Current Level: %d", level);
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 
-		CreateItems(level);
+		
 		CreateEnemies(level);
+		CreateItems(level);
 
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
@@ -416,10 +421,10 @@ void Scene::show_UI() {
 		}
 
 		//Wax texture
-		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
-		char FeatherText[64];
-		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
-		Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);
+		//Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
+		//char FeatherText[64];
+		//sprintf_s(FeatherText, " ", Engine::GetInstance().entityManager->feather);
+		//Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);
 	}
 }
 

@@ -24,6 +24,7 @@ bool Enemy::Awake() {
 }
 
 bool Enemy::Start() {
+	restart = false;
 	followPlayer = false;
 	velocity = 0;
 
@@ -75,48 +76,51 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
+	if (!restart) {
+		if (Engine::GetInstance().scene.get()->GameOverMenu == true) {
+			//// Initialize pathfinding
+			pathfinding = new Pathfinding();
+			ResetPath();
+		}
 
-	if (Engine::GetInstance().scene.get()->GameOverMenu == true) {
-		//// Initialize pathfinding
-		pathfinding = new Pathfinding();
-		ResetPath();
+		if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
+
+		velocity = 0;
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+		if (!attackPlayer and currentAnimation != &idle) {
+			currentAnimation = &idle;
+		}
+
+		if (dir == RIGHT) {
+			Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		}
+		else {
+			Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		}
+		currentAnimation->Update();
+
+		b2Transform enemyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(enemyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(enemyPos.p.y) - texH / 2);
+		sensor->body->SetTransform({ enemyPos.p.x, enemyPos.p.y }, 0);
+		attackSensor->body->SetTransform({ enemyPos.p.x, enemyPos.p.y }, 0);
+
+		if (followPlayer) {
+			MovementEnemy(dt);
+		}
+		else if (attackPlayer) {
+			AttackEnemy(dt);
+		}
+		else {
+			IdleEnemy(dt);
+		}
+
+		pbody->body->SetLinearVelocity({ velocity,0 });
+
 	}
-
-	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
-
-	velocity = 0;
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-	if (!attackPlayer and currentAnimation != &idle) {
-		currentAnimation = &idle;
-	}
-
-	if (dir == RIGHT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	}
-	else {
-		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	}
-	currentAnimation->Update();
-
-	b2Vec2 enemyPos = pbody->body->GetPosition();
-	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
-	attackSensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
-
-	if (followPlayer) {
-		MovementEnemy(dt);
-	} else if (attackPlayer) {
-		AttackEnemy(dt);
-	}
-	else {
-		IdleEnemy(dt);
-	}
-
-	pbody->body->SetLinearVelocity({ velocity,0 });
-
-
 	return true;
 }
 
@@ -255,9 +259,8 @@ void Enemy::AttackEnemy(float dt) {
 bool Enemy::CleanUp()
 {
 	if (pbody != nullptr) {
+		restart = true;
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		Engine::GetInstance().physics.get()->DeletePhysBody(attackSensor);
-		Engine::GetInstance().physics.get()->DeletePhysBody(sensor);
 		pbody = nullptr;
 		attackSensor = nullptr;
 		sensor = nullptr;
@@ -363,21 +366,23 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 {
-	switch (physB->ctype)
-	{
-	case ColliderType::PLATFORM:
-		break;
-	case ColliderType::PLAYER:
-		if (physA->ctype == ColliderType::CHASESENSOR) {
-			followPlayer = false;
-			pauseEnemyIdle = false;
-			IdleReset();
+	if (!restart) {
+		switch (physB->ctype)
+		{
+		case ColliderType::PLATFORM:
+			break;
+		case ColliderType::PLAYER:
+			if (physA->ctype == ColliderType::CHASESENSOR) {
+				followPlayer = false;
+				pauseEnemyIdle = false;
+				IdleReset();
+			}
+			//IdleReset();
+			break;
+		case ColliderType::UNKNOWN:
+			break;
+		default:
+			break;
 		}
-		//IdleReset();
-		break;
-	case ColliderType::UNKNOWN:
-		break;
-	default:
-		break;
 	}
 }

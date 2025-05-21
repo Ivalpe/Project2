@@ -415,14 +415,14 @@ void Physics::EndContact(b2Contact* contact)
 	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData().pointer;
 	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData().pointer;
 
-	if (physA && physA->listener != NULL) {
+	if (physA && physA->listener != NULL && !IsPendingToDelete(physA)) {
 		if (physB) // Ensure physB is also valid
 		{
 			physA->listener->OnCollisionEnd(physA, physB);
 		}
 	}
 
-	if (physB && physB->listener != NULL) {
+	if (physB && physB->listener != NULL && !IsPendingToDelete(physB)) {
 		if (physA) // Ensure physA is also valid
 		{
 			physB->listener->OnCollisionEnd(physB, physA);
@@ -432,6 +432,18 @@ void Physics::EndContact(b2Contact* contact)
 
 void Physics::DeletePhysBody(PhysBody* physBody) {
 	bodiesToDelete.push_back(physBody);
+}
+
+bool Physics::IsPendingToDelete(PhysBody* physBody) {
+	bool pendingToDelete = false;
+	for (PhysBody* _physBody : bodiesToDelete) {
+		if (_physBody == physBody) {
+			pendingToDelete = true;
+			break;
+		}
+	}
+
+	return pendingToDelete;
 }
 
 //--------------- PhysBody

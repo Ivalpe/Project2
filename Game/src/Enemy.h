@@ -88,6 +88,10 @@ public:
 		return attackSensor->body;
 	}
 
+	void RestartEnemy() {
+		restart = true;
+	}
+
 	bool CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance);
 public:
 	int visible = true;
@@ -134,4 +138,5 @@ public:
 	float deathTime;
 	bool dead;
 	float velocity;
+	bool restart;
 };
