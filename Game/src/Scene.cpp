@@ -80,25 +80,6 @@ bool Scene::Awake()
 
 void Scene::CreateEnemies(int level)
 {
-	for (auto e : enemyList) {
-		Engine::GetInstance().physics->DeleteBody((e)->GetAttackSensorBody());
-		Engine::GetInstance().physics->DeleteBody((e)->GetSensorBody());
-		Engine::GetInstance().entityManager->DestroyEntity(e);
-	}
-	enemyList.clear();
-
-	for (auto e : bossList) {
-		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLeftBody());
-		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLimitLeft());
-		Engine::GetInstance().physics->DeleteBody((e)->GetSensorRight());
-		Engine::GetInstance().entityManager->DestroyEntity(e);
-	}
-	bossList.clear();
-
-	for (auto e : columnList) {
-		Engine::GetInstance().entityManager->DestroyEntity(e);
-	}
-	columnList.clear();
 
 	std::vector<Vector2D> listEnemy;
 
@@ -130,6 +111,7 @@ void Scene::CreateEnemies(int level)
 		boss->SetParameters(configParameters.child("entities").child("enemies").child("minotaur"));
 		boss->Start();
 		boss->SetPosition({ bosses.getX(), bosses.getY() });
+		boss->FixYAxis(bosses.getY());
 		bossList.push_back(boss);
 	}
 }
@@ -226,26 +208,70 @@ void Scene::Change_level(int level)
 {
 
 	for (auto e : itemList) {
-		//Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().physics->DeleteBody(e->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
+		e->pbody = nullptr;
 	}
 	itemList.clear();
 
 	for (auto e : interactiveObjectList) {
-		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().physics->DeleteBody(e->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
+		e->pbody = nullptr;
 	}
 	interactiveObjectList.clear();
 
 	for (auto e : platformList) {
-		Engine::GetInstance().physics->DeleteBody((e)->GetBody());
+		Engine::GetInstance().physics->DeleteBody(e->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
+		e->pbody = nullptr;
 	}
 	platformList.clear();
+
+	for (auto e : enemyList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetAttackSensorBody());
+		e->attackSensor = nullptr;
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorBody());
+		e->sensor = nullptr;
+		Engine::GetInstance().physics->DeleteBody(e->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+		e->pbody = nullptr;
+		
+		/*e->pbody->listener = nullptr;
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+		e->pbody = nullptr;*/
+	}
+	enemyList.clear();
+
+	for (auto e : bossList) {
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLeftBody());
+		e->sensorLeft = nullptr;
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorLimitLeft());
+		e->sensorLimitLeft = nullptr;
+		Engine::GetInstance().physics->DeleteBody((e)->GetSensorRight());
+		e->sensorRight = nullptr;
+		Engine::GetInstance().physics->DeleteBody(e->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+		e->pbody = nullptr;
+		//Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	bossList.clear();
+
+	for (auto e : columnList) {
+		Engine::GetInstance().physics->DeleteBody(e->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
+		e->pbody = nullptr;
+		//Engine::GetInstance().entityManager->DestroyEntity(e);
+	}
+	columnList.clear();
 
 	if (level == 0)
 	{
 		Engine::GetInstance().map.get()->CleanUp();
+		/*itemList.clear();
+		interactiveObjectList.clear();
+		platformList.clear();*/
+
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
@@ -253,6 +279,10 @@ void Scene::Change_level(int level)
 
 	else if (level == 1) {
 		Engine::GetInstance().map.get()->CleanUp();
+		/*itemList.clear();
+		interactiveObjectList.clear();
+		platformList.clear();*/
+
 		LOG("Current Level: %d", level);
 		Engine::GetInstance().map->Load(configParameters.child("map1").attribute("path").as_string(), configParameters.child("map1").attribute("name").as_string());
 
@@ -267,10 +297,15 @@ void Scene::Change_level(int level)
 
 	else if (level == 2) {
 		Engine::GetInstance().map.get()->CleanUp();
+		/*itemList.clear();
+		interactiveObjectList.clear();
+		platformList.clear();*/
+
 		Engine::GetInstance().map->Load(configParameters.child("map2").attribute("path").as_string(), configParameters.child("map2").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
 	}
+
 }
 
 // Called each loop iteration
@@ -834,7 +869,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		guiBt->state = GuiControlState::DISABLED;
 		guiBt1->state = GuiControlState::DISABLED;
 
-		Change_level(level);
+		//Change_level(level);
 		break;
 	case 7:// Game Over: Exit
 

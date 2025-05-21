@@ -105,9 +105,9 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle, walk, attack;
 
-	PhysBody* pbody;
-	PhysBody* sensor;
-	PhysBody* attackSensor;
+	PhysBody* pbody = nullptr;
+	PhysBody* sensor = nullptr;
+	PhysBody* attackSensor = nullptr;
 
 	Pathfinding* pathfinding;
 	bool followPlayer = false;

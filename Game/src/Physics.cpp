@@ -363,13 +363,15 @@ bool Physics::PostUpdate()
 	}
 
 	// Process bodies to delete after the world step
-	for (PhysBody* physBody : bodiesToDelete) {
+	for (auto it = bodiesToDelete.begin(); it != bodiesToDelete.end(); ) {
+		PhysBody* physBody = *it;
 		if (physBody != nullptr && physBody->body != nullptr) {
-			LOG("Deleting body %p", physBody->body);
 			world->DestroyBody(physBody->body);
+			it = bodiesToDelete.erase(it);
 		}
-		else
-			bodiesToDelete.remove(physBody);
+		else {
+			it = bodiesToDelete.erase(it);
+		}
 	}
 	bodiesToDelete.clear();
 

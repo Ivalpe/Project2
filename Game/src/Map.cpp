@@ -131,7 +131,9 @@ bool Map::CleanUp()
 
 	for (PhysBody* body : Engine::GetInstance().physics->listToDelete)
 	{
-		Engine::GetInstance().physics->DeletePhysBody(body);
+		if(body->ctype != ColliderType::PLATFORM){
+			Engine::GetInstance().physics->DeletePhysBody(body);
+		}
 	}
 	Engine::GetInstance().physics->listToDelete.clear();
 

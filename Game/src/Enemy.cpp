@@ -94,8 +94,8 @@ bool Enemy::Update(float dt)
 	velocity = 0;	
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();
-	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
-	attackSensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+	if(sensor and sensor->body) sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+	if(attackSensor and attackSensor->body) attackSensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
 	
 	
@@ -317,6 +317,8 @@ bool Enemy::CleanUp()
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		Engine::GetInstance().physics.get()->DeletePhysBody(attackSensor);
 		Engine::GetInstance().physics.get()->DeletePhysBody(sensor);
+		pbody->listener = NULL;
+		pbody->body = nullptr;
 		pbody = nullptr;
 		attackSensor = nullptr;
 		sensor = nullptr;
