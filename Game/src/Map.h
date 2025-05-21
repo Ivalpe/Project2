@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include <list>
+#include "Physics.h"
 #include <vector>
 #include <map>
 
@@ -175,6 +176,7 @@ private:
 	bool mapLoaded;
 	MapData mapData;
 	std::vector<Vector2D> posEnemy;
+	std::vector<PhysBody*> collisions;
 	std::vector<Vector2D> posWaxys;
 	std::vector<Vector2D> posFeathers;
 	std::vector<Vector2D> posColumnBoss;

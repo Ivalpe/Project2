@@ -285,6 +285,7 @@ void Enemy::AttackEnemy(float dt) {
 	int frame = static_cast<int>(attack.currentFrame);
 	if (frame == 6 or frame == 5) {
 		if (Engine::GetInstance().scene.get()->GetPlayer()->isInAttackSensor) {
+			Vector2D enemyPos = GetPosition();
 			Engine::GetInstance().scene.get()->GetPlayer()->TakeDamage();
 		}
 	}

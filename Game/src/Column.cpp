@@ -61,9 +61,6 @@ bool Column::Update(float dt)
 
 	if (!openColumn && contColumn <= 0) {
 		openColumn = true;
-		Engine::GetInstance().physics.get()->bodiesToDelete.push_back(pbody);
-		pbody = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)parameters.attribute("x").as_int(), (int)parameters.attribute("y").as_int(), texW, texH, bodyType::STATIC);
-		//CAMBIAR TEXTURA
 	}
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + (texW * 1.7), (int)position.getY(), &currentAnimation->GetCurrentFrame());
@@ -102,7 +99,7 @@ void Column::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 	switch (physB->ctype)
 	{
-	case ColliderType::ENEMY:
+	case ColliderType::BOSS:
 		contColumn--;
 		break;
 	default:

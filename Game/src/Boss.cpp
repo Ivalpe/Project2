@@ -24,7 +24,7 @@ bool Boss::Awake() {
 }
 
 bool Boss::Start() {
-	contColumn = 4;
+	contColumn = 1;
 	followPlayer = false;
 	velocity = 0;
 	state = IDLE;
@@ -63,7 +63,7 @@ bool Boss::Start() {
 	sensorRight->listener = this;
 
 	////Assign collider type
-	pbody->ctype = ColliderType::ENEMY;
+	pbody->ctype = ColliderType::BOSS;
 	pbody->listener = this;
 
 	//// Set the gravity of the body
@@ -209,7 +209,7 @@ void Boss::StopMovement() {
 		pbody = nullptr;
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
 		pbody->listener = this;
-		pbody->ctype = ColliderType::ENEMY;
+		pbody->ctype = ColliderType::BOSS;
 
 	}
 }
@@ -219,7 +219,7 @@ void Boss::ResumeMovement() {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 		pbody->listener = this;
-		pbody->ctype = ColliderType::ENEMY;
+		pbody->ctype = ColliderType::BOSS;
 
 	}
 }
@@ -256,12 +256,12 @@ void Boss::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::UNKNOWN:
 		break;
 	case ColliderType::WALLBOSS:
-		if (physA->ctype == ColliderType::ENEMY) {
+		if (physA->ctype == ColliderType::BOSS) {
 			state = STUNNED;
 		}
 		break;
 	case ColliderType::WALLBOSSDES:
-		if (physA->ctype == ColliderType::ENEMY) {
+		if (physA->ctype == ColliderType::BOSS) {
 			state = STUNNED;
 			contColumn--;
 		}

@@ -127,16 +127,6 @@ TileSet* Map::GetTilesetFromTileId(int gid) const
 // Called before quitting
 bool Map::CleanUp()
 {
-	LOG("Unloading map");
-
-	for (PhysBody* body : Engine::GetInstance().physics->listToDelete)
-	{
-		if(body->ctype != ColliderType::PLATFORM){
-			Engine::GetInstance().physics->DeletePhysBody(body);
-		}
-	}
-	Engine::GetInstance().physics->listToDelete.clear();
-
 	for (const auto& tileset : mapData.tilesets) {
 		delete tileset;
 	}
@@ -148,12 +138,19 @@ bool Map::CleanUp()
 	}
 	mapData.layers.clear();
 
+	for (auto c : collisions) {
+		Engine::GetInstance().physics->DeleteBody((c)->body);
+		delete c;
+	}
+	collisions.clear();
+
 	return true;
 }
 
 // Load new map
 bool Map::Load(std::string path, std::string fileName)
 {
+	mapData.layers.clear();
 	bool ret = false;
 	posEnemy.clear();
 	posWaxys.clear();
@@ -247,7 +244,7 @@ bool Map::Load(std::string path, std::string fileName)
 							Vector2D mapCoord = MapToWorld(i, j);
 							PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + mapData.tileWidth / 2, mapCoord.getY() + mapData.tileHeight / 2, mapData.tileWidth, mapData.tileHeight, STATIC);
 							c1->ctype = ColliderType::PLATFORM;
-							Engine::GetInstance().physics->listToDelete.push_back(c1);
+							collisions.push_back(c1);
 						}
 						else if (gid == 2) { // Soldier
 							Vector2D mapCoord = { (float)i * 32, (float)j * 32 };

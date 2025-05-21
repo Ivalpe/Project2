@@ -89,7 +89,7 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-	
+
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
@@ -211,14 +211,14 @@ bool Player::Update(float dt)
 			playerState = FALL;
 		}
 
-		
+
 
 
 		//To glide
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
 		{
 			playerState = GLIDE;
-			
+
 			++glid_time;
 			if (fallForce >= 1.0 && glid_time > glid_reduce) {
 				fallForce -= 0.1;
@@ -227,7 +227,7 @@ bool Player::Update(float dt)
 			velocity.y = pbody->body->GetLinearVelocity().y / fallForce;
 		}
 
-	
+
 
 
 		if (playerState == CLIMB) {
@@ -261,7 +261,7 @@ bool Player::Update(float dt)
 
 
 				climbOffset = 40;
-				
+
 
 				// Press space to jump off 
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
@@ -315,8 +315,8 @@ bool Player::Update(float dt)
 				break;
 			}
 		}
-		
-		
+
+
 		if (currentAnimation == &glide) {
 			glide_stop.Reset();
 			currentAnimation = &glide_stop;
@@ -369,9 +369,9 @@ bool Player::Update(float dt)
 		}
 		break;
 	case HIDE:
-		
+
 		if (currentAnimation != &hide) {
-			if(currentAnimation != &crawl) hide.Reset();
+			if (currentAnimation != &crawl) hide.Reset();
 			currentAnimation = &hide;
 		}
 		break;
@@ -379,10 +379,10 @@ bool Player::Update(float dt)
 		if (velocity.x != 0) currentAnimation = &crawl;
 		else currentAnimation = &hide;
 		unhide.Reset();
-		
+
 		break;
 	case UNHIDE:
-		
+
 		if (currentAnimation != &unhide) {
 			unhide.Reset();
 			currentAnimation = &unhide;
@@ -414,11 +414,11 @@ bool Player::Update(float dt)
 			currentAnimation = &glide_start;
 			break;
 		}
-		
+
 		if (currentAnimation == &glide_start && glide_start.HasFinished()) {
 			glide_start.Reset();
 			currentAnimation = &glide;
-			
+
 		}
 		break;
 	}
@@ -462,6 +462,7 @@ void Player::TakeDamage() {
 		}
 	}
 
+	pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -250.0f), true);
 	isInAttackSensor = false;
 	takenDMG = true;
 }
@@ -469,6 +470,10 @@ void Player::TakeDamage() {
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
+	case ColliderType::BOSS:
+		TakeDamage();
+		break;
+
 	case ColliderType::PLATFORM:
 		LOG("Collision PLATFORM");
 		isJumping = false;
@@ -557,7 +562,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			useTemporaryCheckpoint = true;
 			temporaryCheckpoint = GetPosition();
 			int y = temporaryCheckpoint.getY();
-			temporaryCheckpoint.setY(y - (5*32));
+			temporaryCheckpoint.setY(y - (5 * 32));
 		}
 		break;
 	case ColliderType::UNKNOWN:
