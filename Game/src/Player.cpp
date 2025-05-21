@@ -577,18 +577,18 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 
 	case ColliderType::CHANGE_LEVEL:
-		//change_level = false;
-		//Engine::GetInstance().scene.get()->reset_level = true;
+		change_level = false;
+		Engine::GetInstance().scene.get()->reset_level = true;
 
-		//if (cleanup_pbody) {
+		if (cleanup_pbody) {
 
-		//	Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		//	pbody = nullptr;  // Eliminar el cuerpo físico del jugador
+			Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+			pbody = nullptr;  // Eliminar el cuerpo físico del jugador
 
-		//	Start();
+			Start();
 
-		//	cleanup_pbody = false;
-		//}
+			cleanup_pbody = false;
+		}
 	case ColliderType::ENEMY:
 		if (setTempCheckTrue) {
 			useTemporaryCheckpoint = true;

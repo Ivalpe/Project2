@@ -302,8 +302,9 @@ bool Scene::Update(float dt)
 
 	//Reset levels
 	if (reset_level) {
-		Change_level(level);
-		if (level == 1) player->SetPosition(Vector2D{ 40,70 });
+		//Change_level(level);
+		if (level == 0) player->SetPosition(Vector2D{ 40,70 });
+
 		reset_level = false;
 	}
 
@@ -571,8 +572,8 @@ void Scene::GameOver_State()
 		SDL_Rect Continue = { 865+20, 760+10-5, textWidthContinue + 10, textHeightContinue + 10 };
 		SDL_Rect Exit = { 940-10, 860-15-5, textWidthExit + 10, textHeightExit + 10 };
 
-		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
-		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
+		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "", Continue, this));
+		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "", Exit, this));
 	}
 }
 
@@ -646,7 +647,7 @@ void Scene::MenuPause()
 	int textWidthSettings, textHeightSettings;
 	int textWidthExit, textHeightExit;
 
-	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
+	TTF_SizeText(Engine::GetInstance().render.get()->font, "Continues ", &textWidthContinue, &textHeightContinue);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Settings", &textWidthSettings, &textHeightSettings);
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 

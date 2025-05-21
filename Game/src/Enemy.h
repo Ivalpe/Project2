@@ -101,19 +101,18 @@ public:
 	pugi::xml_node parameters;
 	pugi::xml_node instanceParameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, walk, attack;
+	Animation idle;
+	Animation attack;
 
 	PhysBody* pbody;
 	PhysBody* sensor;
 	PhysBody* attackSensor;
-	PhysBody* weapon;
 
 	Pathfinding* pathfinding;
 	bool followPlayer = false;
 	bool attackPlayer = false;
 	bool pauseEnemyIdle = false;
 	int pauseCounter = 0;
-	float weaponOffset = 100;
 
 
 	Player* player;
@@ -132,10 +131,7 @@ public:
 	int attackArea;
 
 	Timer deathTimer;
-	Timer attackTimer;
-	float attackTime;
 	float deathTime;
 	bool dead;
-
 	float velocity;
 };
