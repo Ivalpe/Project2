@@ -61,6 +61,9 @@ public:
 
 	int GetWax();
 
+	bool ControllerBtReleased(bool prevInput, bool currentInput);
+	bool ControllerBtPressedOnce(bool prevInput, bool currentInput);
+
 	void StopMovement();
 	void ResumeMovement();
 
@@ -93,14 +96,17 @@ public:
 	bool takenDMG = false;
 	bool pickedItem = true;
 
+	
+	bool prevZL, prevZR, prevB;
+
 	bool exitingRope = false;
 
-	//bool inputWalkLeft = Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f;
-
+	
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, onrope, death;
 	
+
 
 	bool change_level = false;
 	bool cleanup_pbody = false;
@@ -118,6 +124,9 @@ public:
 
 	float climbableX;
 
+
 	bool isOnPlatform=false;
 	Platform* platform = nullptr;
+
+	
 };

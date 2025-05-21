@@ -275,8 +275,6 @@ void Input::UpdateGamepadsInput()
 			//W --> r_y (right stick moving up)
 			//S (climb) --> r_y (right stick moving down) 
 			//Spacebar (jump) --> B 
-		 
-			//IF WE FIND A WAY TO DETECT A BUTTON/TRIGGER RELEASE (KEY_UP equivalent)
 			//S (hide) --> zl/l2 (left trigger)
 			//Q (glide) --> zr/r2 (right trigger)
  
@@ -328,9 +326,3 @@ const char* Input::GetControllerName(int id) const
 	return "unplugged";
 }
 
-//bool Input::ControllerButtonRelease(SDL_GameControllerButton button, bool inputButton) {
-//	bool currentButtonState = SDL_GameControllerGetButton(pads[0].controller, button) == inputButton;
-//	if (previousButtonState && !currentButtonState) return true;
-//	else return false;
-//	previousButtonState = currentButtonState;
-//}

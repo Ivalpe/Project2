@@ -581,6 +581,7 @@ Vector2D Scene::GetPlayerPosition()
 
 void Scene::MenuInitialScreen()
 {
+
 	if (InitialScreenMenu) {
 		if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
 
@@ -613,6 +614,21 @@ void Scene::MenuInitialScreen()
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 9, "Continue", ConitnuesButton, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "Settings", Settings, this));
 		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "Exit", Exit, this));
+
+		GamePad& pad = Engine::GetInstance().input.get()->pads[0];
+
+		if (pad.enabled) {
+			guiBt0->state = GuiControlState::FOCUSED;
+			if (pad.down && guiBt0->state == GuiControlState::FOCUSED) {
+				guiBt0->state = GuiControlState::NORMAL;
+				guiBt1->state = GuiControlState::FOCUSED;
+				if (pad.a) {
+					guiBt1->state = GuiControlState::SELECTED;
+					OnGuiMouseClickEvent(guiBt1);
+				}
+					
+			}
+		}
 
 		
 	
