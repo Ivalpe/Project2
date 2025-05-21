@@ -9,8 +9,7 @@
 #include "Pathfinding.h"
 
 
-Soldier::Soldier()
-{
+Soldier::Soldier(){
 
 }
 
@@ -30,7 +29,13 @@ bool Soldier::Start() {
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	idle.pingpong = true;
+	walk.LoadAnimations(parameters.child("animations").child("walk"));
+	attack.LoadAnimations(parameters.child("animations").child("attack"));
+
 	currentAnimation = &idle;
+
+
 
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texW / 6, (int)position.getY() + texH/2, texW/2, texH, bodyType::DYNAMIC);
@@ -60,6 +65,7 @@ bool Soldier::Start() {
 	speed = parameters.child("properties").attribute("speed").as_float();
 	chaseArea = parameters.child("properties").attribute("chaseArea").as_float();
 	attackArea = parameters.child("properties").attribute("attackArea").as_float();
+	attackTime = parameters.child("properties").attribute("attackTime").as_float();
 	
 	dir = LEFT;
 
@@ -67,6 +73,8 @@ bool Soldier::Start() {
 }
 
 bool Soldier::Update(float dt) {
+
+
     if (dead) return true;
 
     dist = pbody->GetPhysBodyWorldPosition().distanceEuclidean(player->pbody->GetPhysBodyWorldPosition());
@@ -79,6 +87,7 @@ bool Soldier::Update(float dt) {
     }
     else if (dist <= attackArea) {
         state = ATTACK;
+		
     } 
 
 
@@ -114,6 +123,17 @@ bool Soldier::Update(float dt) {
     }
     case ATTACK: {
         pbody->body->SetLinearVelocity({ 0, 0 }); // Detener al enemigo
+
+		if (currentAnimation != &attack) {
+			attack.Reset();
+			currentAnimation = &attack;
+			attackTimer.Start();
+		} else if (attackTimer.ReadMSec() >= attackTime) {
+			LOG("soldier attacked");
+			attackTimer.Start();
+		}
+		
+		
         LOG("Estado ATTACK. Enemigo detenido.");
         break;
     }
@@ -121,12 +141,21 @@ bool Soldier::Update(float dt) {
         break;
     }
 
+	
+	
+
+
 	//DIRECTION
 	if (pbody->body->GetLinearVelocity().x > 0.2f) {
 		dir = RIGHT;
+		currentAnimation = &walk;
 	}
 	else if (pbody->body->GetLinearVelocity().x < -0.2f) {
 		dir = LEFT;
+		currentAnimation = &walk;
+	}
+	else {
+		currentAnimation = &idle;
 	}
 
     if (Engine::GetInstance().physics.get()->GetDebug()) {
@@ -148,6 +177,7 @@ bool Soldier::Update(float dt) {
     else if (dir == LEFT) {
         Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
     }
+
 
     return true;
 }
@@ -369,6 +399,7 @@ void Soldier::MoveToPoint() {
 		
 
 		pbody->body->SetLinearVelocity({ direction.x * speed, 0 }); 
+		
 
 		if (CheckIfTwoPointsNear({ nextTileWorld.getX(), 0 },
 			{ (float)METERS_TO_PIXELS(pbody->body->GetPosition().x), 0 }, 3)) {

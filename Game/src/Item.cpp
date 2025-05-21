@@ -46,7 +46,7 @@ bool Item::Start() {
 	currentAnimation_feather = &idle_feather;
 
 
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2-5, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2-5, texH / 2, bodyType::KINEMATIC);
 	pbody->listener = this;
 
 	pbody->ctype = ColliderType::ITEM;
@@ -62,11 +62,12 @@ bool Item::Update(float dt)
 {
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
-	if (isWax && isPicked == 0) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	if (isWax && !isPicked) {
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		
 		currentAnimation->Update();
 	}
-	if (isFeather && isPicked == 0) {
+	if (isFeather && !isPicked) {
 		Engine::GetInstance().render.get()->DrawTexture(Feather_texture, (int)position.getX(), (int)position.getY(), &currentAnimation_feather->GetCurrentFrame());
 		currentAnimation_feather->Update();
 	}

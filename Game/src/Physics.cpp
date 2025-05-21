@@ -281,6 +281,7 @@ bool Physics::PostUpdate()
 						METERS_TO_PIXELS(pos.y),
 						METERS_TO_PIXELS(shape->m_radius) * Engine::GetInstance().window.get()->GetScale(),
 						255, 255, 255);
+
 				}
 				break;
 

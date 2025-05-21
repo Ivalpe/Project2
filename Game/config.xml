@@ -13,9 +13,9 @@
 	<window>
 		<resolution width="1920" height="1080" scale="1"/>
 		<fullscreen value="false"/>
-		<borderless value="true"/>
-		<resizable value="false"/>
-		<fullscreen_window value="true"/>
+		<borderless value="false"/>
+		<resizable value="true"/>
+		<fullscreen_window value="false"/>
 	</window>
 
 	<scene>
@@ -44,8 +44,8 @@
 			<Menu_Pause_back path="Assets/Textures/UI/Pause_menu_back.png"/>
 			<Menu_Settings path="Assets/Textures/UI/Setting_front.png"/>
 			<Menu_Settings_back path="Assets/Textures/UI/Setting_base.png"/>
-			<GameOver path="Assets/Textures/UI/Game_Over_front.png"/>
-			<GameOver_back path="Assets/Textures/UI/Game_Over_back.png"/>
+			<GameOver path="Assets/Textures/UI/Game_Over_def.png"/>
+			<GameOver_back path="Assets/Textures/UI/GameOver.png"/>
 			<Feather path="Assets/Textures/UI/Feather.png"/>
 			<Candle w ="64" h="64" path="Assets/Textures/UI/candle ui.png"/>
 			<WaxUI  w="2688" h="896" path="Assets/Textures/UI/Waxy_Sheet.png">
@@ -304,10 +304,19 @@
 				</animations>
 			</player>
 			<items>
-				<item name="wax" x="200" y="672" w="65" h="55" isWax="true" isPicked="false" texture="Assets/Textures/Tileset_Cave.png" gravity="true">
+				<item name="wax" x="200" y="672" w="65" h="65" isWax="true" isPicked="false" texture="Assets/Textures/Waxy/floating waxy sheet.png" gravity="false">
 					<animations>
-						<idle loop="true" speed ="0.5">
-							<frame x="221" y="427" w="65" h="55"/>
+						<idle loop="true" speed ="0.2">
+							<frame x="0" y="0" w="65" h="65"/>
+              <frame x="65" y="0" w="65" h="65"/>
+              <frame x="130" y="0" w="65" h="65"/>
+              <frame x="195" y="0" w="65" h="65"/>
+              <frame x="260" y="0" w="65" h="65"/>
+              <frame x="325" y="0" w="65" h="65"/>
+              <frame x="390" y="0" w="65" h="65"/>
+              <frame x="455" y="0" w="65" h="65"/>
+              <frame x="520" y="0" w="65" h="65"/>
+              <frame x="585" y="0" w="65" h="65"/>
 						</idle>
 					</animations>
 				</item>
@@ -355,14 +364,44 @@
 				</minotaur>
 			</columns>
 			<enemies>
-				<soldier x="16560" y="1527" w="256" h="256" texture="Assets/Textures/enemy/placeholder.png" gravity="true">
-					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
+				<soldier x="600" y="600" w="300" h="300" texture="Assets/Textures/enemy/Soldier Spritesheet.png" gravity="true">
+					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="2.0f" lives ="1"/>
 					<animations>
-						<idle loop="true" speed ="0.5f">
-							<frame x="0" y="0" w="256" h="256"/>
+						<idle loop="true" speed ="0.3f">
+							<frame x="0" y="0" w="300" h="300"/>
+              <frame x="300" y="0" w="300" h="300"/>
+              <frame x="600" y="0" w="300" h="300"/>
+              <frame x="900" y="0" w="300" h="300"/>
+              <frame x="1200" y="0" w="300" h="300"/>
+              <frame x="1500" y="0" w="300" h="300"/>
+              <frame x="1800" y="0" w="300" h="300"/>
+              <frame x="2100" y="0" w="300" h="300"/>
+              <frame x="2400" y="0" w="300" h="300"/>
+              <frame x="2700" y="0" w="300" h="300"/>
 						</idle>
-						<attack loop="false" speed="1.0f">
-							<frame x="0" y="0" w="256" h="256"/>
+            <walk loop ="true" speed ="0.1f">
+              <frame x="0" y="300" w="300" h="300"/>
+              <frame x="300" y="300" w="300" h="300"/>
+              <frame x="600" y="300" w="300" h="300"/>
+              <frame x="900" y="300" w="300" h="300"/>
+              <frame x="1200" y="300" w="300" h="300"/>
+              <frame x="1500" y="300" w="300" h="300"/>
+              <frame x="1800" y="300" w="300" h="300"/>
+              <frame x="2100" y="300" w="300" h="300"/>
+              <frame x="2400" y="300" w="300" h="300"/>
+              <frame x="2700" y="300" w="300" h="300"/>
+            </walk>
+						<attack loop="false" speed="0.3f">
+              <frame x="0" y="600" w="300" h="300"/>
+              <frame x="300" y="600" w="300" h="300"/>
+              <frame x="600" y="600" w="300" h="300"/>
+              <frame x="900" y="600" w="300" h="300"/>
+              <frame x="1200" y="600" w="300" h="300"/>
+              <frame x="1500" y="600" w="300" h="300"/>
+              <frame x="1800" y="600" w="300" h="300"/>
+              <frame x="2100" y="600" w="300" h="300"/>
+              <frame x="2400" y="600" w="300" h="300"/>
+              <frame x="2700" y="600" w="300" h="300"/>
 						</attack>
 					</animations>
 				</soldier>

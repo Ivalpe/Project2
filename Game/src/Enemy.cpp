@@ -35,9 +35,11 @@ bool Enemy::Start() {
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 	speed = parameters.child("properties").attribute("speed").as_int();
+	attackTime = parameters.child("properties").attribute("attackTime").as_float();
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	attack.LoadAnimations(parameters.child("animations").child("attack"));
 	currentAnimation = &idle;
 
@@ -53,6 +55,11 @@ bool Enemy::Start() {
 	attackSensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 1.5, texH, bodyType::KINEMATIC);
 	attackSensor->ctype = ColliderType::ATTACKSENSOR;
 	attackSensor->listener = this;
+
+	weapon = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY() + texH/2 , 150, 250, bodyType::KINEMATIC);
+	weapon->ctype = ColliderType::DAMAGE;
+	weapon->listener = this;
+	/*weapon->body->SetEnabled(false);*/
 
 	////Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
@@ -90,9 +97,13 @@ bool Enemy::Update(float dt)
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
+
 		if (!attackPlayer and currentAnimation != &idle) {
 			currentAnimation = &idle;
 		}
+
+	velocity = 0;	
+
 
 		if (dir == RIGHT) {
 			Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
@@ -101,22 +112,46 @@ bool Enemy::Update(float dt)
 			Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		}
 		currentAnimation->Update();
+	
+	
+		/*SDL_Rect weaponRect = { (int)weapon->body->GetPosition().x, (int)weapon->body->GetPosition().y , weapon->width, weapon->height };
+		Engine::GetInstance().render.get()->DrawRectangle(weaponRect, 255, 0, 255, 255, false);*/
 
-		b2Transform enemyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(enemyPos.p.x) - texH / 2);
-		position.setY(METERS_TO_PIXELS(enemyPos.p.y) - texH / 2);
-		sensor->body->SetTransform({ enemyPos.p.x, enemyPos.p.y }, 0);
-		attackSensor->body->SetTransform({ enemyPos.p.x, enemyPos.p.y }, 0);
+	
 
-		if (followPlayer) {
-			MovementEnemy(dt);
-		}
-		else if (attackPlayer) {
-			AttackEnemy(dt);
-		}
-		else {
-			IdleEnemy(dt);
-		}
+	if (followPlayer) {
+		MovementEnemy(dt);
+		
+	} else if (attackPlayer) {
+		AttackEnemy(dt);
+	}
+	else {
+		IdleEnemy(dt);
+	}
+
+	/*if (attackPlayer) weapon->body->SetEnabled(true);
+	else weapon->body->SetEnabled(false);*/
+	
+	currentAnimation->Update();
+
+	pbody->body->SetLinearVelocity({ velocity,0 });
+	weapon->body->SetLinearVelocity({ velocity,0 });
+	
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+
+	if (dir == RIGHT) {
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		weaponOffset = 200;
+	}
+	else {
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		weaponOffset = -50;
+	}
+
+	weapon->body->SetTransform({ enemyPos.x + weaponOffset, enemyPos.y }, 0);
 
 		pbody->body->SetLinearVelocity({ velocity,0 });
 
@@ -211,6 +246,8 @@ void Enemy::IdleEnemy(float dt) {
 				dir = RIGHT;
 			}
 		}
+
+		currentAnimation = &idle;
 	}
 
 }
@@ -246,14 +283,33 @@ void Enemy::MovementEnemy(float dt) {
 			velocity = speed;
 			dir = RIGHT;
 		}
+
+		currentAnimation = &walk;
 	}
 
 }
 
 void Enemy::AttackEnemy(float dt) {
-	if (currentAnimation->HasFinished()) {
-		attackPlayer = false;
+	
+	if (currentAnimation != &attack) {
+		attack.Reset();
+		currentAnimation = &attack;
+		attackTimer.Start();
+		weapon->body->SetEnabled(true);
 	}
+	else {
+		if (attackTimer.ReadSec() >= attackTime / 2) {
+			weapon->body->SetEnabled(false);
+		}
+
+		if (attack.HasFinished() && attackTimer.ReadSec() >= attackTime) {
+			currentAnimation = &idle;
+
+		}
+	}
+	
+	
+	
 }
 
 bool Enemy::CleanUp()
@@ -352,7 +408,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		}
 		else if (physA->ctype == ColliderType::ATTACKSENSOR) {
 			attackPlayer = true;
-			currentAnimation = &attack;
+			
 			followPlayer = false;
 		}
 		break;
@@ -384,5 +440,16 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		default:
 			break;
 		}
+
+		if (physA->ctype == ColliderType::ATTACKSENSOR) {
+			attackPlayer = false;
+		}
+		//IdleReset();
+		break;
+	case ColliderType::UNKNOWN:
+		break;
+	default:
+		break;
+
 	}
 }
