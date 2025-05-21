@@ -452,6 +452,18 @@ void Player::TeleportToTemporaryCheckpoint() {
 	takenDMG = false;
 }
 
+void Player::TakeDamage() {
+	if (!takenDMG) {
+		Engine::GetInstance().entityManager.get()->candleNum--;
+		if (Engine::GetInstance().entityManager.get()->candleNum <= 0) {
+			//Engine::GetInstance().scene.get()->PreUpdate();
+			Engine::GetInstance().scene.get()->reset_level = true;
+		}
+	}
+
+	isInAttackSensor = false;
+	takenDMG = true;
+}
 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
@@ -513,6 +525,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 		takenDMG = true;
 
+		break;
+	case ColliderType::ATTACKSENSOR:
+		isInAttackSensor = true;
 		break;
 		//Engine::GetInstance().scene.get()->drainedWaxy = false;
 	case ColliderType::WALL:
@@ -598,6 +613,10 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		/*Engine::GetInstance().scene.get()->reset_level = true;*/
 		takenDMG = false;
 
+		break;
+	case ColliderType::ATTACKSENSOR:
+		isInAttackSensor = false;
+		takenDMG = false;
 		break;
 	case ColliderType::M_PLATFORM:
 		LOG("End Collision M_PLATFORM");

@@ -108,7 +108,6 @@ public:
 	PhysBody* pbody;
 	PhysBody* sensor;
 	PhysBody* attackSensor;
-	PhysBody* weapon;
 
 	Pathfinding* pathfinding;
 	bool followPlayer = false;
