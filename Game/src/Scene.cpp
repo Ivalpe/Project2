@@ -110,6 +110,7 @@ void Scene::CreateEnemies(int level)
 		en->SetParameters(configParameters.child("entities").child("enemies").child("soldier"));
 		en->Start();
 		en->SetPosition({ enemy.getX(), enemy.getY() });
+		en->ResetTarget({ enemy.getX(), enemy.getY() });
 		enemyList.push_back(en);
 	}
 
@@ -414,11 +415,11 @@ void Scene::show_UI() {
 			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 50, nullptr, false);
 		}
 
-		//Wax texture
-		Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
+		//feather
+		/*Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
 		char FeatherText[64];
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
-		Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);
+		Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);*/
 	}
 }
 

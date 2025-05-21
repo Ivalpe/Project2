@@ -63,6 +63,8 @@ public:
 
 	void SetPosition(Vector2D pos);
 
+	void ResetTarget(Vector2D pos);
+
 	Vector2D GetPosition();
 
 	void ResetPath();

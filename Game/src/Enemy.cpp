@@ -74,7 +74,7 @@ bool Enemy::Start() {
 	// Initialize idle position
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
-	targetTile.setY(pos.getY());
+	targetTile.setY(tilePos.getY());
 	targetTile.setX(tilePos.getX() - 12);
 
 	return true;
@@ -136,7 +136,7 @@ bool Enemy::Update(float dt)
 		weaponOffset = -50;
 	}
 
-	weapon->body->SetTransform({ enemyPos.x + weaponOffset, enemyPos.y }, 0);
+	//weapon->body->SetTransform({ enemyPos.x + weaponOffset, enemyPos.y }, 0);
 	
 
 
@@ -229,9 +229,10 @@ void Enemy::IdleEnemy(float dt) {
 				velocity = speed;
 				dir = RIGHT;
 			}
+
+			currentAnimation = &walk;
 		}
 
-		currentAnimation = &idle;
 	}
 
 }
@@ -274,8 +275,13 @@ void Enemy::MovementEnemy(float dt) {
 }
 
 void Enemy::AttackEnemy(float dt) {
+
+	if (attack.HasFinished() && attackTimer.ReadSec() >= attackTime) {
+		currentAnimation = &idle;
+		attackPlayer = false;
+	}
 	
-	if (currentAnimation != &attack) {
+	/*if (currentAnimation != &attack) {
 		attack.Reset();
 		currentAnimation = &attack;
 		attackTimer.Start();
@@ -288,9 +294,9 @@ void Enemy::AttackEnemy(float dt) {
 
 		if (attack.HasFinished() && attackTimer.ReadSec() >= attackTime) {
 			currentAnimation = &idle;
-
+			attackPlayer = false;
 		}
-	}
+	}*/
 	
 	
 	
@@ -318,6 +324,12 @@ void Enemy::SetPlayer(Player* _player)
 void Enemy::SetPosition(Vector2D pos) {
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
 	pbody->body->SetTransform(bodyPos, 0);
+}
+
+void Enemy::ResetTarget(Vector2D pos) {
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	targetTile.setY(tilePos.getY());
+	targetTile.setX(tilePos.getX() - 12);
 }
 
 Vector2D Enemy::GetPosition() {
@@ -392,9 +404,12 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 			followPlayer = true;
 		}
 		else if (physA->ctype == ColliderType::ATTACKSENSOR) {
-			attackPlayer = true;
-			
-			followPlayer = false;
+
+			if (!attackPlayer) {
+				attackPlayer = true;
+				currentAnimation = &attack;
+				followPlayer = false;
+			}
 		}
 		break;
 	case ColliderType::UNKNOWN:
