@@ -48,6 +48,8 @@ public:
 
 	void TeleportToTemporaryCheckpoint();
 
+	void TakeDamage();
+
 	 
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 
@@ -93,6 +95,7 @@ public:
 	bool onGround = false;
 
 	bool takenDMG = false;
+	bool isInAttackSensor = false;
 	bool pickedItem = true;
 
 	bool exitingRope = false;

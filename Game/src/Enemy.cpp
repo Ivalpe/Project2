@@ -55,10 +55,10 @@ bool Enemy::Start() {
 	attackSensor->ctype = ColliderType::ATTACKSENSOR;
 	attackSensor->listener = this;
 
-	weapon = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY() + texH/2 , 150, 250, bodyType::KINEMATIC);
+	/*weapon = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH/2 , 150, 250, bodyType::KINEMATIC);
 	weapon->ctype = ColliderType::DAMAGE;
 	weapon->listener = this;
-	/*weapon->body->SetEnabled(false);*/
+	weapon->body->SetEnabled(false);*/
 
 	////Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
@@ -120,7 +120,7 @@ bool Enemy::Update(float dt)
 	currentAnimation->Update();
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
-	weapon->body->SetLinearVelocity({ velocity,0 });
+	//weapon->body->SetLinearVelocity({ velocity,0 });
 	
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
@@ -278,8 +278,17 @@ void Enemy::AttackEnemy(float dt) {
 
 	if (attack.HasFinished() && attackTimer.ReadSec() >= attackTime) {
 		currentAnimation = &idle;
+		attack.Reset();
 		attackPlayer = false;
 	}
+	
+	int frame = static_cast<int>(attack.currentFrame);
+	if (frame == 6 or frame == 5) {
+		if (Engine::GetInstance().scene.get()->GetPlayer()->isInAttackSensor) {
+			Engine::GetInstance().scene.get()->GetPlayer()->TakeDamage();
+		}
+	}
+	
 	
 	/*if (currentAnimation != &attack) {
 		attack.Reset();
