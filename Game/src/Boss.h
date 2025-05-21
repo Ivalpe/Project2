@@ -39,6 +39,8 @@ public:
 
 	virtual bool Update(float dt);
 
+	void FixYAxis(float coord);
+
 	bool CleanUp();
 
 	void SetParameters(pugi::xml_node _parameters) {

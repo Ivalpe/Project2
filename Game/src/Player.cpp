@@ -28,7 +28,8 @@ bool Player::Awake() {
 
 bool Player::Start() {
 
-
+	useTemporaryCheckpoint = false;
+	setTempCheckTrue = false;
 
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
@@ -510,8 +511,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		cleanup_pbody = true;
 		break;
 	case ColliderType::ENEMY:
-		useTemporaryCheckpoint = false;
-		setTempCheckTrue = true;
+		if (useTemporaryCheckpoint) {
+			setTempCheckTrue = true;
+			useTemporaryCheckpoint = false;
+		}
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
