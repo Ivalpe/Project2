@@ -24,7 +24,7 @@ bool Boss::Awake() {
 }
 
 bool Boss::Start() {
-	contColumn = 1;
+	contColumn = 4;
 	followPlayer = false;
 	velocity = 0;
 	state = IDLE;
@@ -39,6 +39,9 @@ bool Boss::Start() {
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	die.LoadAnimations(parameters.child("animations").child("die"));
+	charge.LoadAnimations(parameters.child("animations").child("charge"));
+	loop.LoadAnimations(parameters.child("animations").child("loop"));
+	stunned.LoadAnimations(parameters.child("animations").child("dizzy"));
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
@@ -87,6 +90,52 @@ bool Boss::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
+	// --- Animación y lógica de estado ---
+	switch (state)
+	{
+	case RUNNING:
+		// Si la animación actual no es charge, la asignamos y la reiniciamos
+		if (currentAnimation != &charge && currentAnimation != &loop) {
+			currentAnimation = &charge;
+			charge.Reset();
+		}
+		// Si está en charge y terminó, pasamos a loop
+		else if (currentAnimation == &charge && charge.HasFinished()) {
+			currentAnimation = &loop;
+			loop.Reset();
+		}
+		velocity = dir == LEFT ? -15.0f : 15.0f;
+		break;
+
+	case WAITING:
+		timer++;
+		if (timer == 180) {
+			timer = 0;
+			state = IDLE;
+		}
+		currentAnimation = &idle;
+		break;
+
+	case DEAD:
+		currentAnimation = &die;
+		break;
+
+	case IDLE:
+		currentAnimation = &idle;
+		break;
+	case STUNNED:
+		currentAnimation = &stunned;
+		if (stunned.HasFinished()) {
+			state = WAITING;
+			currentAnimation = &idle;
+			stunned.Reset();
+		}
+		break;
+	default:
+		break;
+	}
+
+	// Dibujo y actualización de animación
 	if (dir == RIGHT) {
 		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	}
@@ -95,6 +144,7 @@ bool Boss::Update(float dt)
 	}
 	currentAnimation->Update();
 
+	// Resto de la lógica de física y sensores
 	b2Vec2 enemyPos = pbody->body->GetPosition();
 	pbody->body->SetTransform(b2Vec2(enemyPos.x, fixedY), pbody->body->GetAngle());
 	sensorLeft->body->SetTransform({ enemyPos.x - PIXEL_TO_METERS(32 * 27), enemyPos.y }, 0);
@@ -103,29 +153,16 @@ bool Boss::Update(float dt)
 
 	if (contColumn <= 0) {
 		state = DEAD;
-		currentAnimation = &die;
-	}
-	else {
-		if (state == RUNNING) {
-			velocity = dir == LEFT ? -15.0f : 15.0f;
-		}
-		else if (state == WAITING) {
-			timer++;
-			if (timer == 180) {
-				timer = 0;
-				state = IDLE;
-			}
-		}
+		pbody->ctype = ColliderType::ENEMY_DEATH;
 	}
 
 	if (delay > 0) delay--;
 
 	pbody->body->SetLinearVelocity({ velocity,0 });
 
-
-
 	return true;
 }
+
 
 bool Boss::CleanUp()
 {
@@ -214,12 +251,12 @@ void Boss::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::WALLBOSS:
 		if (physA->ctype == ColliderType::ENEMY) {
-			state = WAITING;
+			state = STUNNED;
 		}
 		break;
 	case ColliderType::WALLBOSSDES:
 		if (physA->ctype == ColliderType::ENEMY) {
-			state = WAITING;
+			state = STUNNED;
 			contColumn--;
 		}
 		break;

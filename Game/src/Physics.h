@@ -29,6 +29,7 @@ enum class ColliderType {
 	PLATFORM,
 	M_PLATFORM,
 	ENEMY,
+	ENEMY_DEATH,
 	CLIMBABLE,
 	CHANGE_LEVEL,
 	DAMAGE,

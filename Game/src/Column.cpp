@@ -23,7 +23,7 @@ bool Column::Awake() {
 
 bool Column::Start() {
 
-	contColumn = 1;
+	contColumn = 4;
 	openColumn = false;
 
 	//initilize textures

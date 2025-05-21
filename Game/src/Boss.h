@@ -95,6 +95,9 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 	Animation die;
+	Animation charge;
+	Animation loop;
+	Animation stunned;
 	PhysBody* pbody;
 	PhysBody* sensorLeft;
 	PhysBody* sensorLimitLeft;
