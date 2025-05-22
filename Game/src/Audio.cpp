@@ -183,7 +183,7 @@ int Audio::LoadFx(const char* path)
 }
 
 // Play WAV with a specific channel
-bool Audio::PlayFx(int id, int repeat)
+bool Audio::PlayFx(int id, int repeat, int channel)
 {
     if (!active)
     {
@@ -202,14 +202,15 @@ bool Audio::PlayFx(int id, int repeat)
 
     Mix_VolumeChunk(*fxIt, MIX_MAX_VOLUME); // Ajustar volumen al máximo
 
-    int channel = Mix_PlayChannel(-1, *fxIt, repeat);
-    if (channel == -1)
+    // Reproducir en el canal especificado
+    int assignedChannel = Mix_PlayChannel(channel, *fxIt, repeat);
+    if (assignedChannel == -1)
     {
-        LOG("Error playing FX id %d: %s", id, Mix_GetError());
+        LOG("Error playing FX id %d on channel %d: %s", id, channel, Mix_GetError());
         return false;
     }
 
-    LOG("Playing FX id %d on channel %d", id, channel);
+    LOG("Playing FX id %d on channel %d", id, assignedChannel);
     return true;
 }
 
@@ -252,7 +253,7 @@ void Audio::StopFx()
     }
 }
 
-void Audio::StoplongFx(int id)
+void Audio::StopFxByChannel(int channel)
 {
     if (!active)
     {
@@ -260,21 +261,12 @@ void Audio::StoplongFx(int id)
         return;
     }
 
-    if (id <= 0 || id > fx.size())
+    if (channel < 0 || channel >= Mix_AllocateChannels(-1))
     {
-        LOG("Invalid FX id: %d", id);
+        LOG("Invalid channel: %d", channel);
         return;
     }
 
-    // Detener el canal asociado al efecto de sonido
-    int channel = Mix_GroupAvailable(id - 1);
-    if (channel != -1)
-    {
-        Mix_HaltChannel(channel);
-        LOG("Stopped FX id %d on channel %d", id, channel);
-    }
-    else
-    {
-        LOG("No active channel found for FX id %d", id);
-    }
+    Mix_HaltChannel(channel); // Detener todos los audios en el canal especificado
+    LOG("Stopped all FX on channel %d", channel);
 }

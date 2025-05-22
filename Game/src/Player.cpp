@@ -99,7 +99,7 @@ bool Player::Update(float dt)
 	{
 		lastState = playerState;
 		playingsound = false;
-		Engine::GetInstance().audio.get()->StopFx();
+		Engine::GetInstance().audio.get()->StopFxByChannel(2);
 	}
 
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
@@ -361,7 +361,7 @@ bool Player::Update(float dt)
 	case WALK:
 		if (!playingsound)
 		{
-			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId,0,2);
 			playingsound = true;
 		}
 		
@@ -450,7 +450,7 @@ bool Player::Update(float dt)
 	case CLIMB:
 		if (!playingsound)
 		{
-			Engine::GetInstance().audio.get()->PlayFx(climbFxId);
+			Engine::GetInstance().audio.get()->PlayFx(climbFxId,0,2);
 			playingsound = true;
 		}
 		break;

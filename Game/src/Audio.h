@@ -31,7 +31,7 @@ public:
 	int LoadFx(const char* path);
 
 	// Play a previously loaded WAV
-	bool PlayFx(int fx, int repeat = 0);
+	bool PlayFx(int fx, int repeat = 0, int channel=1);
 
 	void PauseFx();
 
@@ -39,7 +39,7 @@ public:
 
 	void StopFx();
 
-	void StoplongFx(int id);
+	void StopFxByChannel(int channel);
 
 	void StopMusic(float fadeTime = 0.0f);
 
