@@ -87,8 +87,9 @@ bool Player::Start() {
 	glideFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
 	hideFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/hide.wav");
 	climbFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/cuerda.wav");
-	deathFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/death.wav");
+	deathFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/hurt.wav");
 	walkFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/walk.wav");
+	landFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/land.wav");
 
 	return true;
 }
@@ -344,6 +345,7 @@ bool Player::Update(float dt)
 			land.Reset();
 			currentAnimation = &land;
 			exitingRope = false;
+			Engine::GetInstance().audio.get()->PlayFx(landFxId);
 		}
 		else if (currentAnimation == &land) {
 			if (land.HasFinished()) {
@@ -492,8 +494,8 @@ void Player::TakeDamage() {
 			//Engine::GetInstance().scene.get()->PreUpdate();
 			Engine::GetInstance().scene.get()->reset_level = true;
 		}
-		Engine::GetInstance().audio.get()->PlayFx(deathFxId);
 	}
+	Engine::GetInstance().audio.get()->PlayFx(deathFxId,0,1);
 
 	pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -250.0f), true);
 	isInAttackSensor = false;

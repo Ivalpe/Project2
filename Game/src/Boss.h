@@ -110,10 +110,18 @@ public:
 	float fixedY;
 	bool hasFixedY = false;
 
+	int idleFxId,
+		dieFxId,
+		gruntFxId,
+		impactFxId,
+		rockFxId;
 
 	Player* player;
 	eState state = IDLE;
+	eState lastState = IDLE;
 	Direction dir = LEFT;
+
+	bool playingsound = false;
 
 	//path: list of points the soldier moves across
 	std::vector<Vector2D> route;

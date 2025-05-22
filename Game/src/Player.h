@@ -84,7 +84,8 @@ public:
 		climbingFxId,
 		deathFxId,
 		waterFxId,
-		walkFxId;
+		walkFxId,
+		landFxId;
 	
 	PhysBody* pbody;
 	float jumpForce = 200.0f; // The force to apply when jumping
