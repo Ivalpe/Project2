@@ -82,13 +82,25 @@ bool Player::Start() {
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(GRAVITY);
 
 	//initialize audio effect
-	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	pickCoinFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/item.wav");
+	jumpFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/jump.wav");
+	glideFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/retro-video-game-coin-pickup-38299.ogg");
+	hideFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/hide.wav");
+	climbFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/cuerda.wav");
+	deathFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/death.wav");
+	walkFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/icaro/walk.wav");
 
 	return true;
 }
 
 bool Player::Update(float dt)
 {
+	if (playerState != lastState)
+	{
+		lastState = playerState;
+		playingsound = false;
+		Engine::GetInstance().audio.get()->StopFx();
+	}
 
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
@@ -143,7 +155,7 @@ bool Player::Update(float dt)
 		//Jump
 		if (isJumping && lastJump <= 25) lastJump++;
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN /*|| Engine::GetInstance().input.get()->pads[0].b*/) {
-
+			
 			if (!isJumping) {
 				// Apply an initial upward force
 				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
@@ -253,7 +265,6 @@ bool Player::Update(float dt)
 				else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
 					velocity.y = 0.3f * 16;
 					currentAnimation = &climb;
-
 				}
 				else {
 					currentAnimation = &onrope;
@@ -305,7 +316,6 @@ bool Player::Update(float dt)
 
 	}
 
-
 	switch (playerState) {
 	case IDLE:
 		if (currentAnimation == &turn2front) {
@@ -349,6 +359,12 @@ bool Player::Update(float dt)
 
 		break;
 	case WALK:
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId);
+			playingsound = true;
+		}
+		
 		currentAnimation = &walk;
 		hide.Reset();
 		break;
@@ -358,7 +374,11 @@ bool Player::Update(float dt)
 			if (!exitingRope) jump.Reset();
 			currentAnimation = &jump;
 		}
-
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(jumpFxId);
+			playingsound = true;
+		}
 		break;
 	case FALL:
 		if (currentAnimation != &fall && !onGround) {
@@ -373,6 +393,11 @@ bool Player::Update(float dt)
 		if (currentAnimation != &hide) {
 			if (currentAnimation != &crawl) hide.Reset();
 			currentAnimation = &hide;
+		}
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(hideFxId);
+			playingsound = true;
 		}
 		break;
 	case CRAWL:
@@ -401,6 +426,7 @@ bool Player::Update(float dt)
 			deathTimer.Start();
 		}
 
+
 		if (deathTimer.ReadSec() >= 2.0f) {
 			Engine::GetInstance().scene.get()->reset_level = true;
 			playerState = IDLE;
@@ -421,8 +447,14 @@ bool Player::Update(float dt)
 
 		}
 		break;
+	case CLIMB:
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(climbFxId);
+			playingsound = true;
+		}
+		break;
 	}
-
 	b2Transform pbodyPos = pbody->body->GetTransform();
 
 
@@ -460,6 +492,7 @@ void Player::TakeDamage() {
 			//Engine::GetInstance().scene.get()->PreUpdate();
 			Engine::GetInstance().scene.get()->reset_level = true;
 		}
+		Engine::GetInstance().audio.get()->PlayFx(deathFxId);
 	}
 
 	pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -250.0f), true);
@@ -499,6 +532,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		isJumping = false;
 		pbody->body->SetGravityScale(0);
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
+
+		
 
 		// auto-grab animation
 		if (currentAnimation != &turn2back) {
@@ -595,6 +630,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 			pbody->body->SetGravityScale(GRAVITY);
 
 		}
+
 
 		LOG("End Collision CLIMABLE");
 		break;

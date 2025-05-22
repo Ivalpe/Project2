@@ -251,3 +251,30 @@ void Audio::StopFx()
         LOG("Audio system not active, cannot stop FX");
     }
 }
+
+void Audio::StoplongFx(int id)
+{
+    if (!active)
+    {
+        LOG("Audio system not active. Cannot stop FX.");
+        return;
+    }
+
+    if (id <= 0 || id > fx.size())
+    {
+        LOG("Invalid FX id: %d", id);
+        return;
+    }
+
+    // Detener el canal asociado al efecto de sonido
+    int channel = Mix_GroupAvailable(id - 1);
+    if (channel != -1)
+    {
+        Mix_HaltChannel(channel);
+        LOG("Stopped FX id %d on channel %d", id, channel);
+    }
+    else
+    {
+        LOG("No active channel found for FX id %d", id);
+    }
+}

@@ -39,6 +39,8 @@ public:
 
 	void StopFx();
 
+	void StoplongFx(int id);
+
 	void StopMusic(float fadeTime = 0.0f);
 
 	void PauseMusic();
