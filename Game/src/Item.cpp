@@ -46,7 +46,7 @@ bool Item::Start() {
 	currentAnimation_feather = &idle_feather;
 
 
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2-5, texH / 2, bodyType::KINEMATIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2-5, texH / 2, bodyType::DYNAMIC);
 	pbody->listener = this;
 
 	pbody->ctype = ColliderType::ITEM;
