@@ -451,7 +451,11 @@ void Scene::show_UI() {
 		}
 
 		//feather
-		/*Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
+		for (int i = 0; i < Engine::GetInstance().entityManager.get()->feather; i++) {
+			Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20 + (i * 70), 150, nullptr, false);
+		}
+
+	/*	Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
 		char FeatherText[64];
 		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
 		Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);*/
