@@ -355,10 +355,10 @@
 				</blocked_wall>
 			</interactiveObject>
 			<columns>
-				<minotaur x="6333" y="1328" w="256" h="1120" texture="Assets/Maps/Stage3/Tilesets/Column.png">
+				<minotaur x="6170" y="1404" w="253" h="1170" texture="Assets/Maps/Stage3/Tilesets/Column.png">
 					<animations>
 						<idle loop="true" speed ="0.5f">
-							<frame x="0" y="0" w="256" h="1120"/>
+							<frame x="0" y="0" w="253" h="1170"/>
 						</idle>
 					</animations>
 				</minotaur>
