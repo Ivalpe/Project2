@@ -40,47 +40,36 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 
-	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
-	{
-
+	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject")){
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		interactiveObjectList.push_back(interactiveObject);
 		interactiveObject->name = "stalactites";
 	}
 
-	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("blocked_wall"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject"))
-
-	{
-
+	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("blocked_wall"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject")){
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		interactiveObjectList.push_back(interactiveObject);
 		interactiveObject->name = "wall";
 	}
 
-	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms"))
-
-	{
-		for (int i = 0; i < 3; i++)
-		{
+	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms")){
+		for (int i = 0; i < 3; i++){
 			Platform* PlatformObject = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
 			PlatformObject->SetParameters(PlatformObjectNode);
 			platformList.push_back(PlatformObject);
 			PlatformObject->name = "platform" + std::to_string(i);
 		}
-
 	}
 
 	CreateEnemies(level);
 	CreateItems(level);
-
 	return ret;
 }
 
 void Scene::CreateEnemies(int level)
 {
-
 	std::vector<Vector2D> listEnemy;
 
 	//Enemies
@@ -160,7 +149,6 @@ bool Scene::Start()
 	Engine::GetInstance().render.get()->camera.x = 0;
 	Engine::GetInstance().render.get()->camera.y = 0;
 
-
 	InitialScreen = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_initial").attribute("path").as_string());
 
 	WaxiFloatingTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxiFloating").attribute("texture").as_string());
@@ -169,7 +157,6 @@ bool Scene::Start()
 	WaxiFloating_currentAnimation = &WaxiFloating_idle;
 	WaxiFloatingPos.setX(configParameters.child("textures").child("WaxiFloating").attribute("x").as_int());
 	WaxiFloatingPos.setY(configParameters.child("textures").child("WaxiFloating").attribute("y").as_int());
-
 
 	Menu_Pause = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause").attribute("path").as_string());
 	Menu_Pause_Back = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Menu_Pause_back").attribute("path").as_string());
@@ -180,7 +167,6 @@ bool Scene::Start()
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
-
 
 	empty.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("empty"));
 	fill2lvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl1"));
@@ -200,13 +186,12 @@ bool Scene::Start()
 	currentAnimation = &idle;
 	MoonPos.setX(configParameters.child("textures").child("moon").attribute("x").as_int());
 	MoonPos.setY(configParameters.child("textures").child("moon").attribute("y").as_int());
-
+	
 	return true;
 }
 
 void Scene::Change_level(int level)
 {
-
 	for (auto e : itemList) {
 		Engine::GetInstance().physics->DeleteBody(e->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
@@ -291,8 +276,6 @@ void Scene::Change_level(int level)
 
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
-
-
 	}
 
 	else if (level == 2) {
@@ -305,20 +288,17 @@ void Scene::Change_level(int level)
 		CreateItems(level);
 		CreateEnemies(level);
 	}
-
 }
 
 // Called each loop iteration
 bool Scene::PreUpdate()
 {
-
 	return true;
 }
 
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-
 	float camSpeed = 1;
 	int Px = player->position.getX();
 	int Py = player->position.getY();
@@ -342,8 +322,6 @@ bool Scene::Update(float dt)
 		if (level == 1) player->SetPosition(Vector2D{ 100,70 });
 		reset_level = false;
 	}
-
-	
 
 	//Moon animation
 	if (level == 0) {

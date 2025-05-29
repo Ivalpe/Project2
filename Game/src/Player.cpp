@@ -43,12 +43,9 @@ bool Player::Start() {
 	{
 		position.setX(300);
 		position.setY(600);
-
-
 	}
 
 	//Load animations
-
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	hide.LoadAnimations(parameters.child("animations").child("hide"));
@@ -69,13 +66,8 @@ bool Player::Start() {
 	playerState = IDLE;
 	hide.Reset();
 
-
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - texH / 2, (int)position.getY() - texH / 2, texW / 3, bodyType::DYNAMIC);
-
-
 	pbody->listener = this;
-
-
 	pbody->ctype = ColliderType::PLAYER;
 
 	// Set the gravity of the body
@@ -89,7 +81,6 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
-
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 	velocity = b2Vec2(0, pbody->body->GetLinearVelocity().y);
 
@@ -106,9 +97,6 @@ bool Player::Update(float dt)
 	}
 
 	if (playerState != DEAD) {
-
-
-
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
 
@@ -132,13 +120,11 @@ bool Player::Update(float dt)
 				playerState = WALK;
 			}
 		}
-
 		if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE && playerState != CLIMB) {
 			if (velocity.x >= -0.05 && velocity.x <= 0.05) {
 				playerState = IDLE;
 			}
 		}
-
 
 		//Jump
 		if (isJumping && lastJump <= 25) lastJump++;
@@ -159,9 +145,38 @@ bool Player::Update(float dt)
 
 		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
 
+		//Dash
+		if ((playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E)== KEY_DOWN && !dashColdown) || isDashing) {
+			
+			playerState = DASH;
+			isDashing = true;
+			isJumping = false;
+			dashColdown = true;
+
+			if (dashDurantion < 12 ) {
+				pbody->body->SetGravityScale(0);
+				velocity.y = 0;
+
+				if (dir == RIGHT) {
+					velocity.x = -0.7 * speed;
+					currentAnimation = &jump;
+
+				}
+				else {
+					velocity.x = 0.7 * speed;
+				}
+				dashDurantion++;
+			}
+			else{
+				pbody->body->SetGravityScale(GRAVITY);
+				dashDurantion = 0;
+				playerState = FALL;
+				isDashing = false;
+
+			}
+		}
 
 		// hide
-
 		if (playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT /*|| Engine::GetInstance().input.get()->pads[0].zl*/)) {
 
 			isJumping = false;
@@ -186,7 +201,7 @@ bool Player::Update(float dt)
 
 		}
 
-		if (playerState == FALL && velocity.y == 0) {
+		if (playerState == FALL && velocity.y == 0 && playerState != DASH) {
 			if (velocity.x != 0) playerState = WALK;
 			else playerState = IDLE;
 		}
@@ -211,11 +226,8 @@ bool Player::Update(float dt)
 			playerState = FALL;
 		}
 
-
-
-
 		//To glide
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
+		if (playerState != DASH && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
 		{
 			playerState = GLIDE;
 
@@ -226,9 +238,6 @@ bool Player::Update(float dt)
 			}
 			velocity.y = pbody->body->GetLinearVelocity().y / fallForce;
 		}
-
-
-
 
 		if (playerState == CLIMB) {
 			pbody->body->SetGravityScale(0);
@@ -258,10 +267,7 @@ bool Player::Update(float dt)
 				else {
 					currentAnimation = &onrope;
 				}
-
-
 				climbOffset = 40;
-
 
 				// Press space to jump off 
 				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
@@ -364,8 +370,6 @@ bool Player::Update(float dt)
 		if (currentAnimation != &fall && !onGround) {
 			if (!exitingRope) fall.Reset();
 			currentAnimation = &fall;
-
-
 		}
 		break;
 	case HIDE:
@@ -478,6 +482,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision PLATFORM");
 		isJumping = false;
 		canDoubleJump = false;
+		dashColdown = false;
 		onGround = true;
 		lastJump = 0;
 		fallForce = 1.5;
