@@ -777,6 +777,8 @@ void Scene::MenuSettings()
 	int sdlVolumeFx = (int)(volumeFx * MIX_MAX_VOLUME);
 	Mix_Volume(-1, sdlVolumeFx);
 
+	//canels 1 and 2 1 mus 2 ambi
+
 	// Music volume background bar
 	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511-7, 195, 6 }, 0, 0, 0, 255, true, false);
 	//Ambient sounds background bar
