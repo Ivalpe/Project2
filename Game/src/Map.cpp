@@ -42,30 +42,63 @@ bool Map::Update(float dt)
 
 		// iterate all tiles in a layer
 		for (const auto& mapLayer : mapData.layers) {
-			//Check if the property Draw exist get the value, if it's true draw the lawyer
-			if (mapLayer->name != "Front" && mapLayer->name != "Front0" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
-				for (int i = 0; i < mapData.width; i++) {
+			if (Engine::GetInstance().scene->level != 0) {
+				//Check if the property Draw exist get the value, if it's true draw the lawyer
+				if (mapLayer->name != "Front" && mapLayer->name != "Front0" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+					for (int i = 0; i < mapData.width; i++) {
 
 
 
-					for (int j = 0; j < mapData.height; j++) {
+						for (int j = 0; j < mapData.height; j++) {
 
-						Vector2D mapInWorld = MapToWorld(i, j);
-						if (Engine::GetInstance().render.get()->InCameraView(mapInWorld.getX(), mapInWorld.getY(), mapData.tileWidth, mapData.tileHeight))
-						{
-							//Get the gid from tile
-							int gid = mapLayer->Get(i, j);
-							//Check if the gid is different from 0 - some tiles are empty
-							if (gid != 0) {
+							Vector2D mapInWorld = MapToWorld(i, j);
+							if (Engine::GetInstance().render.get()->InCameraView(mapInWorld.getX(), mapInWorld.getY(), mapData.tileWidth, mapData.tileHeight))
+							{
+								//Get the gid from tile
+								int gid = mapLayer->Get(i, j);
+								//Check if the gid is different from 0 - some tiles are empty
+								if (gid != 0) {
 
-								TileSet* tileSet = GetTilesetFromTileId(gid);
-								if (tileSet != nullptr) {
-									//Get the Rect from the tileSetTexture;
-									SDL_Rect tileRect = tileSet->GetRect(gid);
-									//Get the screen coordinates from the tile coordinates
-									Vector2D mapCoord = MapToWorld(i, j);
-									//Draw the texture
-									Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+									TileSet* tileSet = GetTilesetFromTileId(gid);
+									if (tileSet != nullptr) {
+										//Get the Rect from the tileSetTexture;
+										SDL_Rect tileRect = tileSet->GetRect(gid);
+										//Get the screen coordinates from the tile coordinates
+										Vector2D mapCoord = MapToWorld(i, j);
+										//Draw the texture
+										Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else {
+				if (mapLayer->name == "Background" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+					for (int i = 0; i < mapData.width; i++) {
+
+
+
+						for (int j = 0; j < mapData.height; j++) {
+
+							Vector2D mapInWorld = MapToWorld(i, j);
+							if (Engine::GetInstance().render.get()->InCameraView(mapInWorld.getX(), mapInWorld.getY(), mapData.tileWidth, mapData.tileHeight))
+							{
+								//Get the gid from tile
+								int gid = mapLayer->Get(i, j);
+								//Check if the gid is different from 0 - some tiles are empty
+								if (gid != 0) {
+
+									TileSet* tileSet = GetTilesetFromTileId(gid);
+									if (tileSet != nullptr) {
+										//Get the Rect from the tileSetTexture;
+										SDL_Rect tileRect = tileSet->GetRect(gid);
+										//Get the screen coordinates from the tile coordinates
+										Vector2D mapCoord = MapToWorld(i, j);
+										//Draw the texture
+										Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+									}
 								}
 							}
 						}
@@ -76,6 +109,38 @@ bool Map::Update(float dt)
 	}
 
 	return ret;
+}
+
+void Map::DrawAll() {
+	for (const auto& mapLayer : mapData.layers) {
+		//Check if the property Draw exist get the value, if it's true draw the lawyer
+		if (mapLayer->name != "Front" && mapLayer->name != "Front0" && mapLayer->name != "Background" && mapLayer->properties.GetProperty("Draw") != NULL && mapLayer->properties.GetProperty("Draw")->value == true) {
+			for (int i = 0; i < mapData.width; i++) {
+				for (int j = 0; j < mapData.height; j++) {
+
+					Vector2D mapInWorld = MapToWorld(i, j);
+					if (Engine::GetInstance().render.get()->InCameraView(mapInWorld.getX(), mapInWorld.getY(), mapData.tileWidth, mapData.tileHeight))
+					{
+						//Get the gid from tile
+						int gid = mapLayer->Get(i, j);
+						//Check if the gid is different from 0 - some tiles are empty
+						if (gid != 0) {
+
+							TileSet* tileSet = GetTilesetFromTileId(gid);
+							if (tileSet != nullptr) {
+								//Get the Rect from the tileSetTexture;
+								SDL_Rect tileRect = tileSet->GetRect(gid);
+								//Get the screen coordinates from the tile coordinates
+								Vector2D mapCoord = MapToWorld(i, j);
+								//Draw the texture
+								Engine::GetInstance().render->DrawTexture(tileSet->texture, mapCoord.getX(), mapCoord.getY(), &tileRect);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void Map::DrawFront() {

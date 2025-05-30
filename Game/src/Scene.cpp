@@ -316,6 +316,9 @@ bool Scene::Update(float dt)
 	Engine::GetInstance().render.get()->camera.x = (camX);
 	Engine::GetInstance().render.get()->camera.y = (camY  /*+ player->crouch*/);
 
+	int camCenterX = Engine::GetInstance().render.get()->camera.x - 350;
+	int camCentery = Engine::GetInstance().render.get()->camera.y - 400;
+
 	//Reset levels
 	if (reset_level) {
 		Change_level(level);
@@ -325,8 +328,9 @@ bool Scene::Update(float dt)
 
 	//Moon animation
 	if (level == 0) {
-		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, (int)MoonPos.getX(), (int)MoonPos.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(MoonTexture, -camCenterX, (int)-camCentery, &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
+		Engine::GetInstance().map->DrawAll();
 	}
 
 	// Wax animation
