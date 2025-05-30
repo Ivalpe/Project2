@@ -77,6 +77,9 @@ bool Enemy::Start() {
 	targetTile.setY(tilePos.getY());
 	targetTile.setX(tilePos.getX() - 12);
 
+	walkFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/soldado/walk.wav");
+	attackFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/soldado/attack.wav");
+
 	return true;
 }
 
@@ -106,12 +109,21 @@ bool Enemy::Update(float dt)
 
 	if (followPlayer) {
 		MovementEnemy(dt);
-		
-	} else if (attackPlayer) {
+		if (!playingsound) {
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId,0,3);
+			playingsound = true;
+		}
+	} 
+	else if (attackPlayer) {
 		AttackEnemy(dt);
+		Engine::GetInstance().audio.get()->PlayFx(attackFxId);
 	}
 	else {
 		IdleEnemy(dt);
+		if (playingsound) {
+			Engine::GetInstance().audio.get()->StopFxByChannel(3);
+			playingsound = false;
+		}
 	}
 
 	/*if (attackPlayer) weapon->body->SetEnabled(true);

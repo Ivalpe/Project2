@@ -73,6 +73,11 @@ bool Boss::Start() {
 	pathfinding = new Pathfinding();
 	ResetPath();
 
+	dieFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/death.wav");
+	idleFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/idle.wav");
+	gruntFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/grunt.wav");
+	impactFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/impacto.wav");
+
 	return true;
 }
 
@@ -96,6 +101,13 @@ bool Boss::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
+	if (state != lastState)
+	{
+		lastState = state;
+		playingsound = false;
+		Engine::GetInstance().audio.get()->StopFxByChannel(4);
+	}
+
 	// --- Animación y lógica de estado ---
 	switch (state)
 	{
@@ -104,6 +116,11 @@ bool Boss::Update(float dt)
 		if (currentAnimation != &charge && currentAnimation != &loop) {
 			currentAnimation = &charge;
 			charge.Reset();
+		}
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(gruntFxId, 0, 4);
+			playingsound = true;
 		}
 		// Si está en charge y terminó, pasamos a loop
 		else if (currentAnimation == &charge && charge.HasFinished()) {
@@ -127,9 +144,19 @@ bool Boss::Update(float dt)
 		break;
 
 	case IDLE:
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(idleFxId, 0, 4);
+			playingsound = true;
+		}
 		currentAnimation = &idle;
 		break;
 	case STUNNED:
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(impactFxId, 0, 4);
+			playingsound = true;
+		}
 		currentAnimation = &stunned;
 		if (stunned.HasFinished()) {
 			state = WAITING;
