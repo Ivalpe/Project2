@@ -96,6 +96,9 @@ public:
 	bool idleDir = false;
 	Vector2D targetTile;
 
+	bool playingsound = false;
+	int attackFxId,
+		walkFxId;
 
 	SDL_Texture* texture;
 	const char* texturePath;

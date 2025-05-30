@@ -77,8 +77,16 @@ public:
 	int texW, texH;
 
 	//Audio fx
-	int pickCoinFxId;
-
+	int pickCoinFxId,
+		jumpFxId,
+		glideFxId,
+		hideFxId,
+		climbFxId,
+		climbingFxId,
+		deathFxId,
+		waterFxId,
+		walkFxId,
+		landFxId;
 	
 	PhysBody* pbody;
 	float jumpForce = 200.0f; // The force to apply when jumping
@@ -106,6 +114,8 @@ public:
 
 	bool exitingRope = false;
 
+	bool playingsound = false;
+
 	bool useTemporaryCheckpoint = false;
 	bool setTempCheckTrue = false;
 	Vector2D temporaryCheckpoint;
@@ -123,6 +133,7 @@ public:
 	b2Vec2 velocity;
 	Direction dir = LEFT;
 	State playerState;
+	State lastState = IDLE;
 
 	Timer hideTimer;
 	Timer turnTimer;
