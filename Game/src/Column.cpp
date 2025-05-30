@@ -38,12 +38,20 @@ bool Column::Start() {
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::STATIC);
+	if(!parameters.attribute("damage").as_bool()){ 
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), texW, texH, bodyType::STATIC);
 
-	////Assign collider type
-	pbody->ctype = ColliderType::WALLBOSSDES;
-	pbody->listener = this;
+		////Assign collider type
+		pbody->ctype = ColliderType::WALLBOSSDES;
+		pbody->listener = this;
+	}
+	else {
+		pbody = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW, texH, bodyType::STATIC);
 
+		////Assign collider type
+		pbody->ctype = ColliderType::DAMAGE_LIGHT;
+		pbody->listener = this;
+	}
 	//// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 

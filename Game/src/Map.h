@@ -164,6 +164,9 @@ public:
 	std::vector<Vector2D> GetColumnBossList() {
 		return posColumnBoss;
 	}
+	std::vector<Vector2D> GetLightList() {
+		return posLight;
+	}
 
 	MapLayer* GetNavigationLayer();
 
@@ -180,5 +183,6 @@ private:
 	std::vector<Vector2D> posWaxys;
 	std::vector<Vector2D> posFeathers;
 	std::vector<Vector2D> posColumnBoss;
+	std::vector<Vector2D> posLight;
 	std::vector<Vector2D> posBoss;
 };

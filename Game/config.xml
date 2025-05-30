@@ -22,6 +22,7 @@
 		<map path="Assets/Maps/" name="Beach.tmx"/>
 		<map1 path="Assets/Maps/" name="cave.tmx"/>
 		<map2 path="Assets/Maps/" name="Boss.tmx"/>
+		<map3 path="Assets/Maps/" name="EndGame.tmx"/>
 		<textures>
 			<Menu_initial path="Assets/Textures/UI/TROI_Start_Fondo.png"/>
 			<WaxiFloating  x="1360" y="560"  texture="Assets/Textures/UI/waxi_Blue_Floating.png">
@@ -355,13 +356,23 @@
 				</blocked_wall>
 			</interactiveObject>
 			<columns>
-				<minotaur x="6170" y="1404" w="253" h="1170" texture="Assets/Maps/Stage3/Tilesets/Column.png">
+				<minotaur x="6170" y="1404" w="253" h="1170" damage="false" texture="Assets/Maps/Stage3/Tilesets/Column.png">
 					<animations>
 						<idle loop="true" speed ="0.5f">
 							<frame x="0" y="0" w="253" h="1170"/>
 						</idle>
 					</animations>
 				</minotaur>
+				<light x="100" y="100" w="256" h="1170" damage="True" texture="Assets/Maps/Stage 4/LIGHT ANIMATION.png">
+					<animations>
+						<idle loop="true" speed ="0.1f">
+							<frame x="0" y="0" w="320" h="1170"/>
+							<frame x="416" y="0" w="320" h="1170"/>
+							<frame x="832" y="0" w="320" h="1170"/>
+							<frame x="416" y="0" w="320" h="1170"/>
+						</idle>
+					</animations>
+				</light>
 			</columns>
 			<enemies>
 				<soldier x="600" y="600" w="300" h="300" texture="Assets/Textures/enemy/Soldier Spritesheet.png" gravity="true">

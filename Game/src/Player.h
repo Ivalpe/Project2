@@ -134,5 +134,6 @@ public:
 	bool isOnPlatform=false;
 	Platform* platform = nullptr;
 
-	
+	int lightDamage = 0;
+	bool onLight = false;
 };
