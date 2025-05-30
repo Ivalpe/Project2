@@ -120,8 +120,4 @@ private:
 
 	// debug mode
 	bool debug;
-
-	
-
-	
 };

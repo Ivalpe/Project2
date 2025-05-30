@@ -23,6 +23,7 @@ enum State {
 	UNHIDE,
 	CLIMB,
 	GLIDE,
+	DASH,
 	DEAD
 };
 
@@ -94,10 +95,15 @@ public:
 	bool isCrawling = false;
 	bool canDoubleJump = false;
 	bool touched_wall = false;
+
 	int lastJump = 0;
 	int glid_time = 0;
 	int glid_reduce=0;
 	float fallForce = 1.5f;
+
+	int dashDurantion = 10;
+	bool isDashing = false;
+	bool dashColdown = false;
 
 	bool isClimbing = false;
 	bool onGround = false;
@@ -118,7 +124,6 @@ public:
 	Animation* currentAnimation = nullptr;
 	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, onrope, death, glide_start, glide, glide_stop;
 	
-
 	bool change_level = false;
 	bool cleanup_pbody = false;
 
@@ -139,4 +144,6 @@ public:
 
 	bool isOnPlatform=false;
 	Platform* platform = nullptr;
+
+	
 };
