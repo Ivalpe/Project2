@@ -156,6 +156,7 @@ bool Map::Load(std::string path, std::string fileName)
 	posWaxys.clear();
 	posFeathers.clear();
 	posColumnBoss.clear();
+	posLight.clear();
 	posBoss.clear();
 
 	// Assigns the name of the map file and the path
@@ -265,6 +266,10 @@ bool Map::Load(std::string path, std::string fileName)
 						else if (gid == 6) { // Column Boss
 							Vector2D mapCoord = { (float)i * 32, (float)j * 32 };
 							posColumnBoss.push_back(mapCoord);
+						}
+						else if (gid == 16330) { // lIGHT
+							Vector2D mapCoord = { (float)i * 32, (float)j * 32 };
+							posLight.push_back(mapCoord);
 						}
 					}
 				}

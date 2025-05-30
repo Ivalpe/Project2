@@ -114,7 +114,9 @@ bool Player::Update(float dt)
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
 
-			velocity.x = -0.2 * speed;
+			if(!onLight) velocity.x = -0.2 * speed;
+			else if(playerState != CRAWL) velocity.x = -0.2 * 10.0f;
+			else velocity.x = -0.2 * speed;
 			dir = RIGHT;
 			if (playerState == CLIMB) {
 
@@ -125,7 +127,11 @@ bool Player::Update(float dt)
 		}
 		// Move right
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x >= 0.1f*/) {
-			velocity.x = 0.2 * speed;
+
+			if (!onLight) velocity.x = 0.2 * speed;
+			else if (playerState != CRAWL) velocity.x = 0.2 * 10.0f;
+			else velocity.x = 0.2 * speed;
+
 			if (playerState == CLIMB) {
 				LOG("MOVING LEFT");
 			}
@@ -142,8 +148,10 @@ bool Player::Update(float dt)
 
 		//Jump
 		if (isJumping && lastJump <= 25) lastJump++;
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN /*|| Engine::GetInstance().input.get()->pads[0].b*/) {
-			
+    
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && !onLight) {
+
+
 			if (!isJumping) {
 				// Apply an initial upward force
 				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
@@ -160,7 +168,7 @@ bool Player::Update(float dt)
 		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
 
 		//Dash
-		if ((playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E)== KEY_DOWN && !dashColdown) || isDashing) {
+		if (((playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E)== KEY_DOWN && !dashColdown) || isDashing) && !onLight) {
 			
 			playerState = DASH;
 			isDashing = true;
@@ -462,8 +470,20 @@ bool Player::Update(float dt)
 		}
 		break;
 	}
-	b2Transform pbodyPos = pbody->body->GetTransform();
+	
+	if (onLight && playerState != CRAWL) {
+		if (lightDamage >= 100) {
+			lightDamage = 0;
+			Engine::GetInstance().entityManager.get()->candleNum--;
+			if (Engine::GetInstance().entityManager.get()->candleNum <= 0) {
+				//Engine::GetInstance().scene.get()->PreUpdate();
+				Engine::GetInstance().scene.get()->reset_level = true;
+			}
+		}
+		else lightDamage++;
+	}
 
+	b2Transform pbodyPos = pbody->body->GetTransform();
 
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
@@ -608,6 +628,20 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			temporaryCheckpoint.setY(y - (5 * 32));
 		}
 		break;
+	case ColliderType::DAMAGE_LIGHT:
+		onLight = true;
+		if(playerState != CRAWL)
+		{ 
+			LOG("Colisión con daño detectada");
+			if (!takenDMG) {
+				Engine::GetInstance().entityManager.get()->candleNum--;
+				if (Engine::GetInstance().entityManager.get()->candleNum <= 0) {
+					//Engine::GetInstance().scene.get()->PreUpdate();
+					Engine::GetInstance().scene.get()->reset_level = true;
+				}
+			}
+		}
+		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;
@@ -680,6 +714,11 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		if (useTemporaryCheckpoint) {
 			useTemporaryCheckpoint = false;
 		}
+		break;
+	case ColliderType::DAMAGE_LIGHT:
+		LOG("End Collision Damage Light");
+		takenDMG = false;
+		onLight = false;
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");

@@ -93,6 +93,17 @@ void Scene::CreateEnemies(int level)
 		columnList.push_back(col);
 	}
 
+	//Light Endgame
+	listEnemy = Engine::GetInstance().map->GetLightList();
+	for (auto lightColumn : listEnemy) {
+		Column* col = (Column*)Engine::GetInstance().entityManager->CreateEntity(EntityType::COLUMN);
+		col->SetParameters(configParameters.child("entities").child("columns").child("light"));
+		col->Start();
+		col->SetPosition({lightColumn.getX()-10, lightColumn.getY()});
+		
+		columnList.push_back(col);
+	}
+
 	//Boss
 	listEnemy = Engine::GetInstance().map->GetBossList();
 	for (auto bosses : listEnemy) {
@@ -288,6 +299,17 @@ void Scene::Change_level(int level)
 		CreateItems(level);
 		CreateEnemies(level);
 	}
+
+	else if (level == 3) {
+		Engine::GetInstance().map.get()->CleanUp();
+		/*itemList.clear();
+		interactiveObjectList.clear();
+		platformList.clear();*/
+
+		Engine::GetInstance().map->Load(configParameters.child("map3").attribute("path").as_string(), configParameters.child("map3").attribute("name").as_string());
+		CreateItems(level);
+		CreateEnemies(level);
+	}
 }
 
 // Called each loop iteration
@@ -376,7 +398,11 @@ bool Scene::PostUpdate()
 		Change_level(level);
 		player->SetPosition(Vector2D{ 64, 64 });
 	}
-
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
+		level = 3;
+		Change_level(level);
+		player->SetPosition(Vector2D{ 200, 600 });
+	}
 	show_UI();
 
 	if (showBlackTransition) {
