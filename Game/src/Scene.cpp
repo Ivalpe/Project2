@@ -398,6 +398,7 @@ bool Scene::PostUpdate()
 
 	if (Engine::GetInstance().scene.get()->showPauseMenu == false && Engine::GetInstance().scene.get()->showSettingsMenu == false && Engine::GetInstance().scene.get()->GameOverMenu == false) {
 		Engine::GetInstance().map.get()->DrawFront();
+		Engine::GetInstance().map.get()->DrawFrontAbove();
 	}
 
 	return ret;
