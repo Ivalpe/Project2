@@ -189,4 +189,35 @@ private:
 	bool showBlackTransition = false;
 	float blackTransitionStart;
 	int blackTransitionDuration = 4000;
+
+
+
+	// PARA BORRAR
+
+/*
+* void Audio::ChangeVolume(int volume, int channel) {
+	if (channel == 6) Mix_VolumeMusic(volume);
+	else Mix_Volume(channel, volume);
+}
+	if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+				state = GuiControlState::PRESSED;
+				posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + mousePos.getX() - 8;
+				if (checkID == 1) {/*MUSIC*
+	Mix_VolumeMusic((posButton - 200) * 2);
+				}
+				else {
+					Engine::GetInstance().audio.get()->ChangeVolume(((posButton - 255) * 2) + Engine::GetInstance().render.get()->camera.x, 3);
+					Engine::GetInstance().audio.get()->ChangeVolume(((posButton - 255) * 2) + Engine::GetInstance().render.get()->camera.x, 2);
+					Engine::GetInstance().audio.get()->ChangeVolume(((posButton - 255) * 2) + Engine::GetInstance().render.get()->camera.x, 4);
+				}
+			}
+
+elipse draw
+
+	https://www.youtube.com/watch?v=WmSuwojt3nw
+
+
+
+	
+*/
 };
