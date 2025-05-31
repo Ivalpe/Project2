@@ -77,6 +77,8 @@ bool Boss::Start() {
 	idleFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/idle.wav");
 	gruntFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/grunt.wav");
 	impactFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/impacto.wav");
+	musicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/boss.wav");
+	
 
 	return true;
 }
@@ -106,6 +108,7 @@ bool Boss::Update(float dt)
 		lastState = state;
 		playingsound = false;
 		Engine::GetInstance().audio.get()->StopFxByChannel(4);
+
 	}
 
 	// --- Animación y lógica de estado ---
@@ -119,6 +122,7 @@ bool Boss::Update(float dt)
 		}
 		if (!playingsound)
 		{
+			
 			Engine::GetInstance().audio.get()->PlayFx(gruntFxId, 0, 4);
 			playingsound = true;
 		}
@@ -141,6 +145,14 @@ bool Boss::Update(float dt)
 
 	case DEAD:
 		currentAnimation = &die;
+		if (!playingsound)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(dieFxId, 0, 4);
+			playingsound = true;
+		}
+
+		Engine::GetInstance().audio.get()->StopFxByChannel(5);
+		
 		break;
 
 	case IDLE:
@@ -156,6 +168,11 @@ bool Boss::Update(float dt)
 		{
 			Engine::GetInstance().audio.get()->PlayFx(impactFxId, 0, 4);
 			playingsound = true;
+		}
+		if (!music)
+		{
+			Engine::GetInstance().audio.get()->PlayFx(musicId, 0, 5);
+			music = true;
 		}
 		currentAnimation = &stunned;
 		if (stunned.HasFinished()) {

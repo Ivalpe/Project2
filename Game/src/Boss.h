@@ -114,7 +114,10 @@ public:
 		dieFxId,
 		gruntFxId,
 		impactFxId,
-		rockFxId;
+		rockFxId,
+		musicId;
+
+	bool music = false;
 
 	Player* player;
 	eState state = IDLE;
