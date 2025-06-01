@@ -88,6 +88,8 @@ public:
 	bool PostUpdate();
 	bool CleanUp();
 
+	bool IsPendingToDelete(PhysBody* physBody);
+
 
 	bool GetDebug();
 

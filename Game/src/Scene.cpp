@@ -204,9 +204,9 @@ bool Scene::Start()
 void Scene::Change_level(int level)
 {
 	for (auto e : itemList) {
-		Engine::GetInstance().physics->DeleteBody(e->GetBody());
-		Engine::GetInstance().entityManager->DestroyEntity(e);
-		e->pbody = nullptr;
+		//Engine::GetInstance().physics->DeleteBody(e->GetBody());
+		//Engine::GetInstance().entityManager->DestroyEntity(e);
+		//e->pbody = nullptr;
 	}
 	itemList.clear();
 

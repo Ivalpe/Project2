@@ -28,6 +28,7 @@ bool Player::Awake() {
 
 bool Player::Start() {
 
+	debug = false;
 	useTemporaryCheckpoint = false;
 	setTempCheckTrue = false;
 
@@ -62,6 +63,7 @@ bool Player::Start() {
 	glide_start.LoadAnimations(parameters.child("animations").child("glide_start"));
 	glide.LoadAnimations(parameters.child("animations").child("glide"));
 	glide_stop.LoadAnimations(parameters.child("animations").child("glide_stop"));
+	currentAnimation = &idle;
 
 	playerState = IDLE;
 	hide.Reset();
@@ -110,12 +112,16 @@ bool Player::Update(float dt)
 		playerState = DEAD;
 	}
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+		debug = !debug;
+	}
+
 	if (playerState != DEAD) {
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT/* || Engine::GetInstance().input.get()->pads[0].l_x <= -0.1f*/) {
 
-			if(!onLight) velocity.x = -0.2 * speed;
-			else if(playerState != CRAWL) velocity.x = -0.2 * 10.0f;
+			if (!onLight) velocity.x = -0.2 * speed;
+			else if (playerState != CRAWL) velocity.x = -0.2 * 10.0f;
 			else velocity.x = -0.2 * speed;
 			dir = RIGHT;
 			if (playerState == CLIMB) {
@@ -148,7 +154,7 @@ bool Player::Update(float dt)
 
 		//Jump
 		if (isJumping && lastJump <= 25) lastJump++;
-    
+
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && !onLight) {
 
 
@@ -168,14 +174,14 @@ bool Player::Update(float dt)
 		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
 
 		//Dash
-		if (((playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E)== KEY_DOWN && !dashColdown) || isDashing) && !onLight) {
-			
+		if (((playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN && !dashColdown) || isDashing) && !onLight) {
+
 			playerState = DASH;
 			isDashing = true;
 			isJumping = false;
 			dashColdown = true;
 
-			if (dashDurantion < 12 ) {
+			if (dashDurantion < 12) {
 				pbody->body->SetGravityScale(0);
 				velocity.y = 0;
 
@@ -189,7 +195,7 @@ bool Player::Update(float dt)
 				}
 				dashDurantion++;
 			}
-			else{
+			else {
 				pbody->body->SetGravityScale(GRAVITY);
 				dashDurantion = 0;
 				playerState = FALL;
@@ -378,10 +384,10 @@ bool Player::Update(float dt)
 	case WALK:
 		if (!playingsound)
 		{
-			Engine::GetInstance().audio.get()->PlayFx(walkFxId,0,2);
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId, 0, 2);
 			playingsound = true;
 		}
-		
+
 		currentAnimation = &walk;
 		hide.Reset();
 		break;
@@ -465,12 +471,12 @@ bool Player::Update(float dt)
 	case CLIMB:
 		if (!playingsound)
 		{
-			Engine::GetInstance().audio.get()->PlayFx(climbFxId,0,2);
+			Engine::GetInstance().audio.get()->PlayFx(climbFxId, 0, 2);
 			playingsound = true;
 		}
 		break;
 	}
-	
+
 	if (onLight && playerState != CRAWL) {
 		if (lightDamage >= 100) {
 			lightDamage = 0;
@@ -513,18 +519,20 @@ void Player::TeleportToTemporaryCheckpoint() {
 }
 
 void Player::TakeDamage() {
-	if (!takenDMG) {
-		Engine::GetInstance().entityManager.get()->candleNum--;
-		if (Engine::GetInstance().entityManager.get()->candleNum <= 0) {
-			//Engine::GetInstance().scene.get()->PreUpdate();
-			Engine::GetInstance().scene.get()->reset_level = true;
+	if (!debug) {
+		if (!takenDMG) {
+			Engine::GetInstance().entityManager.get()->candleNum--;
+			if (Engine::GetInstance().entityManager.get()->candleNum <= 0) {
+				//Engine::GetInstance().scene.get()->PreUpdate();
+				Engine::GetInstance().scene.get()->reset_level = true;
+			}
 		}
-	}
-	Engine::GetInstance().audio.get()->PlayFx(deathFxId,0,1);
+		Engine::GetInstance().audio.get()->PlayFx(deathFxId, 0, 1);
 
-	pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -250.0f), true);
-	isInAttackSensor = false;
-	takenDMG = true;
+		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -250.0f), true);
+		isInAttackSensor = false;
+		takenDMG = true;
+	}
 }
 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
@@ -561,7 +569,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		pbody->body->SetGravityScale(0);
 		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
-		
+
 
 		// auto-grab animation
 		if (currentAnimation != &turn2back) {
@@ -586,7 +594,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::DAMAGE:
 		LOG("Colisión con daño detectada");
 
-		if (!takenDMG) {
+		if (!takenDMG && !debug) {
 			Engine::GetInstance().entityManager.get()->candleNum--;
 			if (Engine::GetInstance().entityManager.get()->candleNum <= 0) {
 				//Engine::GetInstance().scene.get()->PreUpdate();
@@ -630,8 +638,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::DAMAGE_LIGHT:
 		onLight = true;
-		if(playerState != CRAWL)
-		{ 
+		if (playerState != CRAWL)
+		{
 			LOG("Colisión con daño detectada");
 			if (!takenDMG) {
 				Engine::GetInstance().entityManager.get()->candleNum--;
