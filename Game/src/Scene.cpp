@@ -357,7 +357,7 @@ bool Scene::Update(float dt)
 	//Reset levels
 	if (reset_level) {
 		Change_level(level);
-		if (level == 1) player->SetPosition(Vector2D{ 100,70 });
+		if (level == 1) player->SetPosition(Vector2D{ 1568,6700 });
 		reset_level = false;
 	}
 
@@ -407,7 +407,7 @@ bool Scene::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
 		level = 1;
 		Change_level(level);
-		player->SetPosition(Vector2D{ 100, 64 });
+		player->SetPosition(Vector2D{ 1568,6700 });
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
