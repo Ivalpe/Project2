@@ -557,7 +557,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		Engine::GetInstance().audio.get()->PlayFx(pickCoinFxId);
 		/*pickedItem = true;*/
 		Engine::GetInstance().scene.get()->filledWaxy = false;
-		Engine::GetInstance().physics.get()->DeletePhysBody(physB); // Deletes the body of the item from the physics world
 		break;
 	case ColliderType::CLIMBABLE:
 		LOG("Collision CLIMBABLE");

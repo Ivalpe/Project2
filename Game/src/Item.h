@@ -33,6 +33,14 @@ public:
 	b2Body* GetBody() {
 		return pbody->body;
 	}
+
+	PhysBody* GetPhysbody() {
+		return pbody;
+	}
+
+	bool IsPicked() {
+		return isPicked;
+	}
 public:
 
 	bool isPicked = false;

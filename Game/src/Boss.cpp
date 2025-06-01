@@ -181,7 +181,7 @@ bool Boss::Update(float dt)
 	b2Vec2 enemyPos = pbody->body->GetPosition();
 	pbody->body->SetTransform(b2Vec2(enemyPos.x, fixedY), pbody->body->GetAngle());
 	sensorLeft->body->SetTransform({ enemyPos.x - PIXEL_TO_METERS(32 * 27), enemyPos.y }, 0);
-	sensorLimitLeft->body->SetTransform({ PIXEL_TO_METERS(1921), PIXEL_TO_METERS(1828) }, 0);
+	sensorLimitLeft->body->SetTransform({ PIXEL_TO_METERS(1728), PIXEL_TO_METERS(1828) }, 0);
 	sensorRight->body->SetTransform({ enemyPos.x + PIXEL_TO_METERS(32 * 27), enemyPos.y }, 0);
 
 	if (contColumn <= 0) {

@@ -40,22 +40,22 @@ bool Scene::Awake()
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
 
-	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject")){
+	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("stalactites_item"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject")) {
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		interactiveObjectList.push_back(interactiveObject);
 		interactiveObject->name = "stalactites";
 	}
 
-	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("blocked_wall"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject")){
+	for (pugi::xml_node InteractiveObjectNode = configParameters.child("entities").child("interactiveObject").child("blocked_wall"); InteractiveObjectNode; InteractiveObjectNode = InteractiveObjectNode.next_sibling("interactiveObject")) {
 		InteractiveObject* interactiveObject = (InteractiveObject*)Engine::GetInstance().entityManager->CreateEntity(EntityType::INTERACTIVEOBJECT);
 		interactiveObject->SetParameters(InteractiveObjectNode);
 		interactiveObjectList.push_back(interactiveObject);
 		interactiveObject->name = "wall";
 	}
 
-	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms")){
-		for (int i = 0; i < 3; i++){
+	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms")) {
+		for (int i = 0; i < 3; i++) {
 			Platform* PlatformObject = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
 			PlatformObject->SetParameters(PlatformObjectNode);
 			platformList.push_back(PlatformObject);
@@ -99,8 +99,8 @@ void Scene::CreateEnemies(int level)
 		Column* col = (Column*)Engine::GetInstance().entityManager->CreateEntity(EntityType::COLUMN);
 		col->SetParameters(configParameters.child("entities").child("columns").child("light"));
 		col->Start();
-		col->SetPosition({lightColumn.getX()-10, lightColumn.getY()});
-		
+		col->SetPosition({ lightColumn.getX() - 10, lightColumn.getY() });
+
 		columnList.push_back(col);
 	}
 
@@ -190,6 +190,7 @@ bool Scene::Start()
 	full.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("full"));
 
 	candle = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Candle").attribute("path").as_string());
+	candleBase = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("CandleBase").attribute("path").as_string());
 
 	MoonTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("moon").attribute("texture").as_string());
 
@@ -197,15 +198,16 @@ bool Scene::Start()
 	currentAnimation = &idle;
 	MoonPos.setX(configParameters.child("textures").child("moon").attribute("x").as_int());
 	MoonPos.setY(configParameters.child("textures").child("moon").attribute("y").as_int());
-	
+
 	return true;
 }
 
 void Scene::Change_level(int level)
 {
 	for (auto e : itemList) {
-		//Engine::GetInstance().physics->DeleteBody(e->GetBody());
-		//Engine::GetInstance().entityManager->DestroyEntity(e);
+		if (e->GetPhysbody() == nullptr) continue;
+		Engine::GetInstance().physics->DeleteBody(e->GetBody());
+		Engine::GetInstance().entityManager->DestroyEntity(e);
 		//e->pbody = nullptr;
 	}
 	itemList.clear();
@@ -232,7 +234,7 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().physics->DeleteBody(e->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 		e->pbody = nullptr;
-		
+
 		/*e->pbody->listener = nullptr;
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 		e->pbody = nullptr;*/
@@ -326,14 +328,25 @@ bool Scene::Update(float dt)
 	int Py = player->position.getY();
 
 	int camX = -(Px - 700);
-	int camY = -(Py - 600);
+
+	// Calcula la posición objetivo de la cámara en Y
+	int targetCamY = -(Py - 600);
+	if (Py < 1635 || Py > 1650) {
+		targetCamY -= 100;
+	}
+
+	// Interpolación lineal (lerp) para suavizar el movimiento
+	float lerpSpeed = 0.1f;
+	cameraY = cameraY + (targetCamY - cameraY) * lerpSpeed;
+
+	int camY = static_cast<int>(cameraY);
 
 	// Limitar la cámara principio
 	if (camX > 0) camX = 0;
 	if (camY > 0) camY = 0;
 
 	// Limitar la cámara final
-	if (camX < -11520)camX = -11520;
+	if (camX < -11520) camX = -11520;
 
 	Engine::GetInstance().render.get()->camera.x = (camX);
 	Engine::GetInstance().render.get()->camera.y = (camY  /*+ player->crouch*/);
@@ -453,10 +466,11 @@ void Scene::show_UI() {
 		//Crea
 
 		Engine::GetInstance().render.get()->DrawTexture(waxTexture, 10, 10, &currentWaxAnim->GetCurrentFrame(), false);
+		Engine::GetInstance().render.get()->DrawTexture(candleBase, 10, 10, nullptr, false);
 
 		//vela
 		for (int i = 0; i < Engine::GetInstance().entityManager.get()->candleNum; i++) {
-			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 50, nullptr, false);
+			Engine::GetInstance().render.get()->DrawTexture(candle, 150 + (i * 40), 60, nullptr, false);
 		}
 
 		//feather
@@ -464,10 +478,12 @@ void Scene::show_UI() {
 			Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20 + (i * 70), 150, nullptr, false);
 		}
 
-	/*	Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
-		char FeatherText[64];
-		sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
-		Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);*/
+
+
+		/*	Engine::GetInstance().render.get()->DrawTexture(FeatherTexture, 20, 150, nullptr, false);
+			char FeatherText[64];
+			sprintf_s(FeatherText, " x%d", Engine::GetInstance().entityManager->feather);
+			Engine::GetInstance().render.get()->DrawText(FeatherText, 90, 165, 40, 30);*/
 	}
 }
 
@@ -569,10 +585,10 @@ void Scene::MenuInitialScreen()
 
 		float scaleFactor = 0.9f;
 
-		SDL_Rect NewGameButton = { 300 - 60 - 7-100+7, 445 + 50+10-5, static_cast<int>(textWidthNewGame * scaleFactor)+10, static_cast<int>(textHeightNewGame * scaleFactor)+10 };
-		SDL_Rect ConitnuesButton = { 320 - 50 - 7-130+8, 520 + 50-5-5-3, static_cast<int>(textWidthContinue * scaleFactor)+10, static_cast<int>(textHeightContinue * scaleFactor)+10 };
-		SDL_Rect Settings = { 330 - 45 - 7-130-5, 595 + 50-25-5, static_cast<int>(textWidthSettings * scaleFactor)+10, static_cast<int>(textHeightSettings * scaleFactor)+10 };
-		SDL_Rect Exit = { 350 - 25 - 7-150-30+3, 670+10-5-3 , static_cast<int>(textWidthExit * scaleFactor)+10, static_cast<int>(textHeightExit * scaleFactor)+10 };
+		SDL_Rect NewGameButton = { 300 - 60 - 7 - 100 + 7, 445 + 50 + 10 - 5, static_cast<int>(textWidthNewGame * scaleFactor) + 10, static_cast<int>(textHeightNewGame * scaleFactor) + 10 };
+		SDL_Rect ConitnuesButton = { 320 - 50 - 7 - 130 + 8, 520 + 50 - 5 - 5 - 3, static_cast<int>(textWidthContinue * scaleFactor) + 10, static_cast<int>(textHeightContinue * scaleFactor) + 10 };
+		SDL_Rect Settings = { 330 - 45 - 7 - 130 - 5, 595 + 50 - 25 - 5, static_cast<int>(textWidthSettings * scaleFactor) + 10, static_cast<int>(textHeightSettings * scaleFactor) + 10 };
+		SDL_Rect Exit = { 350 - 25 - 7 - 150 - 30 + 3, 670 + 10 - 5 - 3 , static_cast<int>(textWidthExit * scaleFactor) + 10, static_cast<int>(textHeightExit * scaleFactor) + 10 };
 
 
 		guiBt0 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 8, "", NewGameButton, this));
@@ -617,8 +633,8 @@ void Scene::GameOver_State()
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Continue", &textWidthContinue, &textHeightContinue);
 		TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
-		SDL_Rect Continue = { 865+20, 760+10-5, textWidthContinue + 10, textHeightContinue + 10 };
-		SDL_Rect Exit = { 940-10, 860-15-5, textWidthExit + 10, textHeightExit + 10 };
+		SDL_Rect Continue = { 865 + 20, 760 + 10 - 5, textWidthContinue + 10, textHeightContinue + 10 };
+		SDL_Rect Exit = { 940 - 10, 860 - 15 - 5, textWidthExit + 10, textHeightExit + 10 };
 
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
@@ -662,7 +678,7 @@ void Scene::Active_MenuPause() {
 	}
 	if (showPauseMenu) {
 		if (!showSettingsMenu) {
-			MenuPause(); 
+			MenuPause();
 		}
 
 		if (showSettingsMenu) {
@@ -700,9 +716,9 @@ void Scene::MenuPause()
 	TTF_SizeText(Engine::GetInstance().render.get()->font, "Exit", &textWidthExit, &textHeightExit);
 
 
-	SDL_Rect ConitnuesButton = { 862 +7+2, 520 - 15-30+10, textWidthContinue + 20, textHeightContinue + 10 };
-	SDL_Rect Settings = { 882 +7, 595 - 10-30+10, textWidthSettings + 20, textHeightSettings + 10 };
-	SDL_Rect Exit = { 919 +7, 670 - 5-30, textWidthExit + 20, textHeightExit + 10 };
+	SDL_Rect ConitnuesButton = { 862 + 7 + 2, 520 - 15 - 30 + 10, textWidthContinue + 20, textHeightContinue + 10 };
+	SDL_Rect Settings = { 882 + 7, 595 - 10 - 30 + 10, textWidthSettings + 20, textHeightSettings + 10 };
+	SDL_Rect Exit = { 919 + 7, 670 - 5 - 30, textWidthExit + 20, textHeightExit + 10 };
 
 
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "", ConitnuesButton, this));
@@ -791,10 +807,10 @@ void Scene::MenuSettings()
 		}
 	}
 
-	SDL_Rect newMusicPos = { musicPosX, 511 - 5-7, 6, 15 }; // New music volume position 
+	SDL_Rect newMusicPos = { musicPosX, 511 - 5 - 7, 6, 15 }; // New music volume position 
 	guiBt->bounds = newMusicPos;
 
-	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5+7, 6, 15 }; // New music ambient sounds position
+	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5 + 7, 6, 15 }; // New music ambient sounds position
 	guiBt1->bounds = newFxPos;
 
 	// Adjust music volume
@@ -809,14 +825,14 @@ void Scene::MenuSettings()
 	Mix_Volume(-1, sdlVolumeFx);
 
 	// Music volume background bar
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511-7, 195, 6 }, 0, 0, 0, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511 - 7, 195, 6 }, 0, 0, 0, 255, true, false);
 	//Ambient sounds background bar
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1+7, 195, 6 }, 0, 0, 0, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1 + 7, 195, 6 }, 0, 0, 0, 255, true, false);
 
 	// Music volume filled portion
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511-7, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511 - 7, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 	//Ambient sounds filled portion
-	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1+7, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1 + 7, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 }
 
 void Scene::DisableGuiControlButtons()
@@ -965,12 +981,11 @@ void Scene::FillWaxy() {
 		}
 		break;
 	case FULL:
-
-		/*if (resetWax.ReadSec() >= 1.0f) {*/
-		waxState = EMPTY;
-		Engine::GetInstance().entityManager.get()->candleNum++;
-		filledWaxy = true;
-
+		if (Engine::GetInstance().entityManager.get()->candleNum < 3) {
+			waxState = EMPTY;
+			Engine::GetInstance().entityManager.get()->candleNum++;
+			filledWaxy = true;
+		}
 		break;
 	}
 }

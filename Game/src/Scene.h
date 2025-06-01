@@ -99,6 +99,7 @@ public:
 
 	int level = 0;
 	bool reset_level = false;
+	float cameraY = 0.0f;
 
 	bool showPauseMenu = false;
 	bool showSettingsMenu = false;
@@ -117,6 +118,7 @@ public:
 	SDL_Texture* Feather_UI = NULL;
 	SDL_Texture* Wax = NULL;
 	SDL_Texture* candle = NULL;
+	SDL_Texture* candleBase = NULL;
 
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;
