@@ -55,7 +55,7 @@ bool Scene::Awake()
 	}
 
 	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms")) {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 2; i++) {
 			Platform* PlatformObject = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
 			PlatformObject->SetParameters(PlatformObjectNode);
 			platformList.push_back(PlatformObject);
@@ -144,6 +144,31 @@ void Scene::CreateItems(int level)
 		item->SetPosition({ feather.getX(), feather.getY() });
 		itemList.push_back(item);
 	}
+
+	if (level == 1) {
+		listItems = Engine::GetInstance().map->GetClothList();
+		for (auto cloth : listItems) {
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(configParameters.child("entities").child("items").child("cloth"));
+			item->name = "cloth";
+			item->Start();
+			item->SetPosition({ cloth.getX(), cloth.getY() });
+			itemList.push_back(item);
+		}
+
+		listItems = Engine::GetInstance().map->GetGlovesList();
+		for (auto feather : listItems) {
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(configParameters.child("entities").child("items").child("gloves"));
+			item->name = "gloves";
+			item->Start();
+			item->SetPosition({ feather.getX(), feather.getY() });
+			itemList.push_back(item);
+		}
+
+
+
+	}
 }
 
 // Called before the first frame
@@ -178,6 +203,8 @@ bool Scene::Start()
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
+	glovesTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("gloves").attribute("path").as_string());
+	clothTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("cloth").attribute("path").as_string());
 
 	empty.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("empty"));
 	fill2lvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl1"));
@@ -219,12 +246,12 @@ void Scene::Change_level(int level)
 	}
 	interactiveObjectList.clear();
 
-	for (auto e : platformList) {
+	/*for (auto e : platformList) {
 		Engine::GetInstance().physics->DeleteBody(e->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 		e->pbody = nullptr;
 	}
-	platformList.clear();
+	platformList.clear();*/
 
 	for (auto e : enemyList) {
 		Engine::GetInstance().physics->DeleteBody((e)->GetAttackSensorBody());
@@ -331,8 +358,10 @@ bool Scene::Update(float dt)
 
 	// Calcula la posición objetivo de la cámara en Y
 	int targetCamY = -(Py - 600);
-	if (Py < 1635 || Py > 1650) {
-		targetCamY -= 100;
+	if (!InitialScreenMenu) {
+		if (Py < 1450 || Py > 1650) {
+			targetCamY -= 200;
+		}
 	}
 
 	// Interpolación lineal (lerp) para suavizar el movimiento

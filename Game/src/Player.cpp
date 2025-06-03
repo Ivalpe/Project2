@@ -255,7 +255,7 @@ bool Player::Update(float dt)
 		}
 
 		//To glide
-		if (playerState != DASH && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
+		if (canGlide && playerState != DASH && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
 		{
 			playerState = GLIDE;
 
@@ -518,6 +518,15 @@ void Player::TeleportToTemporaryCheckpoint() {
 	takenDMG = false;
 }
 
+void Player::UnlockSkill(std::string skill) {
+	if (skill == "Climb") {
+		canClimb = true;
+	}
+	else if (skill == "Glide") {
+		canGlide = true;
+	}
+}
+
 void Player::TakeDamage() {
 	if (!debug) {
 		if (!takenDMG) {
@@ -560,23 +569,24 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::CLIMBABLE:
 		LOG("Collision CLIMBABLE");
+		if (canClimb) {
+			// Auto-grab triggered
+			playerState = CLIMB;
+			isClimbing = false;
+			isJumping = false;
+			pbody->body->SetGravityScale(0);
+			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
-		// Auto-grab triggered
-		playerState = CLIMB;
-		isClimbing = false;
-		isJumping = false;
-		pbody->body->SetGravityScale(0);
-		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
 
+			// auto-grab animation
+			if (currentAnimation != &turn2back) {
+				turn2back.Reset();
+				currentAnimation = &turn2back;
+			}
 
-		// auto-grab animation
-		if (currentAnimation != &turn2back) {
-			turn2back.Reset();
-			currentAnimation = &turn2back;
+			climbableX = physB->body->GetPosition().x;
 		}
-
-		climbableX = physB->body->GetPosition().x;
 		break;
 	case ColliderType::CHANGE_LEVEL:
 		change_level = true;

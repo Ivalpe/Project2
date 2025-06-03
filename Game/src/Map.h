@@ -157,6 +157,14 @@ public:
 		return posFeathers;
 	}
 
+	std::vector<Vector2D> GetGlovesList() {
+		return posGloves;
+	}
+
+	std::vector<Vector2D> GetClothList() {
+		return posCloth;
+	}
+
 	std::vector<Vector2D> GetBossList() {
 		return posBoss;
 	}
@@ -187,4 +195,6 @@ private:
 	std::vector<Vector2D> posColumnBoss;
 	std::vector<Vector2D> posLight;
 	std::vector<Vector2D> posBoss;
+	std::vector<Vector2D> posGloves;
+	std::vector<Vector2D> posCloth;
 };

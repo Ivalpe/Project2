@@ -42,10 +42,13 @@ public:
 
 	std::vector<std::pair<int, int>> PlatformLimits
 	{
-		{3864 + 300, 4870 + 30},
-		{182 +140+70, 3018 + 60},
+		{400, 3022},
+		{8271, 11248},
+	};
 
-		{8228+50+20, 11295+60},
+	std::vector<int> PlatformY
+	{
+		10200, 10100
 	};
 
 private:

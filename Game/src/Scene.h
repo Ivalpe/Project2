@@ -159,6 +159,8 @@ private:
 
 	SDL_Texture* FeatherTexture;
 	SDL_Texture* waxTexture;
+	SDL_Texture* glovesTexture;
+	SDL_Texture* clothTexture;
 
 	Vector2D mousePos;
 
