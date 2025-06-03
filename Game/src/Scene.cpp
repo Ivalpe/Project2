@@ -99,7 +99,7 @@ void Scene::CreateEnemies(int level)
 		Column* col = (Column*)Engine::GetInstance().entityManager->CreateEntity(EntityType::COLUMN);
 		col->SetParameters(configParameters.child("entities").child("columns").child("light"));
 		col->Start();
-		col->SetPosition({ lightColumn.getX() - 10, lightColumn.getY() });
+		col->SetPosition({ lightColumn.getX() + 32, lightColumn.getY() });
 
 		columnList.push_back(col);
 	}

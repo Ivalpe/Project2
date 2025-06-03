@@ -63,6 +63,7 @@ public:
 	PhysBody* pbody;
 	int contColumn;
 	bool openColumn;
+	bool isLight = false;
 
 	eState state = IDLE;
 
