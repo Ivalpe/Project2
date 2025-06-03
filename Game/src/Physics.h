@@ -34,6 +34,7 @@ enum class ColliderType {
 	CHANGE_LEVEL,
 	DAMAGE,
 	DAMAGE_RESPAWN,
+	DAMAGE_LIGHT,
 	WALL,
 	CHASESENSOR,
 	RANGELEFT,
@@ -86,6 +87,8 @@ public:
 	bool PreUpdate();
 	bool PostUpdate();
 	bool CleanUp();
+
+	bool IsPendingToDelete(PhysBody* physBody);
 
 
 	bool GetDebug();

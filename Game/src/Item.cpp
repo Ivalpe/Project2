@@ -31,30 +31,30 @@ bool Item::Start() {
 	isPicked = parameters.attribute("isPicked").as_bool(false);
 	isWax = parameters.attribute("isWax").as_bool(false);
 	isFeather = parameters.attribute("isFeather").as_bool(false);
-	
+
 
 	//Initialize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	Feather_texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture1").as_string());
-	
+
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
-	
+
 	idle_feather.LoadAnimations(parameters.child("animations").child("idle_feather"));
 	currentAnimation_feather = &idle_feather;
 
 
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2-5, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2 - 5, texH / 2, bodyType::DYNAMIC);
 	pbody->listener = this;
 
 	pbody->ctype = ColliderType::ITEM;
-	
+
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
-	
-	
+
+
 	return true;
 }
 
@@ -64,7 +64,7 @@ bool Item::Update(float dt)
 
 	if (isWax && !isPicked) {
 		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-		
+
 		currentAnimation->Update();
 	}
 	if (isFeather && !isPicked) {
@@ -72,9 +72,11 @@ bool Item::Update(float dt)
 		currentAnimation_feather->Update();
 	}
 
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+	if (!isPicked) {
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+	}
 
 	return true;
 }
@@ -101,11 +103,21 @@ void Item::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			isPicked = true;
 			Engine::GetInstance().entityManager->wax++;
 			Engine::GetInstance().scene.get()->shouldFillWaxy = true;
+
+			if (pbody != nullptr) {
+				Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+				pbody = nullptr;
+			}
 		}
 		else if (name == "feather") {
 			isPicked = true;
 			Engine::GetInstance().entityManager->feather++;
 			Engine::GetInstance().scene.get()->shouldFillWaxy = false;
+
+			if (pbody != nullptr) {
+				Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+				pbody = nullptr;
+			}
 		}
 	}
 }
