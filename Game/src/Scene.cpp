@@ -358,6 +358,9 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	if (changedash == true) 
+	{ player->dashunlock = true; }
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) {
 		showHelpMenu = !showHelpMenu;
 	}

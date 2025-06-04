@@ -138,6 +138,7 @@ public:
 	bool mouseOverMusicControl = false;
 	bool mouseOverAmbientControl = false;
 	bool isMusicPlaying = false;
+	bool changedash = false;
 
 	int sdlVolume;
 	int musicPosX = 1225;
@@ -195,4 +196,5 @@ private:
 	bool showBlackTransition = false;
 	float blackTransitionStart;
 	int blackTransitionDuration = 4000;
+	
 };

@@ -213,33 +213,35 @@ bool Player::Update(float dt)
 		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
 
 		//Dash
-		if (((playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN && !dashColdown) || isDashing) && !onLight) {
+		if (dashunlock == true) {
+			if (((playerState != CLIMB && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN && !dashColdown) || isDashing) && !onLight) {
 
-			playerState = DASH;
-			isDashing = true;
-			isJumping = false;
-			dashColdown = true;
+				playerState = DASH;
+				isDashing = true;
+				isJumping = false;
+				dashColdown = true;
 
-			if (dashDurantion < 12) {
-				pbody->body->SetGravityScale(0);
-				velocity.y = 0;
+				if (dashDurantion < 12) {
+					pbody->body->SetGravityScale(0);
+					velocity.y = 0;
 
-				if (dir == RIGHT) {
-					velocity.x = -0.7 * speed;
-					currentAnimation = &jump;
+					if (dir == RIGHT) {
+						velocity.x = -0.7 * speed;
+						currentAnimation = &jump;
 
+					}
+					else {
+						velocity.x = 0.7 * speed;
+					}
+					dashDurantion++;
 				}
 				else {
-					velocity.x = 0.7 * speed;
-				}
-				dashDurantion++;
-			}
-			else {
-				pbody->body->SetGravityScale(GRAVITY);
-				dashDurantion = 0;
-				playerState = FALL;
-				isDashing = false;
+					pbody->body->SetGravityScale(GRAVITY);
+					dashDurantion = 0;
+					playerState = FALL;
+					isDashing = false;
 
+				}
 			}
 		}
 

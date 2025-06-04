@@ -152,6 +152,7 @@ bool Boss::Update(float dt)
 		{
 			Engine::GetInstance().audio.get()->PlayFx(dieFxId, 0, 4);
 			playingsound = true;
+			
 		}
 
 		Engine::GetInstance().audio.get()->StopFxByChannel(5);
@@ -207,6 +208,7 @@ bool Boss::Update(float dt)
 	if (contColumn <= 0) {
 		state = DEAD;
 		pbody->ctype = ColliderType::ENEMY_DEATH;
+		changedash = true;
 	}
 
 	if (delay > 0) delay--;

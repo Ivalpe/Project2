@@ -6,6 +6,7 @@
 #include "Pathfinding.h"
 #include "Timer.h"
 #include "Physics.h"
+#include "Player.h"
 
 
 class Player;
@@ -109,6 +110,7 @@ public:
 	int contColumn;
 	float fixedY;
 	bool hasFixedY = false;
+	bool changedash = false;
 
 	int idleFxId,
 		dieFxId,

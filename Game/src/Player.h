@@ -99,6 +99,7 @@ public:
 	bool touched_wall = false;
 	bool canClimb = false;
 	bool canGlide = false;
+	bool dashunlock = false;
 
 	int lastJump = 0;
 	int glid_time = 0;
