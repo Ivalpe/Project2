@@ -51,7 +51,7 @@ bool GuiControlButton::Update(float dt)
 			else {
 				state = GuiControlState::NORMAL;
 			}
-			/*}*/
+			
 
 
 

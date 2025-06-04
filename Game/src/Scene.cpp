@@ -422,6 +422,7 @@ bool Scene::Update(float dt)
 	//Pause menu
 	Active_MenuPause();
 
+	
 	GameOver_State();
 
 	MenuInitialScreen();
@@ -654,23 +655,7 @@ void Scene::MenuInitialScreen()
 				
 			}
 
-			
-			if (pad->down && !padPrev.down) {
- 				menuButtons[currentIndex]->state = GuiControlState::NORMAL;
-
-				currentIndex = (currentIndex + 1) % menuButtonsSize;
-				menuButtons[currentIndex]->state = GuiControlState::FOCUSED;
-					
-
-			}
-
-			if (pad->up && !padPrev.up) {
-				menuButtons[currentIndex]->state = GuiControlState::NORMAL;
-
-				currentIndex = (currentIndex - 1 + menuButtonsSize) % menuButtonsSize;
-				menuButtons[currentIndex]->state = GuiControlState::FOCUSED;
-					
-			}
+			GamePadButtonsUpdate();
 
 			Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 160, menuButtons[currentIndex]->bounds.y + menuButtons[currentIndex]->bounds.h / 2 - 10, nullptr, false);
 			/*padPrev = *pad;*/
@@ -685,6 +670,7 @@ void Scene::GameOver_State()
 	if (Engine::GetInstance().entityManager->candleNum <= 0) {
 
 		if (!GameOverMenu) {
+			currentIndex = 0;
 			GameOverMenu = true;
 		}
 
@@ -722,20 +708,24 @@ void Scene::GameOver_State()
 		menuButtonsSize = 2;
 
 		if (pad->enabled) {
-			menuButtons[currentIndex]->state == GuiControlState::FOCUSED;
+
+			menuButtons[currentIndex]->state = GuiControlState::FOCUSED;
+
 			if (pad->a && !padPrev.a && menuButtons[currentIndex]->state == GuiControlState::FOCUSED) {
+
 				switch (currentIndex) {
 				case 0:
 					RestartGame(guiBt, guiBt1);
 					break;
 				case 1:
 					ExitGame();
+					break;
 				}
 			}
 
 
 			GamePadButtonsUpdate();
-			Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 767, menuButtons[currentIndex]->bounds.y + menuButtons[currentIndex]->bounds.h / 2 - 10, nullptr, false);
+			Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, menuButtons[currentIndex]->bounds.y + menuButtons[currentIndex]->bounds.h / 2 - 10, nullptr, false);
 		}
 		
 
@@ -1026,11 +1016,14 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		
 		break;
 	case 2://Menu pause: Settings
-		showSettingsMenu = true;
+
+		OpenSettings();
+	/*	showSettingsMenu = true;*/
 		break;
 	case 3: //Menu pause: Exit
-		exit(0);
-		DisableGuiControlButtons();
+		/*exit(0);
+		DisableGuiControlButtons();*/
+		ExitGame();
 		break;
 	case 4:	// Settings: Music Volume
 		musicButtonHeld = true;
