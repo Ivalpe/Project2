@@ -281,8 +281,8 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().physics->DeleteBody((e)->GetSensorRight());
 		e->sensorRight = nullptr;
 		Engine::GetInstance().physics->DeleteBody(e->GetBody());
-		Engine::GetInstance().entityManager->DestroyEntity(e);
 		e->pbody = nullptr;
+		Engine::GetInstance().entityManager->DestroyEntity(e);
 		//Engine::GetInstance().entityManager->DestroyEntity(e);
 	}
 	bossList.clear();
