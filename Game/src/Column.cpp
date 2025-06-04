@@ -88,7 +88,7 @@ bool Column::Update(float dt)
 bool Column::CleanUp()
 {
 	if (pbody != nullptr) {
-		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
+		//Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 
 		pbody = nullptr;
 	}
