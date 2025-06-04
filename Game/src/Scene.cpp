@@ -941,7 +941,15 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 				player->position.setY(600);
 			}
 			else if (Engine::GetInstance().scene.get()->level == 1) {
-				player->position.setX(300);
+				player->position.setX(1568);
+				player->position.setY(6400);
+			}
+			else if (Engine::GetInstance().scene.get()->level == 2) {
+				player->position.setX(64);
+				player->position.setY(64);
+			}
+			else if (Engine::GetInstance().scene.get()->level == 3) {
+				player->position.setX(200);
 				player->position.setY(600);
 			}
 
