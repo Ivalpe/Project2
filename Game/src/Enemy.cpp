@@ -135,11 +135,11 @@ bool Enemy::Update(float dt)
 
 
 	if (dir == RIGHT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY() + 10, &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		weaponOffset = 200;
 	}
 	else {
-		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY() + 10, &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		weaponOffset = -50;
 	}
 

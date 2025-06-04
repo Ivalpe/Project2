@@ -272,10 +272,11 @@ void Input::UpdateGamepadsInput()
 			
 			//A --> l_x (left stick moving right)
 			//D --> l_x (left stick moving left)
-			//W --> r_y (right stick moving up)
-			//S (climb) --> r_y (right stick moving down) 
+			//W --> l_y (right stick moving up)
+			//S (climb) --> l_y (left stick moving down) 
 			//Spacebar (jump) --> B 
-			//S (hide) --> zl/l2 (left trigger)
+			//S (hide) --> X
+			//E (dash) --> zl/l2 (left trigger)
 			//Q (glide) --> zr/r2 (right trigger)
 			//Home --> guide 
  

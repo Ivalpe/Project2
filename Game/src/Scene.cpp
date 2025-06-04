@@ -702,8 +702,8 @@ void Scene::MenuInitialScreen()
 
 			GamePadButtonsUpdate();
 
-			Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 160, menuButtons[currentIndex]->bounds.y + menuButtons[currentIndex]->bounds.h / 2 - 10, nullptr, false);
-			/*padPrev = *pad;*/
+			Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 30, menuButtons[currentIndex]->bounds.y + menuButtons[currentIndex]->bounds.h / 2 - 10, nullptr, false);
+		
 		}
 
 		Engine::GetInstance().render.get()->DrawTexture(WaxiFloatingTexture, (int)WaxiFloatingPos.getX(), (int)WaxiFloatingPos.getY(), &WaxiFloating_currentAnimation->GetCurrentFrame());
@@ -1239,41 +1239,45 @@ void Scene::ResumeGame() {
 
 void Scene::RestartGame(GuiControlButton* restartBt, GuiControlButton* exitBt) {
 
-	// Restablecer la posición del jugador según el nivel
-		if (player != nullptr) {
-			if (Engine::GetInstance().scene.get()->level == 0) {
-				player->position.setX(784);
-				player->position.setY(600);
-			}
-			else if (Engine::GetInstance().scene.get()->level == 1) {
-				player->position.setX(1568);
-				player->position.setY(6400);
-			}
-			else if (Engine::GetInstance().scene.get()->level == 2) {
-				player->position.setX(64);
-				player->position.setY(64);
-			}
-			else if (Engine::GetInstance().scene.get()->level == 3) {
-				player->position.setX(200);
-				player->position.setY(600);
-			}
 
-			player->ResumeMovement();
+	GameOverMenu = false;
+	// Restablecer la posición del jugador según el nivel
+	if (player != nullptr) {
+		if (Engine::GetInstance().scene.get()->level == 0) {
+			player->position.setX(784);
+			player->position.setY(600);
+		}
+		else if (Engine::GetInstance().scene.get()->level == 1) {
+			player->position.setX(1568);
+			player->position.setY(6400);
+			/*player->position.setX(300);
+			player->position.setY(600);*/
+		}
+		else if (Engine::GetInstance().scene.get()->level == 2) {
+			player->position.setX(64);
+			player->position.setY(64);
+		}
+		else if (Engine::GetInstance().scene.get()->level == 3) {
+			player->position.setX(200);
+			player->position.setY(600);
 		}
 
-		//player->Start(); // Reiniciar cualquier estado del jugador
+		player->ResumeMovement();
+	}
 
-		// Reiniciar recursos del jugador
-		Engine::GetInstance().entityManager->candleNum = 3;
-		Engine::GetInstance().entityManager->feather = 0;
+	//player->Start(); // Reiniciar cualquier estado del jugador
 
-		restartBt->state = GuiControlState::DISABLED;
-		exitBt->state = GuiControlState::DISABLED;
+	// Reiniciar recursos del jugador
+	Engine::GetInstance().entityManager->candleNum = 3;
+	Engine::GetInstance().entityManager->feather = 0;
 
-		//Change_level(level);
+	restartBt->state = GuiControlState::DISABLED;
+	exitBt->state = GuiControlState::DISABLED;
+
+	/*Change_level(level);*/
 
 	// OLD CODE
-	// GameOverMenu = false;
+	
 
 	// // Restablecer la posición del jugador según el nivel
 	// if (player != nullptr) {

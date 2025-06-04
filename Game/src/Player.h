@@ -119,8 +119,10 @@ public:
 	bool isInAttackSensor = false;
 	bool pickedItem = true;
 
-	
-	bool prevZL, prevZR, prevB;
+	GamePad* pad;
+	/*GamePad padPrev;*/
+
+	bool prevZL, prevZR, prevB, prevX;
 
 	bool exitingRope = false;
 

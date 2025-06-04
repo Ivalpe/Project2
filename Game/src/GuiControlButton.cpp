@@ -33,8 +33,7 @@ bool GuiControlButton::Update(float dt)
 			Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
 
 
-			/*if (!Engine::GetInstance().scene.get()->pad->enabled) {*/
-
+		
 			//If the position of the mouse if inside the bounds of the button 
 			if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) {
 
@@ -87,7 +86,7 @@ bool GuiControlButton::Update(float dt)
 						if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 595 + 15 - 2, nullptr, false);
 						if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 670 + 5, nullptr, false);
 						if (id >= 7 && id <= 11 && !Engine::GetInstance().scene.get()->GameOverMenu) {
-							Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 160, bounds.y + bounds.h / 2 - 10, nullptr, false);
+							Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 30, bounds.y + bounds.h / 2 - 10, nullptr, false);
 						}
 					}
 					
@@ -116,13 +115,8 @@ bool GuiControlButton::Update(float dt)
 					break;
 				}
 			}
-
-
-
 			Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
-		
 	}
-
 	return false;
 }
 

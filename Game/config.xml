@@ -386,47 +386,46 @@
 				</light>
 			</columns>
 			<enemies>
-				<soldier x="600" y="600" w="300" h="300" texture="Assets/Textures/enemy/Soldier Spritesheet.png" gravity="true">
+        <soldier x="600" y="600" w="300" h="245" texture="Assets/Textures/enemy/Soldier Spritesheet.png" gravity="true">
 					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="2.0f" lives ="1"/>
-					<animations>
-						<idle loop="true" speed ="0.3f">
-							<frame x="0" y="0" w="300" h="300"/>
-							<frame x="300" y="0" w="300" h="300"/>
-							<frame x="600" y="0" w="300" h="300"/>
-							<frame x="900" y="0" w="300" h="300"/>
-							<frame x="1200" y="0" w="300" h="300"/>
-							<frame x="1500" y="0" w="300" h="300"/>
-							<frame x="1800" y="0" w="300" h="300"/>
-							<frame x="2100" y="0" w="300" h="300"/>
-							<frame x="2400" y="0" w="300" h="300"/>
-							<frame x="2700" y="0" w="300" h="300"/>
-						</idle>
-						<walk loop ="true" speed ="0.1f">
-							<frame x="0" y="300" w="300" h="300"/>
-							<frame x="300" y="300" w="300" h="300"/>
-							<frame x="600" y="300" w="300" h="300"/>
-							<frame x="900" y="300" w="300" h="300"/>
-							<frame x="1200" y="300" w="300" h="300"/>
-							<frame x="1500" y="300" w="300" h="300"/>
-							<frame x="1800" y="300" w="300" h="300"/>
-							<frame x="2100" y="300" w="300" h="300"/>
-							<frame x="2400" y="300" w="300" h="300"/>
-							<frame x="2700" y="300" w="300" h="300"/>
-						</walk>
-						<attack loop="false" speed="0.3f">
-							<frame x="0" y="600" w="300" h="300"/>
-							<frame x="300" y="600" w="300" h="300"/>
-							<frame x="600" y="600" w="300" h="300"/>
-							<frame x="900" y="600" w="300" h="300"/>
-							<frame x="1200" y="600" w="300" h="300"/>
-							<frame x="1500" y="600" w="300" h="300"/>
-							<frame x="1800" y="600" w="300" h="300"/>
-							<frame x="2100" y="600" w="300" h="300"/>
-							<frame x="2400" y="600" w="300" h="300"/>
-							<frame x="2700" y="600" w="300" h="300"/>
-
-						</attack>
-					</animations>
+          <animations>
+            <idle loop="true" speed ="0.3f">
+              <frame x="0" y="55" w="300" h="245"/>
+              <frame x="300" y="55" w="300" h="245"/>
+              <frame x="600" y="55" w="300" h="245"/>
+              <frame x="900" y="55" w="300" h="245"/>
+              <frame x="1200" y="55" w="300" h="245"/>
+              <frame x="1500" y="55" w="300" h="245"/>
+              <frame x="1800" y="55" w="300" h="245"/>
+              <frame x="2100" y="55" w="300" h="245"/>
+              <frame x="2400" y="55" w="300" h="245"/>
+              <frame x="2700" y="55" w="300" h="245"/>
+            </idle>
+            <walk loop ="true" speed ="0.1f">
+              <frame x="0" y="355" w="300" h="245"/>
+              <frame x="300" y="355" w="300" h="245"/>
+              <frame x="600" y="355" w="300" h="245"/>
+              <frame x="900" y="355" w="300" h="245"/>
+              <frame x="1200" y="355" w="300" h="245"/>
+              <frame x="1500" y="355" w="300" h="245"/>
+              <frame x="1800" y="355" w="300" h="245"/>
+              <frame x="2100" y="355" w="300" h="245"/>
+              <frame x="2400" y="355" w="300" h="245"/>
+              <frame x="2700" y="355" w="300" h="245"/>
+            </walk>
+            <attack loop="false" speed="0.3f">
+              <frame x="0" y="655" w="300" h="245"/>
+              <frame x="300" y="655" w="300" h="245"/>
+              <frame x="600" y="655" w="300" h="245"/>
+              <frame x="900" y="655" w="300" h="245"/>
+              <frame x="1200" y="655" w="300" h="245"/>
+              <frame x="1500" y="655" w="300" h="245"/>
+              <frame x="1800" y="655" w="300" h="245"/>
+              <frame x="2100" y="655" w="300" h="245"/>
+              <frame x="2400" y="655" w="300" h="245"/>
+              <frame x="2700" y="655" w="300" h="245"/>
+            </attack>
+          </animations>
 				</soldier>
 				<minotaur x="4500" y="1527" w="5200" h="400" texture="Assets/Textures/enemy/MinotaurSpritesheet.png" gravity="true">
 					<properties chaseArea ="400" attackArea ="20" speed ="5.0f" deathTime ="2.0f" attackTime ="1.0f" lives ="1"/>
