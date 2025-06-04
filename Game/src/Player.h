@@ -68,6 +68,9 @@ public:
 
 	int GetWax();
 
+	bool ControllerBtReleased(bool prevInput, bool currentInput);
+	bool ControllerBtPressedOnce(bool prevInput, bool currentInput);
+
 	void StopMovement();
 	void ResumeMovement();
 
@@ -116,7 +119,11 @@ public:
 	bool isInAttackSensor = false;
 	bool pickedItem = true;
 
+	
+	bool prevZL, prevZR, prevB;
+
 	bool exitingRope = false;
+
 
 	bool playingsound = false;
 
@@ -124,10 +131,12 @@ public:
 	bool setTempCheckTrue = false;
 	Vector2D temporaryCheckpoint;
 
+
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle, walk, hide, unhide, crawl, jump, fall, land, turn2back, turn2front, climb, onrope, death, glide_start, glide, glide_stop;
 	
+
 	bool change_level = false;
 	bool cleanup_pbody = false;
 
@@ -146,8 +155,10 @@ public:
 	float climbableX;
 	float climbOffset = 0;
 
+
 	bool isOnPlatform=false;
 	Platform* platform = nullptr;
+
 
 	int lightDamage = 0;
 	bool onLight = false;
@@ -156,4 +167,5 @@ public:
 	bool showFeatherMsg = false;
 	int featherMsgTimer = 0;
 	std::string infoMsg;
+
 };

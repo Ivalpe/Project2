@@ -21,6 +21,7 @@ GuiControlButton::~GuiControlButton()
 
 bool GuiControlButton::Update(float dt)
 {
+
 	if (state == GuiControlState::DISABLED)
 	{
 		return false;
@@ -29,27 +30,32 @@ bool GuiControlButton::Update(float dt)
 	if (state != GuiControlState::DISABLED)
 	{
 		
-		Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
+			Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
 
-		//If the position of the mouse if inside the bounds of the button 
-		if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) {
 
-			state = GuiControlState::FOCUSED;
+			/*if (!Engine::GetInstance().scene.get()->pad->enabled) {*/
 
-			if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
-				state = GuiControlState::PRESSED;
+			//If the position of the mouse if inside the bounds of the button 
+			if (mousePos.getX() > bounds.x && mousePos.getX() < bounds.x + bounds.w && mousePos.getY() > bounds.y && mousePos.getY() < bounds.y + bounds.h) {
+
+				state = GuiControlState::FOCUSED;
+
+				if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+					state = GuiControlState::PRESSED;
+				}
+
+				if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
+					NotifyObserver();
+				}
 			}
-
-			if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
-				NotifyObserver();
+			else {
+				state = GuiControlState::NORMAL;
 			}
-		}
-		else {
-			state = GuiControlState::NORMAL;
-		}
-		
-		
-			if (id == 4 || id == 5) 
+			
+
+
+
+			if (id == 4 || id == 5)
 			{
 				switch (state)
 				{
@@ -75,21 +81,46 @@ bool GuiControlButton::Update(float dt)
 					Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 0, true, false);
 					break;
 				case GuiControlState::FOCUSED:
-					if (id==1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 520-30, nullptr, false);
-					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 595 -30, nullptr, false);
-					if(id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 670-35, nullptr, false);
+
+					if (!Engine::GetInstance().scene.get()->pad->enabled) {
+						if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 520 + 13 - 2, nullptr, false);
+						if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 595 + 15 - 2, nullptr, false);
+						if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 670 + 5, nullptr, false);
+						if (id >= 7 && id <= 11 && !Engine::GetInstance().scene.get()->GameOverMenu) {
+							Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 160, bounds.y + bounds.h / 2 - 10, nullptr, false);
+						}
+					}
+					
+
 					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 0, true, false);
+
 					break;
 				case GuiControlState::PRESSED:
-					if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788-15, 520-30, nullptr, false);
-					if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 595 -30, nullptr, false);
-					if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 670-35, nullptr, false);
-					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 100, true, false);
+
+
+					if (!Engine::GetInstance().scene.get()->pad->enabled) {
+						if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 520 + 10 - 2, nullptr, false);
+						if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 595 + 10 - 2, nullptr, false);
+						if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 670, nullptr, false);
+
+
+						if (id >= 7 && id <= 11 && !Engine::GetInstance().scene.get()->GameOverMenu && !Engine::GetInstance().scene.get()->pad->enabled) {
+							Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 160, bounds.y + bounds.h / 2 - 5, nullptr, false);
+						}
+						
+					}
+
+					Engine::GetInstance().render->DrawRectangle(bounds, 66, 90, 131, 255, true, false);
+					
+
 					break;
 				}
 			}
 
+
+
 			Engine::GetInstance().render->DrawText(text.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
+		
 	}
 
 	return false;

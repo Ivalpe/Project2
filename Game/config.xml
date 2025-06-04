@@ -250,6 +250,7 @@
 						<frame x ="1024" y="1792" w="256" h="256"/>
 						<frame x ="1280" y="1792" w="256" h="256"/>
 					</turn2back>
+
 					<onrope loop ="false" speed ="0.5f">
 						<frame x ="1280" y="1792" w="256" h="256"/>
 					</onrope>
@@ -423,6 +424,7 @@
 							<frame x="2100" y="600" w="300" h="300"/>
 							<frame x="2400" y="600" w="300" h="300"/>
 							<frame x="2700" y="600" w="300" h="300"/>
+
 						</attack>
 					</animations>
 				</soldier>
