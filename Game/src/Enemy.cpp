@@ -44,7 +44,7 @@ bool Enemy::Start() {
 
 	//Add a physics to an item - initialize the physics body
 	//pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 3, texH / 2, bodyType::DYNAMIC);
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH / 3, texW / 2, texH, bodyType::KINEMATIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH / 3, texW / 2, texH, bodyType::DYNAMIC);
 
 	//Sensor
 	sensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, texH, bodyType::KINEMATIC);
@@ -145,7 +145,17 @@ bool Enemy::Update(float dt)
 
 	//weapon->body->SetTransform({ enemyPos.x + weaponOffset, enemyPos.y }, 0);
 
+	const float maxAngle = 2.0f * (float)M_PI / 180.0f;
+	float angle = pbody->body->GetAngle();
 
+	if (angle > maxAngle) {
+		pbody->body->SetTransform(pbody->body->GetPosition(), maxAngle);
+		pbody->body->SetAngularVelocity(0);
+	}
+	else if (angle < -maxAngle) {
+		pbody->body->SetTransform(pbody->body->GetPosition(), -maxAngle);
+		pbody->body->SetAngularVelocity(0);
+	}
 
 	return true;
 }
