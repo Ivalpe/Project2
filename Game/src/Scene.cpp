@@ -404,6 +404,7 @@ bool Scene::Update(float dt)
 		Change_level(level);
 		if (level == 1) player->SetPosition(Vector2D{ 1568,6700 });
 		if (level == 2) player->SetPosition(Vector2D{ 64, 64 });
+		if (level == 3) player->SetPosition(Vector2D{ 200, 600 });
 		reset_level = false;
 	}
 

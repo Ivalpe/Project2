@@ -88,11 +88,12 @@ bool Player::Start() {
 	return true;
 }
 
+
 bool Player::Update(float dt)
 {
 
 	if (showFeatherMsg && featherMsgTimer > 0) {
-		Engine::GetInstance().render.get()->DrawText("You need more feathers", 40, 200, 400, 30);
+		Engine::GetInstance().render.get()->DrawText(infoMsg.c_str(), 40, 200, 400, 30);
 		featherMsgTimer--;
 		if (featherMsgTimer == 0) showFeatherMsg = false;
 	}
@@ -563,9 +564,15 @@ void Player::TeleportToTemporaryCheckpoint() {
 void Player::UnlockSkill(std::string skill) {
 	if (skill == "Climb") {
 		canClimb = true;
+		showFeatherMsg = true;
+		featherMsgTimer = 120;
+		infoMsg = "You unlocked Climb!";
 	}
 	else if (skill == "Glide") {
 		canGlide = true;
+		showFeatherMsg = true;
+		featherMsgTimer = 120;
+		infoMsg = "You unlocked Glide. Press Q in the air.";
 	}
 }
 
@@ -642,6 +649,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			else {
 				showFeatherMsg = true;
 				featherMsgTimer = 120;
+				infoMsg = "You need more feathers";
 			}
 		}
 		else {

@@ -155,4 +155,5 @@ public:
 
 	bool showFeatherMsg = false;
 	int featherMsgTimer = 0;
+	std::string infoMsg;
 };
