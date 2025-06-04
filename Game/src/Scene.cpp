@@ -346,6 +346,7 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map3").attribute("path").as_string(), configParameters.child("map3").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
+		Engine::GetInstance().audio.get()->PlayFx(beachMusicId, 5, 5);
 	}
 }
 
