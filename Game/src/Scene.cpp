@@ -227,11 +227,15 @@ bool Scene::Start()
 	MoonPos.setX(configParameters.child("textures").child("moon").attribute("x").as_int());
 	MoonPos.setY(configParameters.child("textures").child("moon").attribute("y").as_int());
 
+	beachMusicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/playa.wav");
+	caveMusicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/cueva.wav");
+
 	return true;
 }
 
 void Scene::Change_level(int level)
 {
+	Engine::GetInstance().audio.get()->StopFxByChannel(5);
 	for (auto e : itemList) {
 		if (e->GetPhysbody() == nullptr) continue;
 		Engine::GetInstance().physics->DeleteBody(e->GetBody());
@@ -317,9 +321,11 @@ void Scene::Change_level(int level)
 
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
+		Engine::GetInstance().audio.get()->PlayFx(caveMusicId, 5, 5);
 	}
 
-	else if (level == 2) {
+	else if (level == 2) {    
+
 		Engine::GetInstance().map.get()->CleanUp();
 		/*itemList.clear();
 		interactiveObjectList.clear();
@@ -328,6 +334,7 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map2").attribute("path").as_string(), configParameters.child("map2").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
+		
 	}
 
 	else if (level == 3) {
@@ -968,6 +975,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		DisableGuiControlButtons();
 		CreateEnemies(level);
 		CreateItems(level);
+		Engine::GetInstance().audio.get()->PlayFx(beachMusicId, 5, 5);
 
 		break;
 	case 9:// Initial Screen: Conitnue
