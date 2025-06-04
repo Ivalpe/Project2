@@ -64,6 +64,8 @@ public:
 
 	Vector2D GetPosition();
 
+	void UnlockSkill(std::string skill);
+
 	int GetWax();
 
 	void StopMovement();
@@ -95,6 +97,8 @@ public:
 	bool isCrawling = false;
 	bool canDoubleJump = false;
 	bool touched_wall = false;
+	bool canClimb = false;
+	bool canGlide = false;
 
 	int lastJump = 0;
 	int glid_time = 0;
@@ -148,4 +152,8 @@ public:
 	int lightDamage = 0;
 	bool onLight = false;
 	bool debug = false;
+
+	bool showFeatherMsg = false;
+	int featherMsgTimer = 0;
+	std::string infoMsg;
 };

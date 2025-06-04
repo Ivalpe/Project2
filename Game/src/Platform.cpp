@@ -48,6 +48,24 @@ bool Platform::Start() {
 	//Assign collider type
 	pbody->ctype = ColliderType::M_PLATFORM;
 
+	if (name == "platform0") {
+		position.setY(PlatformY[0]);
+		position.setX(PlatformLimits[0].first);
+		b2Vec2 currentPos = pbody->body->GetPosition();
+		pbody->body->SetTransform(b2Vec2(PIXEL_TO_METERS(PlatformLimits[0].first), PIXEL_TO_METERS(PlatformY[0])), 0);
+	}
+	else if (name == "platform1") {
+		position.setY(PlatformY[1]);
+		position.setX(PlatformLimits[1].first);
+		b2Vec2 currentPos = pbody->body->GetPosition();
+		pbody->body->SetTransform(b2Vec2(PIXEL_TO_METERS(PlatformLimits[1].first), PIXEL_TO_METERS(PlatformY[1])), 0);
+	}
+	else if (name == "platform2") {
+		position.setY(PlatformY[2]);
+		position.setX(PlatformLimits[2].first);
+		b2Vec2 currentPos = pbody->body->GetPosition();
+		pbody->body->SetTransform(b2Vec2(PIXEL_TO_METERS(PlatformLimits[2].first), PIXEL_TO_METERS(PlatformY[2])), 0);
+	}
 	return true;
 }
 
@@ -57,32 +75,30 @@ bool Platform::Update(float dt)
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true || Engine::GetInstance().scene.get()->level == 0) return true;
 
 
-	for (int i = 0; i < PlatformLimits.size(); i++)
-	{
-		int startPositionX;
-		int endPositionX;
-		if (name == "platform0") {
-			startPositionX = PlatformLimits[0].first;
-			endPositionX = PlatformLimits[0].second;
-		}
-		if (name == "platform1") {
-			startPositionX = PlatformLimits[1].first;
-			endPositionX = PlatformLimits[1].second;
-		}
-		if (name == "platform2") {
-			startPositionX = PlatformLimits[2].first;
-			endPositionX = PlatformLimits[2].second;
-		}
-		if (name == "platform0" || name == "platform1" || name == "platform2") {
-			b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
-
-			if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
-			else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
-			pbody->body->SetLinearVelocity(velocity);
-		}
-
-
+	int startPositionX;
+	int endPositionX;
+	if (name == "platform0") {
+		startPositionX = PlatformLimits[0].first;
+		endPositionX = PlatformLimits[0].second;
 	}
+	if (name == "platform1") {
+		startPositionX = PlatformLimits[1].first;
+		endPositionX = PlatformLimits[1].second;
+	}
+	if (name == "platform2") {
+		startPositionX = PlatformLimits[2].first;
+		endPositionX = PlatformLimits[2].second;
+	}
+
+	b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
+
+	if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
+	else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
+	pbody->body->SetLinearVelocity(velocity);
+
+
+
+
 
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
@@ -92,6 +108,7 @@ bool Platform::Update(float dt)
 	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
+	LOG("Platform position: %f, %f", position.getX(), position.getY());
 	return true;
 }
 

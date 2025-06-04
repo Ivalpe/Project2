@@ -43,7 +43,8 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+	//pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 3, texH / 2, bodyType::DYNAMIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH / 3, texW / 2, texH, bodyType::KINEMATIC);
 
 	//Sensor
 	sensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, texH, bodyType::KINEMATIC);
@@ -51,7 +52,7 @@ bool Enemy::Start() {
 	sensor->listener = this;
 
 	//Attack Sensor
-	attackSensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW * 1.5, texH, bodyType::KINEMATIC);
+	attackSensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW / 2, texH, bodyType::KINEMATIC);
 	attackSensor->ctype = ColliderType::ATTACKSENSOR;
 	attackSensor->listener = this;
 
@@ -65,7 +66,7 @@ bool Enemy::Start() {
 	pbody->listener = this;
 
 	//// Set the gravity of the body
-	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+	pbody->body->SetGravityScale(1.0f);
 
 	//// Initialize pathfinding
 	pathfinding = new Pathfinding();
@@ -94,26 +95,19 @@ bool Enemy::Update(float dt)
 
 	if (Engine::GetInstance().scene.get()->showPauseMenu == true || Engine::GetInstance().scene.get()->GameOverMenu == true || Engine::GetInstance().scene.get()->InitialScreenMenu == true) return true;
 
-	velocity = 0;	
+	velocity = 0;
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();
-	if(sensor and sensor->body) sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
-	if(attackSensor and attackSensor->body) attackSensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
-
-	
-	
-		/*SDL_Rect weaponRect = { (int)weapon->body->GetPosition().x, (int)weapon->body->GetPosition().y , weapon->width, weapon->height };
-		Engine::GetInstance().render.get()->DrawRectangle(weaponRect, 255, 0, 255, 255, false);*/
-
-	
+	if (sensor and sensor->body) sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+	if (attackSensor and attackSensor->body) attackSensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
 	if (followPlayer) {
 		MovementEnemy(dt);
 		if (!playingsound) {
-			Engine::GetInstance().audio.get()->PlayFx(walkFxId,0,3);
+			Engine::GetInstance().audio.get()->PlayFx(walkFxId, 0, 3);
 			playingsound = true;
 		}
-	} 
+	}
 	else if (attackPlayer) {
 		AttackEnemy(dt);
 		Engine::GetInstance().audio.get()->PlayFx(attackFxId);
@@ -128,28 +122,29 @@ bool Enemy::Update(float dt)
 
 	/*if (attackPlayer) weapon->body->SetEnabled(true);
 	else weapon->body->SetEnabled(false);*/
-	
+
 	currentAnimation->Update();
 
-	pbody->body->SetLinearVelocity({ velocity,0 });
+	b2Vec2 vel = pbody->body->GetLinearVelocity();
+	pbody->body->SetLinearVelocity({ velocity, vel.y });
 	//weapon->body->SetLinearVelocity({ velocity,0 });
-	
+
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 
 	if (dir == RIGHT) {
-		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX(), (int)position.getY() + 10, &currentAnimation->GetCurrentFrame());
 		weaponOffset = 200;
 	}
 	else {
-		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		Engine::GetInstance().render.get()->DrawTextureFlipped(texture, (int)position.getX(), (int)position.getY() + 10, &currentAnimation->GetCurrentFrame());
 		weaponOffset = -50;
 	}
 
 	//weapon->body->SetTransform({ enemyPos.x + weaponOffset, enemyPos.y }, 0);
-	
+
 
 
 	return true;
@@ -293,7 +288,7 @@ void Enemy::AttackEnemy(float dt) {
 		attack.Reset();
 		attackPlayer = false;
 	}
-	
+
 	int frame = static_cast<int>(attack.currentFrame);
 	if (frame == 6 or frame == 5) {
 		if (Engine::GetInstance().scene.get()->GetPlayer()->isInAttackSensor) {
@@ -301,8 +296,8 @@ void Enemy::AttackEnemy(float dt) {
 			Engine::GetInstance().scene.get()->GetPlayer()->TakeDamage();
 		}
 	}
-	
-	
+
+
 	/*if (currentAnimation != &attack) {
 		attack.Reset();
 		currentAnimation = &attack;
@@ -319,9 +314,9 @@ void Enemy::AttackEnemy(float dt) {
 			attackPlayer = false;
 		}
 	}*/
-	
-	
-	
+
+
+
 }
 
 bool Enemy::CleanUp()
@@ -372,7 +367,7 @@ void Enemy::StopMovement() {
 	if (pbody != nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
 		pbody = nullptr;
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texW / 2, texH, bodyType::KINEMATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::ENEMY;
 
@@ -382,7 +377,7 @@ void Enemy::StopMovement() {
 void Enemy::ResumeMovement() {
 	if (pbody == nullptr) {
 		Engine::GetInstance().physics.get()->DeletePhysBody(pbody);
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() - 2 + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texW / 2, texH, bodyType::KINEMATIC);
 		pbody->listener = this;
 		pbody->ctype = ColliderType::ENEMY;
 

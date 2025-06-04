@@ -142,4 +142,6 @@ public:
 	float velocity;
 	int timer = 0;
 	int delay;
+
+	bool leftWallBlocked = false;
 };

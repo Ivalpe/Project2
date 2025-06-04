@@ -99,7 +99,7 @@ void Scene::CreateEnemies(int level)
 		Column* col = (Column*)Engine::GetInstance().entityManager->CreateEntity(EntityType::COLUMN);
 		col->SetParameters(configParameters.child("entities").child("columns").child("light"));
 		col->Start();
-		col->SetPosition({ lightColumn.getX() - 10, lightColumn.getY() });
+		col->SetPosition({ lightColumn.getX() + 32, lightColumn.getY() });
 
 		columnList.push_back(col);
 	}
@@ -144,6 +144,31 @@ void Scene::CreateItems(int level)
 		item->SetPosition({ feather.getX(), feather.getY() });
 		itemList.push_back(item);
 	}
+
+	if (level == 1) {
+		listItems = Engine::GetInstance().map->GetClothList();
+		for (auto cloth : listItems) {
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(configParameters.child("entities").child("items").child("cloth"));
+			item->name = "cloth";
+			item->Start();
+			item->SetPosition({ cloth.getX(), cloth.getY() });
+			itemList.push_back(item);
+		}
+
+		listItems = Engine::GetInstance().map->GetGlovesList();
+		for (auto feather : listItems) {
+			Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			item->SetParameters(configParameters.child("entities").child("items").child("gloves"));
+			item->name = "gloves";
+			item->Start();
+			item->SetPosition({ feather.getX(), feather.getY() });
+			itemList.push_back(item);
+		}
+
+
+
+	}
 }
 
 // Called before the first frame
@@ -178,6 +203,9 @@ bool Scene::Start()
 	Feather = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("Feather").attribute("path").as_string());
 	FeatherTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("FeatherUI").attribute("path").as_string());
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
+	glovesTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("gloves").attribute("path").as_string());
+	clothTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("cloth").attribute("path").as_string());
+	helpMenu = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("helpMenu").attribute("path").as_string());
 
 	empty.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("empty"));
 	fill2lvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl1"));
@@ -219,12 +247,12 @@ void Scene::Change_level(int level)
 	}
 	interactiveObjectList.clear();
 
-	for (auto e : platformList) {
+	/*for (auto e : platformList) {
 		Engine::GetInstance().physics->DeleteBody(e->GetBody());
 		Engine::GetInstance().entityManager->DestroyEntity(e);
 		e->pbody = nullptr;
 	}
-	platformList.clear();
+	platformList.clear();*/
 
 	for (auto e : enemyList) {
 		Engine::GetInstance().physics->DeleteBody((e)->GetAttackSensorBody());
@@ -323,6 +351,21 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) {
+		showHelpMenu = !showHelpMenu;
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
+		Engine::GetInstance().entityManager->wax++;
+		shouldFillWaxy = true;
+		filledWaxy = false;
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
+		Engine::GetInstance().entityManager->feather++;
+	}
+
+
 	float camSpeed = 1;
 	int Px = player->position.getX();
 	int Py = player->position.getY();
@@ -331,8 +374,10 @@ bool Scene::Update(float dt)
 
 	// Calcula la posición objetivo de la cámara en Y
 	int targetCamY = -(Py - 600);
-	if (Py < 1635 || Py > 1650) {
-		targetCamY -= 100;
+	if (!InitialScreenMenu) {
+		if (Py < 1450 || Py > 1650) {
+			targetCamY -= 200;
+		}
 	}
 
 	// Interpolación lineal (lerp) para suavizar el movimiento
@@ -358,6 +403,8 @@ bool Scene::Update(float dt)
 	if (reset_level) {
 		Change_level(level);
 		if (level == 1) player->SetPosition(Vector2D{ 1568,6700 });
+		if (level == 2) player->SetPosition(Vector2D{ 64, 64 });
+		if (level == 3) player->SetPosition(Vector2D{ 200, 600 });
 		reset_level = false;
 	}
 
@@ -385,6 +432,10 @@ bool Scene::Update(float dt)
 	//	Engine::GetInstance().render.get()->DrawTexture(WaxiFloatingTexture, (int)WaxiFloatingPos.getX(), (int)WaxiFloatingPos.getY(), &WaxiFloating_currentAnimation->GetCurrentFrame());
 	//	WaxiFloating_currentAnimation->Update();
 	//}
+
+	if (showHelpMenu && helpMenu != nullptr) {
+		Engine::GetInstance().render.get()->DrawTexture(helpMenu, 0, 0, nullptr, false);
+	}
 
 	return true;
 }
@@ -489,6 +540,7 @@ void Scene::show_UI() {
 
 void Scene::animationWaxy()
 {
+
 	if (!filledWaxy) {
 		if (waxState == FULL) resetWax.Start();
 		if (shouldFillWaxy) {

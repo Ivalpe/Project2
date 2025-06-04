@@ -255,6 +255,13 @@ bool Map::Load(std::string path, std::string fileName)
 	posColumnBoss.clear();
 	posLight.clear();
 	posBoss.clear();
+	posCloth.clear();
+	posGloves.clear();
+	for (auto c : colliders) {
+		Engine::GetInstance().physics->DeleteBody(c->body);
+		delete c;
+	}
+	colliders.clear();
 
 	// Assigns the name of the map file and the path
 	mapFileName = fileName;
@@ -364,6 +371,14 @@ bool Map::Load(std::string path, std::string fileName)
 							Vector2D mapCoord = { (float)i * 32, (float)j * 32 };
 							posColumnBoss.push_back(mapCoord);
 						}
+						else if (gid == 7) { // Cloth
+							Vector2D mapCoord = { (float)i * 32, (float)j * 32 };
+							posCloth.push_back(mapCoord);
+						}
+						else if (gid == 8) { // Gloves
+							Vector2D mapCoord = { (float)i * 32, (float)j * 32 };
+							posGloves.push_back(mapCoord);
+						}
 						else if (gid == 16330) { // lIGHT
 							Vector2D mapCoord = { (float)i * 32, (float)j * 32 };
 							posLight.push_back(mapCoord);
@@ -402,6 +417,7 @@ bool Map::Load(std::string path, std::string fileName)
 					PhysBody* rect = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
 					rect->ctype = ColliderType::CLIMBABLE;
 					Engine::GetInstance().physics->listToDelete.push_back(rect);
+					colliders.push_back(rect);
 
 				}
 
@@ -412,6 +428,7 @@ bool Map::Load(std::string path, std::string fileName)
 					PhysBody* damage = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
 					damage->ctype = ColliderType::DAMAGE;
 					Engine::GetInstance().physics->listToDelete.push_back(damage);
+					colliders.push_back(damage);
 
 				}
 
@@ -422,6 +439,7 @@ bool Map::Load(std::string path, std::string fileName)
 					PhysBody* Change_level = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
 					Change_level->ctype = ColliderType::CHANGE_LEVEL;
 					Engine::GetInstance().physics->listToDelete.push_back(Change_level);
+					colliders.push_back(Change_level);
 				}
 
 				if (layerName == "DamageRespawn") {
@@ -431,6 +449,7 @@ bool Map::Load(std::string path, std::string fileName)
 					PhysBody* Damage_respawn = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
 					Damage_respawn->ctype = ColliderType::DAMAGE_RESPAWN;
 					Engine::GetInstance().physics->listToDelete.push_back(Damage_respawn);
+					colliders.push_back(Damage_respawn);
 				}
 
 			}

@@ -105,6 +105,7 @@ public:
 	bool showSettingsMenu = false;
 	bool GameOverMenu = false;
 	bool InitialScreenMenu = true;
+	bool showHelpMenu = false;
 
 
 	SDL_Texture* Menu_Pause = NULL;
@@ -119,6 +120,7 @@ public:
 	SDL_Texture* Wax = NULL;
 	SDL_Texture* candle = NULL;
 	SDL_Texture* candleBase = NULL;
+	SDL_Texture* helpMenu = NULL;
 
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;
@@ -159,6 +161,8 @@ private:
 
 	SDL_Texture* FeatherTexture;
 	SDL_Texture* waxTexture;
+	SDL_Texture* glovesTexture;
+	SDL_Texture* clothTexture;
 
 	Vector2D mousePos;
 

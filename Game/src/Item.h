@@ -46,6 +46,8 @@ public:
 	bool isPicked = false;
 	bool isWax = false;
 	bool isFeather = false;
+	bool isGloves = false;
+	bool isCloth = false;
 
 	PhysBody* pbody;
 	int texW, texH;

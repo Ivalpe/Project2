@@ -46,11 +46,12 @@ bool Column::Start() {
 		pbody->listener = this;
 	}
 	else {
-		pbody = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY(), texW, texH, bodyType::STATIC);
+		pbody = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)(position.getX() + texW), (int)position.getY(), texW - texW/4, texH, bodyType::STATIC);
 
 		////Assign collider type
 		pbody->ctype = ColliderType::DAMAGE_LIGHT;
 		pbody->listener = this;
+		isLight = true;
 	}
 	//// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -73,9 +74,10 @@ bool Column::Update(float dt)
 		pbody = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)parameters.attribute("x").as_int(), (int)parameters.attribute("y").as_int(), texW, texH, bodyType::STATIC);
 	}
 
-	if (!openColumn)
-	Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + (texW * 1.7), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-
+	if (!openColumn){
+		if(!isLight) Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + (texW * 1.7), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		else Engine::GetInstance().render.get()->DrawTexture(texture, (int)position.getX() + ((texW + texW/2) + 8), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	}
 	currentAnimation->Update();
 
 	pbody->body->SetLinearVelocity({ 0,0 });

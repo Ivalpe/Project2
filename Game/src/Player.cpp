@@ -88,8 +88,16 @@ bool Player::Start() {
 	return true;
 }
 
+
 bool Player::Update(float dt)
 {
+
+	if (showFeatherMsg && featherMsgTimer > 0) {
+		Engine::GetInstance().render.get()->DrawText(infoMsg.c_str(), 40, 200, 400, 30);
+		featherMsgTimer--;
+		if (featherMsgTimer == 0) showFeatherMsg = false;
+	}
+
 	if (playerState != lastState)
 	{
 		lastState = playerState;
@@ -107,7 +115,7 @@ bool Player::Update(float dt)
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
-	// press F to die for absolutely no reason lmao (akshually yes, debugging purposes)
+	// press F to die
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
 		playerState = DEAD;
 	}
@@ -144,6 +152,37 @@ bool Player::Update(float dt)
 			dir = LEFT;
 			if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
 				playerState = WALK;
+			}
+		}
+		if (debug) {
+			velocity.y = 0;
+			// Move up
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+
+				if (!onLight) velocity.y = -0.2 * speed;
+				else if (playerState != CRAWL) velocity.y = -0.2 * 10.0f;
+				else velocity.y = -0.2 * speed;
+				dir = RIGHT;
+				if (playerState == CLIMB) {
+
+				}
+				if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
+					playerState = WALK;
+				}
+			}
+			// Move down
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+
+				if (!onLight) velocity.y = 0.2 * speed;
+				else if (playerState != CRAWL) velocity.y = 0.2 * 10.0f;
+				else velocity.y = 0.2 * speed;
+				dir = RIGHT;
+				if (playerState == CLIMB) {
+
+				}
+				if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
+					playerState = WALK;
+				}
 			}
 		}
 		if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE && playerState != CLIMB) {
@@ -255,7 +294,7 @@ bool Player::Update(float dt)
 		}
 
 		//To glide
-		if (playerState != DASH && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
+		if (canGlide && playerState != DASH && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT && velocity.y > 0.5f)
 		{
 			playerState = GLIDE;
 
@@ -327,6 +366,10 @@ bool Player::Update(float dt)
 		}
 		else {
 			pbody->body->SetGravityScale(GRAVITY);
+		}
+
+		if (debug) {
+			pbody->body->SetGravityScale(0);
 		}
 
 		// When on a m_platform, add platform velocity to player movement
@@ -518,6 +561,21 @@ void Player::TeleportToTemporaryCheckpoint() {
 	takenDMG = false;
 }
 
+void Player::UnlockSkill(std::string skill) {
+	if (skill == "Climb") {
+		canClimb = true;
+		showFeatherMsg = true;
+		featherMsgTimer = 120;
+		infoMsg = "You unlocked Climb!";
+	}
+	else if (skill == "Glide") {
+		canGlide = true;
+		showFeatherMsg = true;
+		featherMsgTimer = 120;
+		infoMsg = "You unlocked Glide. Press Q in the air.";
+	}
+}
+
 void Player::TakeDamage() {
 	if (!debug) {
 		if (!takenDMG) {
@@ -560,30 +618,47 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::CLIMBABLE:
 		LOG("Collision CLIMBABLE");
+		if (canClimb) {
+			// Auto-grab triggered
+			playerState = CLIMB;
+			isClimbing = false;
+			isJumping = false;
+			pbody->body->SetGravityScale(0);
+			pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
-		// Auto-grab triggered
-		playerState = CLIMB;
-		isClimbing = false;
-		isJumping = false;
-		pbody->body->SetGravityScale(0);
-		pbody->body->SetLinearVelocity(b2Vec2(0, 0));
 
 
+			// auto-grab animation
+			if (currentAnimation != &turn2back) {
+				turn2back.Reset();
+				currentAnimation = &turn2back;
+			}
 
-		// auto-grab animation
-		if (currentAnimation != &turn2back) {
-			turn2back.Reset();
-			currentAnimation = &turn2back;
+			climbableX = physB->body->GetPosition().x;
 		}
-
-		climbableX = physB->body->GetPosition().x;
 		break;
 	case ColliderType::CHANGE_LEVEL:
-		change_level = true;
-		Engine::GetInstance().scene.get()->level++;
-		Engine::GetInstance().scene.get()->reset_level = true;
+		if (Engine::GetInstance().scene.get()->level == 1) {
+			if (Engine::GetInstance().entityManager->feather >= 3) {
+				change_level = true;
+				Engine::GetInstance().scene.get()->level++;
+				Engine::GetInstance().scene.get()->reset_level = true;
 
-		cleanup_pbody = true;
+				cleanup_pbody = true;
+			}
+			else {
+				showFeatherMsg = true;
+				featherMsgTimer = 120;
+				infoMsg = "You need more feathers";
+			}
+		}
+		else {
+			change_level = true;
+			Engine::GetInstance().scene.get()->level++;
+			Engine::GetInstance().scene.get()->reset_level = true;
+
+			cleanup_pbody = true;
+		}
 		break;
 	case ColliderType::ENEMY:
 		if (useTemporaryCheckpoint) {

@@ -156,7 +156,10 @@
 					</full>
 				</animations>
 			</WaxUI>
+			<gloves path="Assets/Textures/gloves.png" />
+			<cloth path="Assets/Textures/cloth.png" />
 			<FeatherUI path="Assets/Textures/Feather_item.png"/>
+			<helpMenu path="Assets/Textures/helpMenu.png"/>
 			<moon x="220" y="1180+64" texture="Assets/Textures/Moon.png">
 				<animations>
 					<idle loop="true" speed ="0.2">
@@ -321,6 +324,20 @@
 						</idle_feather>
 					</animations>
 				</feather_item>
+				<cloth name="cloth" w="32" h="32" isCloth="true" isPicked="false" texture="Assets/Textures/Cloth.png" gravity="true">
+					<animations>
+						<idle loop="true" speed ="0.5">
+							<frame x="0" y="0" w="32" h="32"/>
+						</idle>
+					</animations>
+				</cloth>
+				<gloves name="gloves" w="32" h="32" isGloves="true" isPicked="false" texture="Assets/Textures/Gloves.png" gravity="true">
+					<animations>
+						<idle loop="true" speed ="0.5">
+							<frame x="0" y="0" w="32" h="32"/>
+						</idle>
+					</animations>
+				</gloves>
 			</items>
 			<interactiveObject>
 				<stalactites_item name="stalactites" x="2000" y="1000" w="128" h="152" isStalactites="true" isPicked="false" texture2="Assets/Textures/cave stalactite.png" gravity="false">
