@@ -83,6 +83,15 @@ public:
 	std::string GetCurrentLevelName();
 
 
+	void NewGame();
+	void Continue();
+	void OpenSettings();
+	void ExitGame();
+	void ResumeGame();
+	void RestartGame(GuiControlButton* restartBt, GuiControlButton* exitBt);
+
+	void GamePadButtonsUpdate();
+	
 
 public:
 	
@@ -113,10 +122,21 @@ public:
 	SDL_Texture* Wax = NULL;
 	SDL_Texture* candle = NULL;
 
+
+	
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;
 	GuiControlButton* guiBt2 = nullptr;
 	GuiControlButton* guiBt0 = nullptr;
+
+
+	GamePad* pad;
+	GamePad padPrev;
+	GuiControlButton* menuButtons[4];
+	GuiControlButton* currentBt = guiBt0;
+	int currentIndex = 0;
+	int menuButtonsSize = sizeof(menuButtons) / sizeof(menuButtons[0]);
+
 
 
 	//WAXY

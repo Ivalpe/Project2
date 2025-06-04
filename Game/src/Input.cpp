@@ -277,6 +277,7 @@ void Input::UpdateGamepadsInput()
 			//Spacebar (jump) --> B 
 			//S (hide) --> zl/l2 (left trigger)
 			//Q (glide) --> zr/r2 (right trigger)
+			//Home --> guide 
  
 		}
 	}

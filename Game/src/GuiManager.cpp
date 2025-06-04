@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Textures.h"
 #include "Log.h"
+#include "Scene.h"
 
 #include "GuiControlButton.h"
 #include "Audio.h"
@@ -45,7 +46,10 @@ bool GuiManager::Update(float dt)
 {
 	for (const auto& control : guiControlsList)
 	{
+		
 		control->Update(dt);
+		
+		
 	}
 
 	return true;
