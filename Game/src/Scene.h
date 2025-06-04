@@ -84,7 +84,7 @@ public:
 
 	std::string GetCurrentLevelName();
 
-
+	int beachMusicId, caveMusicId;
 
 public:
 	
