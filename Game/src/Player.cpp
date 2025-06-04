@@ -90,6 +90,13 @@ bool Player::Start() {
 
 bool Player::Update(float dt)
 {
+
+	if (showFeatherMsg && featherMsgTimer > 0) {
+		Engine::GetInstance().render.get()->DrawText("You need more feathers", 40, 200, 400, 30);
+		featherMsgTimer--;
+		if (featherMsgTimer == 0) showFeatherMsg = false;
+	}
+
 	if (playerState != lastState)
 	{
 		lastState = playerState;
@@ -107,7 +114,7 @@ bool Player::Update(float dt)
 
 	if (!parameters.attribute("gravity").as_bool()) velocity = b2Vec2(0, 0);
 
-	// press F to die for absolutely no reason lmao (akshually yes, debugging purposes)
+	// press F to die
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F) == KEY_DOWN) {
 		playerState = DEAD;
 	}
@@ -144,6 +151,37 @@ bool Player::Update(float dt)
 			dir = LEFT;
 			if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
 				playerState = WALK;
+			}
+		}
+		if (debug) {
+			velocity.y = 0;
+			// Move up
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+
+				if (!onLight) velocity.y = -0.2 * speed;
+				else if (playerState != CRAWL) velocity.y = -0.2 * 10.0f;
+				else velocity.y = -0.2 * speed;
+				dir = RIGHT;
+				if (playerState == CLIMB) {
+
+				}
+				if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
+					playerState = WALK;
+				}
+			}
+			// Move down
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+
+				if (!onLight) velocity.y = 0.2 * speed;
+				else if (playerState != CRAWL) velocity.y = 0.2 * 10.0f;
+				else velocity.y = 0.2 * speed;
+				dir = RIGHT;
+				if (playerState == CLIMB) {
+
+				}
+				if (playerState != FALL && playerState != JUMP && playerState != CLIMB) {
+					playerState = WALK;
+				}
 			}
 		}
 		if (playerState != CRAWL && playerState != HIDE && playerState != UNHIDE && playerState != CLIMB) {
@@ -327,6 +365,10 @@ bool Player::Update(float dt)
 		}
 		else {
 			pbody->body->SetGravityScale(GRAVITY);
+		}
+
+		if (debug) {
+			pbody->body->SetGravityScale(0);
 		}
 
 		// When on a m_platform, add platform velocity to player movement
@@ -589,11 +631,26 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		}
 		break;
 	case ColliderType::CHANGE_LEVEL:
-		change_level = true;
-		Engine::GetInstance().scene.get()->level++;
-		Engine::GetInstance().scene.get()->reset_level = true;
+		if (Engine::GetInstance().scene.get()->level == 1) {
+			if (Engine::GetInstance().entityManager->feather >= 3) {
+				change_level = true;
+				Engine::GetInstance().scene.get()->level++;
+				Engine::GetInstance().scene.get()->reset_level = true;
 
-		cleanup_pbody = true;
+				cleanup_pbody = true;
+			}
+			else {
+				showFeatherMsg = true;
+				featherMsgTimer = 120;
+			}
+		}
+		else {
+			change_level = true;
+			Engine::GetInstance().scene.get()->level++;
+			Engine::GetInstance().scene.get()->reset_level = true;
+
+			cleanup_pbody = true;
+		}
 		break;
 	case ColliderType::ENEMY:
 		if (useTemporaryCheckpoint) {

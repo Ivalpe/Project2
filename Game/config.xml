@@ -159,6 +159,7 @@
 			<gloves path="Assets/Textures/gloves.png" />
 			<cloth path="Assets/Textures/cloth.png" />
 			<FeatherUI path="Assets/Textures/Feather_item.png"/>
+			<helpMenu path="Assets/Textures/helpMenu.png"/>
 			<moon x="220" y="1180+64" texture="Assets/Textures/Moon.png">
 				<animations>
 					<idle loop="true" speed ="0.2">

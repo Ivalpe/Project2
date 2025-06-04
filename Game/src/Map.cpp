@@ -257,6 +257,11 @@ bool Map::Load(std::string path, std::string fileName)
 	posBoss.clear();
 	posCloth.clear();
 	posGloves.clear();
+	for (auto c : climbColliders) {
+		Engine::GetInstance().physics->DeleteBody(c->body);
+		delete c;
+	}
+	climbColliders.clear();
 
 	// Assigns the name of the map file and the path
 	mapFileName = fileName;
@@ -412,6 +417,7 @@ bool Map::Load(std::string path, std::string fileName)
 					PhysBody* rect = Engine::GetInstance().physics.get()->CreateRectangleSensor(x + width / 2, y + height / 2, width, height, STATIC);
 					rect->ctype = ColliderType::CLIMBABLE;
 					Engine::GetInstance().physics->listToDelete.push_back(rect);
+					climbColliders.push_back(rect);
 
 				}
 

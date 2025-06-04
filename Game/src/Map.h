@@ -197,4 +197,6 @@ private:
 	std::vector<Vector2D> posBoss;
 	std::vector<Vector2D> posGloves;
 	std::vector<Vector2D> posCloth;
+
+	std::vector<PhysBody*> climbColliders;
 };

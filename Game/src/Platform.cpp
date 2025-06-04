@@ -60,6 +60,12 @@ bool Platform::Start() {
 		b2Vec2 currentPos = pbody->body->GetPosition();
 		pbody->body->SetTransform(b2Vec2(PIXEL_TO_METERS(PlatformLimits[1].first), PIXEL_TO_METERS(PlatformY[1])), 0);
 	}
+	else if (name == "platform2") {
+		position.setY(PlatformY[2]);
+		position.setX(PlatformLimits[2].first);
+		b2Vec2 currentPos = pbody->body->GetPosition();
+		pbody->body->SetTransform(b2Vec2(PIXEL_TO_METERS(PlatformLimits[2].first), PIXEL_TO_METERS(PlatformY[2])), 0);
+	}
 	return true;
 }
 
@@ -79,13 +85,17 @@ bool Platform::Update(float dt)
 		startPositionX = PlatformLimits[1].first;
 		endPositionX = PlatformLimits[1].second;
 	}
-	if (name == "platform0" || name == "platform1") {
-		b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
-
-		if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
-		else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
-		pbody->body->SetLinearVelocity(velocity);
+	if (name == "platform2") {
+		startPositionX = PlatformLimits[2].first;
+		endPositionX = PlatformLimits[2].second;
 	}
+
+	b2Vec2 velocity = b2Vec2(pbody->body->GetLinearVelocity().x, 0);
+
+	if (position.getX() <= startPositionX && position.getX() != endPositionX) velocity.x = movement; //Movement to the right
+	else if (position.getX() >= endPositionX) velocity.x = -movement; // Movement to the left  
+	pbody->body->SetLinearVelocity(velocity);
+
 
 
 

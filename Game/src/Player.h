@@ -152,4 +152,7 @@ public:
 	int lightDamage = 0;
 	bool onLight = false;
 	bool debug = false;
+
+	bool showFeatherMsg = false;
+	int featherMsgTimer = 0;
 };

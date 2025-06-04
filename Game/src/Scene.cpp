@@ -55,7 +55,7 @@ bool Scene::Awake()
 	}
 
 	for (pugi::xml_node PlatformObjectNode = configParameters.child("entities").child("platforms").child("platform"); PlatformObjectNode; PlatformObjectNode = PlatformObjectNode.next_sibling("platforms")) {
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 3; i++) {
 			Platform* PlatformObject = (Platform*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLATFORM);
 			PlatformObject->SetParameters(PlatformObjectNode);
 			platformList.push_back(PlatformObject);
@@ -205,6 +205,7 @@ bool Scene::Start()
 	waxTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("WaxUI").attribute("path").as_string());
 	glovesTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("gloves").attribute("path").as_string());
 	clothTexture = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("cloth").attribute("path").as_string());
+	helpMenu = Engine::GetInstance().textures.get()->Load(configParameters.child("textures").child("helpMenu").attribute("path").as_string());
 
 	empty.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("empty"));
 	fill2lvl1.LoadAnimations(configParameters.child("textures").child("WaxUI").child("animations").child("fill_to_lvl1"));
@@ -350,6 +351,21 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) {
+		showHelpMenu = !showHelpMenu;
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
+		Engine::GetInstance().entityManager->wax++;
+		shouldFillWaxy = true;
+		filledWaxy = false;
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
+		Engine::GetInstance().entityManager->feather++;
+	}
+
+
 	float camSpeed = 1;
 	int Px = player->position.getX();
 	int Py = player->position.getY();
@@ -387,6 +403,7 @@ bool Scene::Update(float dt)
 	if (reset_level) {
 		Change_level(level);
 		if (level == 1) player->SetPosition(Vector2D{ 1568,6700 });
+		if (level == 2) player->SetPosition(Vector2D{ 64, 64 });
 		reset_level = false;
 	}
 
@@ -414,6 +431,10 @@ bool Scene::Update(float dt)
 	//	Engine::GetInstance().render.get()->DrawTexture(WaxiFloatingTexture, (int)WaxiFloatingPos.getX(), (int)WaxiFloatingPos.getY(), &WaxiFloating_currentAnimation->GetCurrentFrame());
 	//	WaxiFloating_currentAnimation->Update();
 	//}
+
+	if (showHelpMenu && helpMenu != nullptr) {
+		Engine::GetInstance().render.get()->DrawTexture(helpMenu, 0, 0, nullptr, false);
+	}
 
 	return true;
 }
@@ -518,6 +539,7 @@ void Scene::show_UI() {
 
 void Scene::animationWaxy()
 {
+
 	if (!filledWaxy) {
 		if (waxState == FULL) resetWax.Start();
 		if (shouldFillWaxy) {

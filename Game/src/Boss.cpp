@@ -266,7 +266,7 @@ void Boss::OnCollision(PhysBody* physA, PhysBody* physB) {
 		if (delay <= 0 && state != DEAD) {
 			if (physA->ctype == ColliderType::RANGELEFT) {
 
-				if (state == IDLE) {
+				if (state == IDLE && !leftWallBlocked) {
 					dir = Direction::LEFT;
 					state = RUNNING;
 				}
@@ -285,6 +285,7 @@ void Boss::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::WALLBOSS:
 		if (physA->ctype == ColliderType::BOSS) {
 			state = STUNNED;
+			leftWallBlocked = true;
 		}
 		break;
 	case ColliderType::WALLBOSSDES:
@@ -307,6 +308,10 @@ void Boss::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::PLAYER:
 		break;
 	case ColliderType::UNKNOWN:
+		break;
+	case ColliderType::WALLBOSS:
+		if (physA->ctype == ColliderType::BOSS)
+			leftWallBlocked = false;
 		break;
 	default:
 		break;
