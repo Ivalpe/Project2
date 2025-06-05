@@ -209,6 +209,8 @@ bool Boss::Update(float dt)
 	if (contColumn <= 0) {
 		state = DEAD;
 		pbody->ctype = ColliderType::ENEMY_DEATH;
+		Player* player = Engine::GetInstance().scene.get()->GetPlayer();
+		player->UnlockSkill("Dash");
 	}
 
 	if (delay > 0) delay--;

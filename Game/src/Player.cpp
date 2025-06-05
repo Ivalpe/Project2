@@ -228,7 +228,7 @@ bool Player::Update(float dt)
 		// If the player is jumpling, we don't want to apply gravity, we use the current velocity prduced by the jump
 
 		//Dash
-		if (((playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN || ControllerBtPressedOnce(prevZL, pad->l2)) && !dashColdown) || isDashing) && !onLight) {
+		if (canDash && ((playerState != CLIMB && (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN || ControllerBtPressedOnce(prevZL, pad->l2)) && !dashColdown) || isDashing) && !onLight) {
 
 			playerState = DASH;
 			isDashing = true;
@@ -628,6 +628,12 @@ void Player::UnlockSkill(std::string skill) {
 		showFeatherMsg = true;
 		featherMsgTimer = 120;
 		infoMsg = "You unlocked Glide. Press Q in the air.";
+	}
+	else if (skill == "Dash") {
+		canDash = true;
+		showFeatherMsg = true;
+		featherMsgTimer = 120;
+		infoMsg = "You unlocked Dash. Press E to Dash.";
 	}
 }
 
