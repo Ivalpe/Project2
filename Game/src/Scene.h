@@ -84,7 +84,20 @@ public:
 
 	std::string GetCurrentLevelName();
 
+
 	int beachMusicId, caveMusicId;
+	std::string beachMusPath, caveMusPath;
+
+	void NewGame();
+	void Continue();
+	void OpenSettings();
+	void ExitGame();
+	void ResumeGame();
+	void RestartGame(GuiControlButton* restartBt, GuiControlButton* exitBt);
+
+	void GamePadButtonsUpdate(int &currentIndex);
+	
+
 
 public:
 	
@@ -122,10 +135,27 @@ public:
 	SDL_Texture* candleBase = NULL;
 	SDL_Texture* helpMenu = NULL;
 
+
+	
 	GuiControlButton* guiBt = nullptr;
 	GuiControlButton* guiBt1 = nullptr;
 	GuiControlButton* guiBt2 = nullptr;
 	GuiControlButton* guiBt0 = nullptr;
+
+	SDL_Rect MusicPosition;
+	SDL_Rect FxPosition;
+
+
+	GamePad* pad;
+	GamePad padPrev;
+	GuiControlButton* menuButtons[4];
+	GuiControlButton* currentBt = guiBt0;
+	int currentInitialIndex = 0;
+	int currentSettingsIndex = 0;
+	int currentPauseIndex = 0;
+	int currentDeathIndex = 0;
+	int menuButtonsSize;
+
 
 
 	//WAXY

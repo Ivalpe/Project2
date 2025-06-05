@@ -19,6 +19,7 @@
 #include "Physics.h"
 #include "Platform.h"
 
+#define DEADZONE 0.2f
 
 
 Scene::Scene() : Module(), showPauseMenu(false), showSettingsMenu(false), GameOverMenu(false)
@@ -36,6 +37,8 @@ bool Scene::Awake()
 {
 	LOG("Loading Scene");
 	bool ret = true;
+
+	
 
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
@@ -63,9 +66,13 @@ bool Scene::Awake()
 		}
 	}
 
+
 	CreateEnemies(level);
 	CreateItems(level);
+
 	return ret;
+
+	
 }
 
 void Scene::CreateEnemies(int level)
@@ -227,14 +234,21 @@ bool Scene::Start()
 	MoonPos.setX(configParameters.child("textures").child("moon").attribute("x").as_int());
 	MoonPos.setY(configParameters.child("textures").child("moon").attribute("y").as_int());
 
-	beachMusicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/playa.wav");
-	caveMusicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/cueva.wav");
+
+	//beachMusicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/playa.wav");
+	//caveMusicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Music/cueva.wav");
+
+
+	pad = &Engine::GetInstance().input.get()->pads[0];
+	padPrev = *pad;
+
 
 	return true;
 }
 
 void Scene::Change_level(int level)
 {
+	Engine::GetInstance().audio.get()->StopMusic();
 	Engine::GetInstance().audio.get()->StopFxByChannel(5);
 	for (auto e : itemList) {
 		if (e->GetPhysbody() == nullptr) continue;
@@ -305,6 +319,8 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map").attribute("path").as_string(), configParameters.child("map").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
+		/*Engine::GetInstance().audio.get()->StopMusic();*/
+		Engine::GetInstance().audio.get()->PlayMusic(configParameters.child("music").child("beachMus").attribute("path").as_string());
 	}
 
 	else if (level == 1) {
@@ -321,7 +337,10 @@ void Scene::Change_level(int level)
 
 		showBlackTransition = true;
 		blackTransitionStart = SDL_GetTicks();
-		Engine::GetInstance().audio.get()->PlayFx(caveMusicId, 5, 5);
+		/*Engine::GetInstance().audio.get()->PlayFx(caveMusicId, 5, 5);*/
+		/*Engine::GetInstance().audio.get()->StopMusic();*/
+		Engine::GetInstance().audio.get()->PlayMusic(configParameters.child("music").child("caveMus").attribute("path").as_string());
+
 	}
 
 	else if (level == 2) {    
@@ -346,6 +365,8 @@ void Scene::Change_level(int level)
 		Engine::GetInstance().map->Load(configParameters.child("map3").attribute("path").as_string(), configParameters.child("map3").attribute("name").as_string());
 		CreateItems(level);
 		CreateEnemies(level);
+
+		Engine::GetInstance().audio.get()->PlayMusic(configParameters.child("music").child("beachMus").attribute("path").as_string());
 	}
 }
 
@@ -358,7 +379,7 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN || (pad->start && !padPrev.start)) {
 		showHelpMenu = !showHelpMenu;
 	}
 
@@ -422,17 +443,24 @@ bool Scene::Update(float dt)
 		Engine::GetInstance().map->DrawAll();
 	}
 
+
+	
+
 	// Wax animation
 	animationWaxy();
 
 	//Pause menu
 	Active_MenuPause();
 
+	
 	GameOver_State();
 
 	MenuInitialScreen();
 
-	if (showSettingsMenu) 	MenuSettings();
+
+	if (showSettingsMenu) {
+		MenuSettings();
+	}
 
 	////Waxi floating
 	//if (level == 0) {
@@ -443,6 +471,8 @@ bool Scene::Update(float dt)
 	if (showHelpMenu && helpMenu != nullptr) {
 		Engine::GetInstance().render.get()->DrawTexture(helpMenu, 0, 0, nullptr, false);
 	}
+
+	padPrev = *pad;
 
 	return true;
 }
@@ -468,6 +498,7 @@ bool Scene::PostUpdate()
 		player->SetPosition(Vector2D{ 1568,6700 });
 	}
 
+
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
 		level = 2;
 		Change_level(level);
@@ -478,6 +509,7 @@ bool Scene::PostUpdate()
 		Change_level(level);
 		player->SetPosition(Vector2D{ 200, 600 });
 	}
+
 	show_UI();
 
 	if (showBlackTransition) {
@@ -622,7 +654,10 @@ Vector2D Scene::GetPlayerPosition()
 
 void Scene::MenuInitialScreen()
 {
+	/*menuButtonsSize = 0;*/
+
 	if (InitialScreenMenu) {
+		
 		if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
 
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
@@ -632,6 +667,7 @@ void Scene::MenuInitialScreen()
 		Engine::GetInstance().render.get()->DrawTexture(InitialScreen, -cameraX, -cameraY);
 
 
+		
 		int textWidthNewGame, textHeightNewGame;
 		int textWidthContinue, textHeightContinue;
 		int textWidthSettings, textHeightSettings;
@@ -644,6 +680,7 @@ void Scene::MenuInitialScreen()
 
 		float scaleFactor = 0.9f;
 
+
 		SDL_Rect NewGameButton = { 300 - 60 - 7 - 100 + 7, 445 + 50 + 10 - 5, static_cast<int>(textWidthNewGame * scaleFactor) + 10, static_cast<int>(textHeightNewGame * scaleFactor) + 10 };
 		SDL_Rect ConitnuesButton = { 320 - 50 - 7 - 130 + 8, 520 + 50 - 5 - 5 - 3, static_cast<int>(textWidthContinue * scaleFactor) + 10, static_cast<int>(textHeightContinue * scaleFactor) + 10 };
 		SDL_Rect Settings = { 330 - 45 - 7 - 130 - 5, 595 + 50 - 25 - 5, static_cast<int>(textWidthSettings * scaleFactor) + 10, static_cast<int>(textHeightSettings * scaleFactor) + 10 };
@@ -655,16 +692,55 @@ void Scene::MenuInitialScreen()
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 10, "", Settings, this));
 		guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 11, "", Exit, this));
 
-		Engine::GetInstance().render.get()->DrawTexture(WaxiFloatingTexture, (int)WaxiFloatingPos.getX(), (int)WaxiFloatingPos.getY(), &WaxiFloating_currentAnimation->GetCurrentFrame());
+		if (!showSettingsMenu) {
+
+			menuButtons[0] = guiBt0;
+			menuButtons[1] = guiBt;
+			menuButtons[2] = guiBt1;
+			menuButtons[3] = guiBt2;
+			menuButtonsSize = 4;
+
+			//Gamepad navigation
+
+			if (pad->enabled) {
+
+				menuButtons[currentInitialIndex]->state = GuiControlState::FOCUSED;
+
+
+				if (pad->a && !padPrev.a && menuButtons[currentInitialIndex]->state == GuiControlState::FOCUSED) {
+					/*menuButtons[currentIndex]->state = GuiControlState::PRESSED;*/
+					/*OnGuiMouseClickEvent(menuButtons[currentIndex]);*/
+					if (currentInitialIndex == 0) NewGame();
+					else if (currentInitialIndex == 1) Continue();
+					else if (currentInitialIndex == 2) OpenSettings();
+					else if (currentInitialIndex == 3) ExitGame();
+
+				}
+
+				GamePadButtonsUpdate(currentInitialIndex);
+
+				Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 30, menuButtons[currentInitialIndex]->bounds.y + menuButtons[currentInitialIndex]->bounds.h / 2 - 10, nullptr, false);
+
+			}
+
+			Engine::GetInstance().render.get()->DrawTexture(WaxiFloatingTexture, (int)WaxiFloatingPos.getX(), (int)WaxiFloatingPos.getY(), &WaxiFloating_currentAnimation->GetCurrentFrame());
+		}
+
 		WaxiFloating_currentAnimation->Update();
+
 	}
+	
 }
 
 void Scene::GameOver_State()
 {
+
+	/*menuButtonsSize = 0; */
+
 	if (Engine::GetInstance().entityManager->candleNum <= 0) {
 
 		if (!GameOverMenu) {
+			/*currentDeathIndex = 0;*/
 			GameOverMenu = true;
 		}
 
@@ -697,12 +773,44 @@ void Scene::GameOver_State()
 
 		guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 6, "Continue", Continue, this));
 		guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 7, "Exit", Exit, this));
+
+
+		menuButtons[0] = guiBt;
+		menuButtons[1] = guiBt1;
+		menuButtonsSize = 2;
+
+		if (pad->enabled) {
+
+			menuButtons[currentDeathIndex]->state = GuiControlState::FOCUSED;
+
+			if (pad->a && !padPrev.a && menuButtons[currentDeathIndex]->state == GuiControlState::FOCUSED) {
+
+				switch (currentDeathIndex) {
+				case 0:
+					RestartGame(guiBt, guiBt1);
+					break;
+				case 1:
+					ExitGame();
+					break;
+				}
+			}
+
+
+			GamePadButtonsUpdate(currentDeathIndex);
+			Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788, menuButtons[currentDeathIndex]->bounds.y + menuButtons[currentDeathIndex]->bounds.h / 2 - 10, nullptr, false);
+		}
+
+		// Engine::GetInstance().render.get()->DrawText("Ikaros, don't seek the strength int the light, seek it in the shades", Sentence.x, Sentence.y, Sentence.w, Sentence.h);
+
 	}
 }
 
 void Scene::Active_MenuPause() {
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+	
+
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN || (pad->guide && !padPrev.guide)) {
 		showPauseMenu = !showPauseMenu;
 		showSettingsMenu = false;
 		if (showPauseMenu) {
@@ -739,7 +847,6 @@ void Scene::Active_MenuPause() {
 		if (!showSettingsMenu) {
 			MenuPause();
 		}
-
 		if (showSettingsMenu) {
 			MenuSettings();
 
@@ -753,6 +860,8 @@ void Scene::Active_MenuPause() {
 
 void Scene::MenuPause()
 {
+	/*menuButtonsSize = 0;*/
+
 	if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
 
 	int cameraX = Engine::GetInstance().render.get()->camera.x;
@@ -783,10 +892,51 @@ void Scene::MenuPause()
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 1, "", ConitnuesButton, this));
 	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 2, "", Settings, this));
 	guiBt2 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 3, "", Exit, this));
+
+	menuButtons[0] = guiBt;
+	menuButtons[1] = guiBt1;
+	menuButtons[2] = guiBt2;
+	menuButtonsSize = 3;
+	
+	
+
+	if (pad->enabled) {
+
+		menuButtons[currentPauseIndex]->state = GuiControlState::FOCUSED;
+
+		if (pad->a && !padPrev.a && menuButtons[currentPauseIndex]->state == GuiControlState::FOCUSED) {
+
+
+			if (menuButtons[currentPauseIndex]->state == GuiControlState::FOCUSED) {
+
+				switch (currentPauseIndex) {
+				case 0:
+					ResumeGame();
+					break;
+				case 1:
+					OpenSettings();
+					break;
+				case 2:
+					ExitGame();
+					break;
+				}
+			}
+
+		}
+		
+		GamePadButtonsUpdate(currentPauseIndex);
+		
+		Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 767, menuButtons[currentPauseIndex]->bounds.y + menuButtons[currentPauseIndex]->bounds.h / 2 - 20, nullptr, false);
+		
+	}
+
 }
 
 void Scene::MenuSettings()
 {
+
+	//menuButtonsSize = 0;
+
 	if (Engine::GetInstance().guiManager != nullptr)	Engine::GetInstance().guiManager->CleanUp();
 
 	Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
@@ -801,30 +951,96 @@ void Scene::MenuSettings()
 	Engine::GetInstance().render.get()->DrawTexture(Menu_Settings, -cameraX, -cameraY);
 
 
-	SDL_Rect MusicPosition = { musicPosX, 10, 485, 35 };
-	guiBt->bounds.x = musicPosX; // Reposition the music volume button
-	SDL_Rect FxPosition = { ambient_soundsPosX, 10, 555, 35 };
-	guiBt1->bounds.x = ambient_soundsPosX; // Reposition the ambient sounds volume button
+	MusicPosition = { musicPosX, 490, 485, 35 };
+	
+	FxPosition = { ambient_soundsPosX, 560, 555, 35 };
+	
 
 	guiBt = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 4, "  ", MusicPosition, this));
 	guiBt1 = static_cast<GuiControlButton*>(Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, 5, "  ", FxPosition, this));
 
-	// Prevent both ambient sounds and Music Volume from moving at the same time. Check the mouse position on the Y axis
-	if (mousePos.getX() >= musicPosX && mousePos.getX() <= musicPosX + 6 && mousePos.getY() >= 511 - 5 && mousePos.getY() <= 511 + 10)
-	{
-		mouseOverMusicControl = true; // Mouse is over the music volume control
-	}
-	else {
-		mouseOverMusicControl = false; // Mouse is not over the music control
-	}
+	guiBt->bounds.x = musicPosX; // Reposition the music volume button
+	guiBt1->bounds.x = ambient_soundsPosX; // Reposition the ambient sounds volume button
 
-	// Check if the mouse is over the Ambient sounds control
-	if (mousePos.getX() >= ambient_soundsPosX && mousePos.getX() <= ambient_soundsPosX + 6 && mousePos.getY() >= 571 - 5 && mousePos.getY() <= 571 + 10) {
-		mouseOverAmbientControl = true;  // Mouse is over the ambient sounds volume control
+	//gamePad implementation attempt
+
+	menuButtons[0] = guiBt;
+	menuButtons[1] = guiBt1;
+	menuButtonsSize = 2;
+
+	if (pad->enabled) {
+		/*if(pad->a) menuButtons[currentSettingsIndex]->state = GuiControlState::FOCUSED;*/
+
+		if (pad->a/* && menuButtons[currentSettingsIndex]->state == GuiControlState::FOCUSED*/) {
+			if(currentSettingsIndex == 0) mouseOverMusicControl = true;
+			else if (currentSettingsIndex == 1) mouseOverAmbientControl = true;
+	
+		}
+	
+		if (mouseOverMusicControl) {
+
+			if (pad->right) {
+
+				musicPosX++;
+				if (musicPosX > 1225) musicPosX = 1225;
+			}
+			if (pad->left) {
+				musicPosX--;
+				if (musicPosX < 1034) musicPosX = 1034;
+			}
+			if (pad->b) {
+				mouseOverMusicControl = false;
+			}
+
+		}
+
+		if (mouseOverAmbientControl) {
+
+			if (pad->right) {
+				ambient_soundsPosX++;
+				if (ambient_soundsPosX > 1225) ambient_soundsPosX = 1225;
+			}
+			if (pad->left) {
+				ambient_soundsPosX--;
+				if (ambient_soundsPosX < 1034) ambient_soundsPosX = 1034;
+			}
+			if (pad->b) {
+				mouseOverAmbientControl = false;
+			}
+			
+		}
+		
+		if (mouseOverMusicControl || mouseOverAmbientControl ) {
+			Engine::GetInstance().render.get()->DrawRectangle({ 680, menuButtons[currentSettingsIndex]->bounds.y, 200, menuButtons[currentSettingsIndex]->bounds.h }, 0, 0, 100, 50, true, false);
+			
+		}
+		else {
+			GamePadButtonsUpdate(currentSettingsIndex);
+		}
+		Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 600/*menuButtons[currentIndex]->bounds.x - menuButtons[currentIndex]->bounds.w/2*/, menuButtons[currentSettingsIndex]->bounds.y, nullptr, false);
 	}
 	else {
-		mouseOverAmbientControl = false; // Mouse is not over the ambient sounds volume control
+		// Prevent both ambient sounds and Music Volume from moving at the same time. Check the mouse position on the Y axis
+		if (mousePos.getX() >= musicPosX && mousePos.getX() <= musicPosX + 6 && mousePos.getY() >= 511 - 5 && mousePos.getY() <= 511 + 10)
+		{
+			mouseOverMusicControl = true; // Mouse is over the music volume control
+		}
+
+		else /*if (!pad->enabled && mouseOverMusicControl)*/ {
+			mouseOverMusicControl = false;
+		}
+
+		// Check if the mouse is over the Ambient sounds control
+		if (mousePos.getX() >= ambient_soundsPosX && mousePos.getX() <= ambient_soundsPosX + 6 && mousePos.getY() >= 571 - 5 && mousePos.getY() <= 571 + 10) {
+			mouseOverAmbientControl = true;  // Mouse is over the ambient sounds volume control
+		}
+		else {
+			mouseOverAmbientControl = false; // Mouse is not over the ambient sounds volume control
+		}
 	}
+	
+	
+	
 
 	if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 		if (mouseOverMusicControl) {
@@ -866,7 +1082,9 @@ void Scene::MenuSettings()
 		}
 	}
 
+
 	SDL_Rect newMusicPos = { musicPosX, 511 - 5 - 7, 6, 15 }; // New music volume position 
+
 	guiBt->bounds = newMusicPos;
 
 	SDL_Rect newFxPos = { ambient_soundsPosX, 571 - 5 + 7, 6, 15 }; // New music ambient sounds position
@@ -891,7 +1109,15 @@ void Scene::MenuSettings()
 	// Music volume filled portion
 	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 511 - 7, musicPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
 	//Ambient sounds filled portion
+
 	Engine::GetInstance().render.get()->DrawRectangle({ 1034, 570 + 1 + 7, ambient_soundsPosX - 1034, 6 }, 255, 255, 255, 255, true, false);
+
+
+	if (pad->guide && padPrev.guide) 
+		showSettingsMenu = false;
+
+	padPrev = *pad;
+
 }
 
 void Scene::DisableGuiControlButtons()
@@ -900,30 +1126,25 @@ void Scene::DisableGuiControlButtons()
 	guiBt1->state = GuiControlState::DISABLED;
 	guiBt2->state = GuiControlState::DISABLED;
 }
+
+
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	switch (control->id) {
 	case 1: //Menu pause: Resume
-		showPauseMenu = false;
 
-		player->ResumeMovement();
-		Engine::GetInstance().entityManager->candleNum = 3;
-		Engine::GetInstance().entityManager->feather = 0;
-		/*for (Enemy* enemy : enemyList) {
-			if (enemy) {
-				enemy->visible = true;
-				enemy->ResumeMovement();
-			}
-		}*/
-
-		DisableGuiControlButtons();
+		ResumeGame();
+		
 		break;
 	case 2://Menu pause: Settings
-		showSettingsMenu = true;
+
+		OpenSettings();
+		/*showSettingsMenu = true;*/
 		break;
 	case 3: //Menu pause: Exit
-		exit(0);
-		DisableGuiControlButtons();
+		/*exit(0);
+		DisableGuiControlButtons();*/
+		ExitGame();
 		break;
 	case 4:	// Settings: Music Volume
 		musicButtonHeld = true;
@@ -932,76 +1153,27 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		Ambient_Sounds_ButtonHeld = true;
 		break;
 	case 6:	// Game Over: Continue
-		GameOverMenu = false;
-
-		// Restablecer la posición del jugador según el nivel
-		if (player != nullptr) {
-			if (Engine::GetInstance().scene.get()->level == 0) {
-				player->position.setX(784);
-				player->position.setY(600);
-			}
-			else if (Engine::GetInstance().scene.get()->level == 1) {
-				player->position.setX(1568);
-				player->position.setY(6400);
-			}
-			else if (Engine::GetInstance().scene.get()->level == 2) {
-				player->position.setX(64);
-				player->position.setY(64);
-			}
-			else if (Engine::GetInstance().scene.get()->level == 3) {
-				player->position.setX(200);
-				player->position.setY(600);
-			}
-
-			player->ResumeMovement();
-		}
-
-		//player->Start(); // Reiniciar cualquier estado del jugador
-
-		// Reiniciar recursos del jugador
-		Engine::GetInstance().entityManager->candleNum = 3;
-		Engine::GetInstance().entityManager->feather = 0;
-
-		guiBt->state = GuiControlState::DISABLED;
-		guiBt1->state = GuiControlState::DISABLED;
-
-		//Change_level(level);
+		RestartGame(guiBt, guiBt1);
+		
 		break;
 	case 7:// Game Over: Exit
-
-		exit(0);
-		guiBt->state = GuiControlState::DISABLED;
-		guiBt1->state = GuiControlState::DISABLED;
+		ExitGame();
 		break;
 
 	case 8:// Initial Screen: New Game
-		showPauseMenu = false;
-		player->ResumeMovement();
 
-		InitialScreenMenu = false;
-		guiBt0->state = GuiControlState::DISABLED;
-		DisableGuiControlButtons();
-		CreateEnemies(level);
-		CreateItems(level);
-		Engine::GetInstance().audio.get()->PlayFx(beachMusicId, 5, 5);
+		NewGame();
 
 		break;
 	case 9:// Initial Screen: Conitnue
 
+		Continue();
 		break;
 	case 10:// Initial Screen: Settings
-
-		//InitialScreenMenu = false;
-		guiBt0->state = GuiControlState::DISABLED;
-		DisableGuiControlButtons();
-		showSettingsMenu = true;
-
+		OpenSettings();
 		break;
 	case 11:// Initial Screen: Exit
-		InitialScreenMenu = false;
-		exit(0);
-		guiBt0->state = GuiControlState::DISABLED;
-		DisableGuiControlButtons();
+		ExitGame();
 		break;
 	}
 
@@ -1111,4 +1283,137 @@ void Scene::DrainWaxy() {
 
 std::string Scene::GetCurrentLevelName() {
 	return ("lvl" + std::to_string(level));
+}
+
+void Scene::NewGame() {
+
+	InitialScreenMenu = false;
+	guiBt0->state = GuiControlState::DISABLED;
+	DisableGuiControlButtons();
+	CreateEnemies(level);
+	CreateItems(level);
+
+	Engine::GetInstance().audio.get()->StopMusic();
+	Engine::GetInstance().audio.get()->PlayMusic(configParameters.child("music").child("beachMus").attribute("path").as_string());
+
+	//OLD CODE
+	// showPauseMenu = false;
+	// player->ResumeMovement();
+
+	// InitialScreenMenu = false;
+	// guiBt0->state = GuiControlState::DISABLED;
+	// DisableGuiControlButtons();
+}
+
+void Scene::Continue() {
+	
+}
+
+void Scene::OpenSettings() {
+
+	guiBt0->state = GuiControlState::DISABLED;
+
+	DisableGuiControlButtons();
+	showSettingsMenu = true;
+
+}
+
+void Scene::ExitGame() {
+	InitialScreenMenu = false;
+	exit(0);
+	guiBt0->state = GuiControlState::DISABLED;
+	DisableGuiControlButtons();
+}
+
+void Scene::ResumeGame() {
+	showPauseMenu = false;
+
+	player->ResumeMovement();
+	Engine::GetInstance().entityManager->candleNum = 3;
+	Engine::GetInstance().entityManager->feather = 0;
+
+
+	DisableGuiControlButtons();
+}
+
+void Scene::RestartGame(GuiControlButton* restartBt, GuiControlButton* exitBt) {
+
+
+	GameOverMenu = false;
+	
+	// Restablecer la posición del jugador según el nivel
+	if (player != nullptr) {
+		if (Engine::GetInstance().scene.get()->level == 0) {
+			player->position.setX(784);
+			player->position.setY(600);
+		}
+		else if (Engine::GetInstance().scene.get()->level == 1) {
+			player->position.setX(1568);
+			player->position.setY(6400);
+
+		}
+		else if (Engine::GetInstance().scene.get()->level == 2) {
+			player->position.setX(64);
+			player->position.setY(64);
+		}
+		else if (Engine::GetInstance().scene.get()->level == 3) {
+			player->position.setX(200);
+			player->position.setY(600);
+		}
+
+		player->ResumeMovement();
+	}
+
+	//player->Start(); // Reiniciar cualquier estado del jugador
+
+	// Reiniciar recursos del jugador
+	Engine::GetInstance().entityManager->candleNum = 3;
+	Engine::GetInstance().entityManager->feather = 0;
+
+	restartBt->state = GuiControlState::DISABLED;
+	exitBt->state = GuiControlState::DISABLED;
+
+	/*Change_level(level);*/
+
+	// OLD CODE
+	
+
+	// // Restablecer la posición del jugador según el nivel
+	// if (player != nullptr) {
+	// 	if (Engine::GetInstance().scene.get()->level == 0) {
+	// 		player->position.setX(784);
+	// 		player->position.setY(600);
+	// 	}
+	// 	else if (Engine::GetInstance().scene.get()->level == 1) {
+	// 		player->position.setX(300);
+	// 		player->position.setY(600);
+	// 	}
+
+	// 	player->ResumeMovement();
+	// }
+
+	// //player->Start(); // Reiniciar cualquier estado del jugador
+
+	// // Reiniciar recursos del jugador
+	// Engine::GetInstance().entityManager->candleNum = 3;
+	// Engine::GetInstance().entityManager->feather = 0;
+
+	// restartBt->state = GuiControlState::DISABLED;
+	// exitBt->state = GuiControlState::DISABLED;
+}
+
+void Scene::GamePadButtonsUpdate(int &currentIndex) {
+	if (pad->down && !padPrev.down) {
+		menuButtons[currentIndex]->state = GuiControlState::NORMAL;
+		currentIndex = (currentIndex + 1) % menuButtonsSize;
+		menuButtons[currentIndex]->state = GuiControlState::FOCUSED;
+	}
+
+	if (pad->up && !padPrev.up) {
+		menuButtons[currentIndex]->state = GuiControlState::NORMAL;
+
+		currentIndex = (currentIndex - 1 + menuButtonsSize) % menuButtonsSize;
+		menuButtons[currentIndex]->state = GuiControlState::FOCUSED;
+
+	}
 }

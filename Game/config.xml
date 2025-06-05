@@ -250,6 +250,7 @@
 						<frame x ="1024" y="1792" w="256" h="256"/>
 						<frame x ="1280" y="1792" w="256" h="256"/>
 					</turn2back>
+
 					<onrope loop ="false" speed ="0.5f">
 						<frame x ="1280" y="1792" w="256" h="256"/>
 					</onrope>
@@ -504,5 +505,10 @@
 				</platform>
 			</platforms>
 		</entities>
+    <music>
+      <beachMus path = "Assets/Audio/Music/playa.ogg"/>
+      <caveMus path ="Assets/Audio/Music/cueva.ogg"/>
+      <bossMus path ="Assets/Audio/Music/boss.ogg"/>
+    </music>
 	</scene>
 </config>

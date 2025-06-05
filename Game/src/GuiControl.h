@@ -4,6 +4,7 @@
 #include "Render.h"
 #include "Module.h"
 
+
 #include "Vector2D.h"
 
 enum class GuiControlType
@@ -39,12 +40,14 @@ public:
 	// Constructor
 	GuiControl(GuiControlType type, SDL_Rect bounds, const char* text) :
 		type(type),
+		
 		state(GuiControlState::NORMAL),
 		bounds(bounds),
 		text(text)
 	{
 		color.r = 255; color.g = 255; color.b = 255;
 		texture = NULL;
+
 	}
 
 	// Called each loop iteration

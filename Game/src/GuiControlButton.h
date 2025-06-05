@@ -13,11 +13,14 @@ public:
 
 	// Called each loop iteration
 	bool Update(float dt);
+	bool gamepadFocused;
+	bool gamepadPressed;
 
 private:
 
 	bool canClick = true;
 	bool drawBasic = false;
+	
 
 	SDL_Texture* feather;
 };

@@ -87,7 +87,7 @@ public:
 public:
 	int visible = true;
 
-
+	bool music = false;
 
 	SDL_Texture* texture;
 	const char* texturePath;
@@ -114,10 +114,9 @@ public:
 		dieFxId,
 		gruntFxId,
 		impactFxId,
-		rockFxId,
-		musicId;
+		rockFxId;
 
-	bool music = false;
+
 
 	Player* player;
 	eState state = IDLE;
