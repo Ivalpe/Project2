@@ -7,7 +7,6 @@
 #include "Item.h"
 #include "Enemy.h"
 #include "Platform.h"
-#include "Soldier.h"
 
 
 

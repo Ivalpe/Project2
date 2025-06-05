@@ -29,8 +29,6 @@ bool Enemy::Start() {
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
-	//position.setX(parameters.attribute("x").as_int());
-	//position.setY(parameters.attribute("y").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 	speed = parameters.child("properties").attribute("speed").as_int();
@@ -43,7 +41,6 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	//pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 3, texH / 2, bodyType::DYNAMIC);
 	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX() + texH / 2, (int)position.getY() + texH / 3, texW / 2, texH, bodyType::DYNAMIC);
 
 	//Sensor
@@ -55,11 +52,6 @@ bool Enemy::Start() {
 	attackSensor = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH, texW / 2, texH, bodyType::KINEMATIC);
 	attackSensor->ctype = ColliderType::ATTACKSENSOR;
 	attackSensor->listener = this;
-
-	/*weapon = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + texH/2 , 150, 250, bodyType::KINEMATIC);
-	weapon->ctype = ColliderType::DAMAGE;
-	weapon->listener = this;
-	weapon->body->SetEnabled(false);*/
 
 	////Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
@@ -120,14 +112,10 @@ bool Enemy::Update(float dt)
 		}
 	}
 
-	/*if (attackPlayer) weapon->body->SetEnabled(true);
-	else weapon->body->SetEnabled(false);*/
-
 	currentAnimation->Update();
 
 	b2Vec2 vel = pbody->body->GetLinearVelocity();
 	pbody->body->SetLinearVelocity({ velocity, vel.y });
-	//weapon->body->SetLinearVelocity({ velocity,0 });
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
@@ -143,7 +131,6 @@ bool Enemy::Update(float dt)
 		weaponOffset = -50;
 	}
 
-	//weapon->body->SetTransform({ enemyPos.x + weaponOffset, enemyPos.y }, 0);
 
 	const float maxAngle = 2.0f * (float)M_PI / 180.0f;
 	float angle = pbody->body->GetAngle();
@@ -306,27 +293,6 @@ void Enemy::AttackEnemy(float dt) {
 			Engine::GetInstance().scene.get()->GetPlayer()->TakeDamage();
 		}
 	}
-
-
-	/*if (currentAnimation != &attack) {
-		attack.Reset();
-		currentAnimation = &attack;
-		attackTimer.Start();
-		weapon->body->SetEnabled(true);
-	}
-	else {
-		if (attackTimer.ReadSec() >= attackTime / 2) {
-			weapon->body->SetEnabled(false);
-		}
-
-		if (attack.HasFinished() && attackTimer.ReadSec() >= attackTime) {
-			currentAnimation = &idle;
-			attackPlayer = false;
-		}
-	}*/
-
-
-
 }
 
 bool Enemy::CleanUp()
@@ -393,29 +359,6 @@ void Enemy::ResumeMovement() {
 
 	}
 }
-
-void Enemy::SetPath(pugi::xml_node pathNode)
-{
-	/*route.clear();
-
-	if (pathNode)
-	{
-		for (pugi::xml_node pointNode : pathNode.children("point")) {
-
-			float x = pointNode.attribute("x").as_float();
-			float y = pointNode.attribute("y").as_float();
-
-			route.emplace_back(x, y);
-		}
-
-		if (!route.empty()) {
-			destPointIndex = 0;
-			destPoint = route[destPointIndex];
-		}
-
-	}*/
-}
-
 
 bool Enemy::CheckIfTwoPointsNear(Vector2D point1, Vector2D point2, float nearDistance)
 {

@@ -13,7 +13,6 @@
 #include "Item.h"
 #include "InteractiveObject.h"
 #include "Enemy.h"
-#include "Soldier.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
 #include "Physics.h"
