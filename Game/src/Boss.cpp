@@ -77,7 +77,7 @@ bool Boss::Start() {
 	idleFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/idle.wav");
 	gruntFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/grunt.wav");
 	impactFxId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/impacto.wav");
-	musicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/boss.wav");
+	/*musicId = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/minotauro/boss.wav");*/
 	
 
 	return true;
@@ -154,6 +154,7 @@ bool Boss::Update(float dt)
 			playingsound = true;
 		}
 
+		Engine::GetInstance().audio.get()->StopMusic(0.5f);
 		Engine::GetInstance().audio.get()->StopFxByChannel(5);
 		
 		break;
@@ -174,7 +175,8 @@ bool Boss::Update(float dt)
 		}
 		if (!music)
 		{
-			Engine::GetInstance().audio.get()->PlayFx(musicId, 0, 5);
+			/*Engine::GetInstance().audio.get()->PlayFx(musicId, 0, 5);*/
+			Engine::GetInstance().audio.get()->PlayMusic(Engine::GetInstance().scene.get()->configParameters.child("music").child("bossMus").attribute("path").as_string());
 			music = true;
 		}
 		currentAnimation = &stunned;

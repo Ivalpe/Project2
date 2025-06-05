@@ -86,7 +86,7 @@ public:
 
 
 	int beachMusicId, caveMusicId;
-
+	std::string beachMusPath, caveMusPath;
 
 	void NewGame();
 	void Continue();
@@ -95,7 +95,7 @@ public:
 	void ResumeGame();
 	void RestartGame(GuiControlButton* restartBt, GuiControlButton* exitBt);
 
-	void GamePadButtonsUpdate();
+	void GamePadButtonsUpdate(int &currentIndex);
 	
 
 
@@ -142,13 +142,19 @@ public:
 	GuiControlButton* guiBt2 = nullptr;
 	GuiControlButton* guiBt0 = nullptr;
 
+	SDL_Rect MusicPosition;
+	SDL_Rect FxPosition;
+
 
 	GamePad* pad;
 	GamePad padPrev;
 	GuiControlButton* menuButtons[4];
 	GuiControlButton* currentBt = guiBt0;
-	int currentIndex = 0;
-	int menuButtonsSize = sizeof(menuButtons) / sizeof(menuButtons[0]);
+	int currentInitialIndex = 0;
+	int currentSettingsIndex = 0;
+	int currentPauseIndex = 0;
+	int currentDeathIndex = 0;
+	int menuButtonsSize;
 
 
 

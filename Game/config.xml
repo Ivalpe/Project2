@@ -505,5 +505,10 @@
 				</platform>
 			</platforms>
 		</entities>
+    <music>
+      <beachMus path = "Assets/Audio/Music/playa.ogg"/>
+      <caveMus path ="Assets/Audio/Music/cueva.ogg"/>
+      <bossMus path ="Assets/Audio/Music/boss.ogg"/>
+    </music>
 	</scene>
 </config>

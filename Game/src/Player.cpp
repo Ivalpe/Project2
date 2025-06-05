@@ -131,7 +131,7 @@ bool Player::Update(float dt)
 	//	playerState = DEAD;
 	//}
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN || ControllerBtPressedOnce(prevMinus, pad->back)) {
 		debug = !debug;
 	}
 
@@ -589,6 +589,7 @@ bool Player::Update(float dt)
 	prevZR = pad->r2;
 	prevX = pad->x;
 	prevB = pad->b;
+	prevMinus = pad->back;
 	/*padPrev = *pad;*/
 
 

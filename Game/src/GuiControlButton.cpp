@@ -82,9 +82,9 @@ bool GuiControlButton::Update(float dt)
 				case GuiControlState::FOCUSED:
 
 					if (!Engine::GetInstance().scene.get()->pad->enabled) {
-						if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 520 + 13 - 2, nullptr, false);
-						if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 595 + 15 - 2, nullptr, false);
-						if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 670 + 5, nullptr, false);
+						if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 500 , nullptr, false);
+						if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 575 , nullptr, false);
+						if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 650 , nullptr, false);
 						if (id >= 7 && id <= 11 && !Engine::GetInstance().scene.get()->GameOverMenu) {
 							Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 30, bounds.y + bounds.h / 2 - 10, nullptr, false);
 						}
@@ -98,9 +98,9 @@ bool GuiControlButton::Update(float dt)
 
 
 					if (!Engine::GetInstance().scene.get()->pad->enabled) {
-						if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 520 + 10 - 2, nullptr, false);
-						if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 595 + 10 - 2, nullptr, false);
-						if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 670, nullptr, false);
+						if (id == 1)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 510 , nullptr, false);
+						if (id == 2)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 585, nullptr, false);
+						if (id == 3)Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().scene.get()->Feather, 788 - 15, 660, nullptr, false);
 
 
 						if (id >= 7 && id <= 11 && !Engine::GetInstance().scene.get()->GameOverMenu && !Engine::GetInstance().scene.get()->pad->enabled) {

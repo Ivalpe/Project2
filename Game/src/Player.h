@@ -122,7 +122,7 @@ public:
 	GamePad* pad;
 	/*GamePad padPrev;*/
 
-	bool prevZL, prevZR, prevB, prevX;
+	bool prevZL, prevZR, prevB, prevX, prevMinus;
 
 	bool exitingRope = false;
 
